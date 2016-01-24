@@ -1,0 +1,673 @@
+<!-- http://www.bhyuu.com/drilldown-maps-and-funnell-charts-on-the-same-page-using-highcharts/ -->
+<!-- http://suzumenote.com/tech/46 -->
+<!-- http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/maps/demo/latlon-advanced/ -->
+<h1>StaticPages#home</h1>
+<p>Find me in app/views/static_pages/home.html.erb</p>
+
+  <!-- stock -->
+  <script src="https://code.highcharts.com/stock/highstock.js"></script>
+  <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+
+  <!-- map -->
+  <script src="http://code.highcharts.com/highcharts-more.js"></script>
+  <script src="http://code.highcharts.com/maps/modules/map.js"></script>
+  <script src="http://code.highcharts.com/maps/modules/data.js"></script>
+  <script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
+
+
+<div id="container_chart" style="width:100%; height:400px;"></div>
+<div id="container_map" style="width:100%; height:400px;"></div>
+<div id="container" style="width:100%; height:400px;"></div>
+<div id="historical_chart" style="width:100%; height:400px;"></div>
+<script>
+$(function () {
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
+
+        // create the chart
+        $('#container').highcharts('StockChart', {
+
+
+            rangeSelector : {
+                selected : 1
+            },
+
+            title : {
+                text : 'AAPL Stock Price'
+            },
+
+            series : [{
+                type : 'candlestick',
+                name : 'AAPL Stock Price',
+                data : data,
+                dataGrouping : {
+                    units : [
+                        [
+                            'week', // unit name
+                            [1] // allowed multiples
+                        ], [
+                            'month',
+                            [1, 2, 3, 4, 6]
+                        ]
+                    ]
+                }
+            }]
+        });
+    });
+});
+
+
+$(function() {
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?',
+     function(data) {
+      //model-db(active_record)からデータを取得してjsに渡す方法
+      //http://qiita.com/s_nakamura/items/5d153f7d9db1b1190296
+      // split the data set into ohlc and volume
+
+
+      var historicals=gon.historical_data
+      // alert(historicals[0]["ymd"])
+      console.log('historicals=', historicals[0])
+
+      var ohlc = [],
+          volume = [],
+          // dataLength = data.length;
+          // console.log("length=", dataLength)
+          dataLength=historicals.length;
+      // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
+      // var unixtime=data[0][0]/1000
+      // alert("original unix=" + unixtime)
+
+      for (i = 0; i < dataLength&&i<historicals.length; i++) {
+          var ymd=String(historicals[i]["ymd"])
+          var year=ymd.substring(0, 4);
+          var month=ymd.substring(4, 6);
+          var day=ymd.substring(6, 8);
+          var ts = year+"-"+month+"-"+day+" 00:00:00";//"2011-10-14 00:00:00";
+          ts=String(ts)
+          var unixtime1=Date.parse( ts.replace( /-/g, '/') )
+
+          // alert(ymd)
+          // alert(year)
+          // alert(month)
+          // alert(day)
+          // alert(ts)
+          // alert( Date.parse( ts.replace( /-/g, '/') ) / 1000 );
+          // alert("unixtime="+unixtime1)
+
+          var open=historicals[i]["open"];
+          var high=historicals[i]["high"];
+          var low=historicals[i]["low"];
+          var close=historicals[i]["close"];
+          var volume1=historicals[i]["volume"];
+          // console.log("ymd=",data[i][0]);
+          // console.log("ymd2=", unixtime1);
+          ohlc.push([
+            unixtime1,
+            open,
+            high,
+            low,
+            close
+              // data[i][0], // the date : unixtime
+              // data[i][1], // open
+              // data[i][2], // high
+              // data[i][3], // low
+              // data[i][4] // close
+          ]);
+
+          volume.push([
+            unixtime1,
+            volume1
+              // data[i][0], // the date
+              // data[i][5] // the volume
+          ])
+
+
+      }
+
+      // set the allowed units for data grouping
+      var groupingUnits = [[
+          'week',                         // unit name
+          [1]                             // allowed multiples
+      ], [
+          'month',
+          [1, 2, 3, 4, 6]
+      ]];
+
+      // create the chart
+      $('#historical_chart').highcharts('StockChart', {
+          rangeSelector: {
+              selected: 1
+          },
+          title: {
+              text: historicals[0]["ticker"]//gon.user_name//arrayData[0]//gon.user_name
+              // text: array[0]["20151230"]//gon.@pseries.
+          },
+          yAxis: [{
+              title: {
+                  text: 'price'
+              },
+              height: 170,
+              lineWidth: 2
+          }, {
+              title: {
+                  text: 'Volume'
+              },
+              top: 250,
+              height: 40,
+              offset: 0,
+              lineWidth: 2
+          }],
+
+          series: [{
+              name: 'AAPL',
+              data: ohlc,
+              dataGrouping: {
+                  units: groupingUnits
+              }
+          }, {
+              type: 'column',
+              name: 'Volume',
+              data: volume,
+              yAxis: 1,
+              dataGrouping: {
+                  units: groupingUnits
+              }
+          }]
+      });
+    });
+});
+
+
+$(function () {
+
+    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+        // Create the chart
+        $('#container_chart').highcharts('StockChart', {
+
+
+            rangeSelector : {
+                selected : 1
+            },
+
+            title : {
+                text : 'AAPL Stock Price'
+            },
+
+            series : [{
+                name : 'AAPL',
+                data : data,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    });
+
+});
+
+  $(function () {
+
+    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
+
+        var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
+
+        // Correct UK to GB in data
+        $.each(data, function () {
+            if (this.code === 'UK') {
+                this.code = 'GB';
+            }
+        });
+
+        $('#container_map').highcharts('Map', {
+            chart : {
+                borderWidth : 1
+            },
+
+            title: {
+                text: 'World population 2013 by country'
+            },
+
+            subtitle : {
+                text : 'Demo of Highcharts map with bubbles'
+            },
+
+            legend: {
+                enabled: false
+            },
+
+            mapNavigation: {
+                enabled: true,
+                buttonOptions: {
+                    verticalAlign: 'bottom'
+                }
+            },
+
+            series : [{
+                name: 'Countries',
+                mapData: mapData,
+                color: '#E0E0E0',
+                enableMouseTracking: false
+            }, {
+                type: 'mapbubble',
+                mapData: mapData,
+                name: 'Population 2013',
+                joinBy: ['iso-a2', 'code'],
+                data: data,
+                minSize: 4,
+                maxSize: '12%',
+                tooltip: {
+                    pointFormat: '{point.code}: {point.z} thousands'
+                }
+            }]
+        });
+
+    });
+});
+</script>
+
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
+        <!-- 90, 120 -->
+        <%= image_tag("http://www.nikkei.co.jp/gifdata/nk_chart_L.gif", alt: "日経平均チャート", :width => '270', :height => '150') %>
+        <br>
+        日経平均チャート
+      <% end %>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
+        <!-- 90, 120 -->
+        <%= image_tag("http://quote.jpx.co.jp/jpx/chart/chart23.exe?template=ini/realindex&basequote=151&15%3A00",
+         alt: "トピックスチャート", :width => '300', :height => '150') %>
+        <br>
+        トピックスチャート
+      <% end %>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <%= link_to "http://www.google.com" do %>
+        <%= image_tag("http://www.jpx.co.jp/top/indices/charts/TseMothersIndexChart.gif",
+        alt: "マザーズチャート", :width => '290', :height => '150') %>
+        <br>
+        マザーズチャート
+      <% end %>
+    </div>
+    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <%= link_to "http://www.nikkei.com/markets/chart/#!/0101" do %>
+        <%= image_tag("http://www.nikkei.co.jp/chart/nka_l.gif",
+        alt: "日経平均とダウ平均", :width => '290', :height => '150') %>
+        <br>
+        日経平均とダウ平均
+      <% end %>
+    </div>
+  </div>
+
+
+
+<br>
+<br>
+<br>
+<br>
+
+<p>Click the buttons to create and delete row(s) for the table.</p>
+
+<table id="myTable">
+  <tr>
+    <td>Row1 cell1</td>
+    <td>Row1 cell2</td>
+  </tr>
+  <tr>
+    <td>Row2 cell1</td>
+    <td>Row2 cell2</td>
+  </tr>
+  <tr>
+    <td>Row3 cell1</td>
+    <td>Row3 cell2</td>
+  </tr>
+</table>
+<br>
+
+<button onclick="myCreateFunction()">Create row</button>
+<button onclick="myDeleteFunction()">Delete row</button>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+    aaa
+
+  </div>
+
+  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+    bbb
+  </div>
+</div>
+
+
+<!-- highstock チャート表示 -->
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+    <br>地図描画
+    <div id="global_map"></div>
+    <!-- candle chart -->
+    <br>ヒストリカルチャート
+    <div id="historical_chart"></div>
+    <div id="container1" style="height: 400px; min-width: 310px"></div>
+    <!-- bar graph -->
+    <% if @h then %>
+    <%= high_chart("sample", @h) %>
+    <% end if %>
+
+
+
+
+    <!-- 世界チャート -->
+    <!-- 一行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^NZ50",
+          alt: "ニュージーランド", :width => '192', :height => '96') %>
+          <br>
+          ニュージーランド
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^AXJO",
+           alt: "オーストラリア", :width => '192', :height => '96') %>
+          <br>
+          オーストラリア
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "http://www.google.com" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^KS11",
+          alt: "韓国", :width => '192', :height => '96') %>
+          <br>
+          韓国
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "http://www.google.com" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^KS11",
+          alt: "韓国", :width => '192', :height => '96') %>
+          <br>
+          韓国
+        <% end %>
+      </div>
+    </div>
+    <!-- 2行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^TWII",
+          alt: "台湾", :width => '192', :height => '96') %>
+          <br>
+          台湾
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^STI",
+           alt: "シンガポール", :width => '192', :height => '96') %>
+          <br>
+          シンガポール
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "上海" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=000001.SS",
+          alt: "上海", :width => '192', :height => '96') %>
+          <br>
+          上海総合指数
+        <% end %>
+      </div>
+    </div>
+    http://stackoverflow.com/questions/20010080/how-to-change-the-colour-of-a-row-in-bootstrap-3
+    https://www.psd2html.com/blog/customize-bootstrap-grid-with-sass.html
+    <!-- 3行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^TWII",
+          alt: "ハンセン", :width => '192', :height => '96') %>
+          <br>
+          ニュージーランド
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^JKSE",
+           alt: "ジャカルタ", :width => '192', :height => '96') %>
+          <br>
+          ジャカルタ
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^BSESN",
+          alt: "インド SENSEX", :width => '192', :height => '96') %>
+          <br>
+          インド SENSEX
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 4行目 -->
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^FCHI",
+          alt: "フランス", :width => '192', :height => '96') %>
+          <br>
+          フランス
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^GDAXI",
+           alt: "ドイツ", :width => '192', :height => '96') %>
+          <br>
+          ドイツ
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^FTSE",
+          alt: "イギリス", :width => '192', :height => '96') %>
+          <br>
+          イギリス
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 5行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=FTSEMIB.MI",
+          alt: "イタリア", :width => '192', :height => '96') %>
+          <br>
+          イタリア
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=RTS.RS",
+           alt: "ロシア", :width => '192', :height => '96') %>
+          <br>
+          ロシア
+        <% end %>
+      </div>
+      <!-- <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div> -->
+    </div>
+
+    <!-- 6行目:中南米 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^BVSP",
+          alt: "ボベスパ（ブラジル）", :width => '192', :height => '96') %>
+          <br>
+          ボベスパ（ブラジル）
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^MERV",
+           alt: "メルバル", :width => '192', :height => '96') %>
+          <br>
+          メルバル（アルゼンチン）
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^MXX",
+          alt: "メキシコ", :width => '192', :height => '96') %>
+          <br>
+          IPC(メキシコ)
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 7行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("",
+           alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+    </div>
+
+    <!-- 8行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("",
+           alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+    </div>
+
+    <!-- ９行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
+        <%= link_to "http://google.com" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("",
+           alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <%= image_tag("",
+          alt: "", :width => '192', :height => '96') %>
+          <br>
+
+        <% end %>
+      </div>
+    </div>
+
+    <!-- １０行目 -->
+
+    <!-- 世界チャート -->
+  </div>
+
+  <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+    <div id="topsidebar">
+      left side bar
+      <br>
+      <br>
+      <br>
+      <br>
+
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+function myCreateFunction() {
+    var table = document.getElementById("myTable");
+    var row = table.insertRow(0);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    cell1.innerHTML = "NEW CELL1";
+    cell2.innerHTML = "NEW CELL2";
+}
+
+function myDeleteFunction() {
+    document.getElementById("myTable").deleteRow(0);
+}
+</script>

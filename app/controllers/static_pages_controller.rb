@@ -45,6 +45,7 @@ class StaticPagesController < ApplicationController
     # 銘柄コードを調べる方法
     # http://stackoverflow.com/questions/32899143/yahoo-finance-api-stock-ticker-lookup-only-allowing-exact-match?rq=1
     # http://d.yimg.com/aq/autoc?query=nikkei&region=US&lang=en-US&callback=YAHOO.util.ScriptNodeDataSource.callbacks
+
     yahoo_client = YahooFinance::Client.new
     # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
     # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
@@ -55,7 +56,6 @@ class StaticPagesController < ApplicationController
 
     # try and error
     gon.historical_data=Priceseries.all.order(:ymd)
-
   end
 
   def help

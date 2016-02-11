@@ -1,0 +1,92 @@
+@import "bootstrap";
+
+/* mixins, variables, etc. */
+
+$grayMediumLight: #eaeaea;
+$lightGray: #999;
+$grayLighter: #999;
+
+$sidebarMarginLeft: -35px;
+$sidebarMarginRight: -20px;
+$sidebarPaddingLeft: 10px;
+$sidebarPaddingRight: -45px;
+
+@mixin box_sizing {
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+//newsのタイトル
+#newssidebartitle{
+  margin-right: $sidebarMarginRight;
+  margin-left: $sidebarMarginLeft;
+
+  padding-left: $sidebarPaddingLeft;
+  padding-right: $sidebarPaddingRight;
+
+  //border-radius: 10px;
+  border-style: solid;
+  border-color: $grayMediumLight;
+  border-width: 1px;
+
+  background-color:#858585;//#ffe;
+  color:#fff;
+  letter-spacing: 1px;
+
+  // text-align:
+}
+//newsコンテンツ
+#newssidebarcontents {
+  margin-right: $sidebarMarginRight;
+  margin-left: $sidebarMarginLeft;
+  padding-left: $sidebarPaddingLeft;
+  padding-right: $sidebarPaddingRight;
+
+  border-top:0px;
+  border-right:1px solid $grayMediumLight;
+  border-bottom:1px solid $grayMediumLight;
+  border-left:1px solid $grayMediumLight;
+  //border-right:1px double $grayMediumLight;
+  //border-left:1px dotted $grayMediumLight;
+  //border-bottom:1px dashed $grayMediumLight;
+
+  // background-color:#ffe;
+
+  //border-top: 1px solid $grayMediumLight;
+}
+
+.newssidebaritem{
+  height: 80px;
+  border-bottom : 1px dotted $grayMediumLight;
+
+  margin-left: -3px;
+  margin-right: -1px;
+  margin-bottom: 3px;
+
+  //background-color: #000;
+}
+.chartLocationCustomize{
+  padding-left: 100px;
+}
+#topsidebar {
+  margin-right: $sidebarMarginRight;
+  margin-left: $sidebarMarginLeft;
+
+  padding-left: $sidebarPaddingLeft;
+  padding-right: $sidebarPaddingRight;
+
+  border-radius: 10px;
+  border-style: solid;
+  border-color: $grayMediumLight;
+  border-width: 1px;
+
+
+  background-color:#ffe;
+
+  border-top: 1px solid $grayMediumLight;
+}
+
+.first-col{
+  padding-left: 20px;
+}

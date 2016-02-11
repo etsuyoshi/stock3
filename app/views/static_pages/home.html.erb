@@ -1,4 +1,4 @@
-<!-- http://www.bhyuu.com/drilldown-maps-and-funnell-charts-on-the-same-page-using-highcharts/ -->
+ <!-- http://www.bhyuu.com/drilldown-maps-and-funnell-charts-on-the-same-page-using-highcharts/ -->
 <!-- http://suzumenote.com/tech/46 -->
 <!-- http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/maps/demo/latlon-advanced/ -->
 <h1>StaticPages#home</h1>
@@ -14,11 +14,6 @@
   <script src="http://code.highcharts.com/maps/modules/data.js"></script>
   <script src="http://code.highcharts.com/mapdata/custom/world.js"></script>
 
-
-<div id="container_chart" style="width:100%; height:400px;"></div>
-<div id="container_map" style="width:100%; height:400px;"></div>
-<div id="container" style="width:100%; height:400px;"></div>
-<div id="historical_chart" style="width:100%; height:400px;"></div>
 <script>
 $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
@@ -264,40 +259,77 @@ $(function () {
     });
 });
 </script>
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+  <div class = "row">
+    <!-- line chart -->
+    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+      <div id="container_chart" style="width:100%; height:400px;"></div>
+    </div>
+  </div>
+
+  <div class = "row">
+    <!-- global map -->
+    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+      <div id="container_map" style="width:100%; height:400px;"></div>
+    </div>
+  </div>
+
+
+  <div class = "row">
+    <!-- candle stick @apple -->
+    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+      <div id="container" style="width:100%; height:400px;"></div>
+    </div>
+  </div>
+
+
+  <div class = "row">
+    <!-- candle stick nk225 -->
+    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+      <div id="historical_chart" style="width:100%; height:400px;"></div>
+    </div>
+  </div>
+
 
 
   <div class="row">
+
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <br>
       <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
         <!-- 90, 120 -->
-        <%= image_tag("http://www.nikkei.co.jp/gifdata/nk_chart_L.gif", alt: "日経平均チャート", :width => '270', :height => '150') %>
-        <br>
-        日経平均チャート
+        <%= image_tag("http://www.nikkei.co.jp/gifdata/nk_chart_L.gif",
+        alt: "日経平均チャート", :width => '205', :height => '150') %>
+        <br><br>
+        <center>日経平均チャート</center>
       <% end %>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+      <br>
       <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
         <!-- 90, 120 -->
         <%= image_tag("http://quote.jpx.co.jp/jpx/chart/chart23.exe?template=ini/realindex&basequote=151&15%3A00",
-         alt: "トピックスチャート", :width => '300', :height => '150') %>
+         alt: "トピックスチャート", :width => '205', :height => '160') %>
         <br>
-        トピックスチャート
+        <center>トピックスチャート</center>
       <% end %>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+
       <%= link_to "http://www.google.com" do %>
         <%= image_tag("http://www.jpx.co.jp/top/indices/charts/TseMothersIndexChart.gif",
-        alt: "マザーズチャート", :width => '290', :height => '150') %>
+        alt: "マザーズチャート", :width => '210', :height => '183') %>
         <br>
-        マザーズチャート
+        <center>マザーズチャート</center>
       <% end %>
     </div>
     <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
       <%= link_to "http://www.nikkei.com/markets/chart/#!/0101" do %>
         <%= image_tag("http://www.nikkei.co.jp/chart/nka_l.gif",
-        alt: "日経平均とダウ平均", :width => '290', :height => '150') %>
+        alt: "日経平均とダウ平均", :width => '200', :height => '173') %>
         <br>
-        日経平均とダウ平均
+        <center>日経平均とダウ平均</center>
       <% end %>
     </div>
   </div>
@@ -330,26 +362,14 @@ $(function () {
 <button onclick="myCreateFunction()">Create row</button>
 <button onclick="myDeleteFunction()">Delete row</button>
 
-<div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-    aaa
-
-  </div>
-
-  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-    bbb
-  </div>
-</div>
-
 
 <!-- highstock チャート表示 -->
-<div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10">
+
     <br>地図描画
     <div id="global_map"></div>
     <!-- candle chart -->
     <br>ヒストリカルチャート
-    <div id="historical_chart"></div>
+    <!-- <div id="historical_chart"></div> -->
     <div id="container1" style="height: 400px; min-width: 310px"></div>
     <!-- bar graph -->
     <% if @h then %>
@@ -643,16 +663,46 @@ $(function () {
     <!-- 世界チャート -->
   </div>
 
-  <div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-    <div id="topsidebar">
-      left side bar
-      <br>
-      <br>
-      <br>
-      <br>
+
+  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+    <!-- １行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+        <div id="newssidebartitle">
+          ニュース
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+        <div id="newssidebarcontents">
+            <div class="newssidebaritem">テストテストテストテストテストテストテストテストテストテストテストテストテストテストテストテストテストテスト</div>
+            <div class="newssidebaritem">aaa</div>
+            <div class="newssidebaritem">aaa</div>
+            <div class="newssidebaritem">aaa</div>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <!-- ２行目 -->
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+        <div id="topsidebar">
+          left side bar
+          <br>a
+          <br>b
+          <br>c
+          <br>d
+        </div>
+      </div>
 
     </div>
+    <div class="col-xs-12 col-sm-12 col-md-1 col-lg-1">
+    </div>
   </div>
+
 </div>
 
 

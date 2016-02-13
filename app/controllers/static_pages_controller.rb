@@ -63,6 +63,10 @@ class StaticPagesController < ApplicationController
 
     # try and error
     gon.historical_data=Priceseries.all.order(:ymd)
+
+
+    @feed_news = Feed.all.limit(10)
+    p @feed_news
   end
 
   def help

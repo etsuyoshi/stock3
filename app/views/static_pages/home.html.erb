@@ -676,11 +676,15 @@ $(function () {
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
         <div id="newssidebarcontents">
-            <div class="newssidebaritem">テストテストテストテストテストテストテストテストテストテストテストテストテストテストテストテストテストテスト</div>
-            <div class="newssidebaritem">aaa</div>
-            <div class="newssidebaritem">aaa</div>
-            <div class="newssidebaritem">aaa</div>
-          </ul>
+
+          <% @feed_news.each do |feed| %>
+            <div class="newssidebaritem">
+              <div class="newsSideBarItemTime">
+                <%= Time.at(feed.feed_id.to_i).strftime('%H:%M') %>
+              </div>
+              <%= feed.title %>
+            </div>
+          <% end %>
         </div>
       </div>
     </div>

@@ -1,6 +1,9 @@
 Rails.application.routes.draw do
+  # get ':controller(/:action(/:id(.:format)))'
   get 'priceseries/new'
 
+  # ニュース取得用のコントローラ
+  get 'fetch/index'
   get 'static_pages/home'
   root to: 'static_pages#home'
 

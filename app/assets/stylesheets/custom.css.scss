@@ -1,4 +1,7 @@
 @import "bootstrap";
+// topsidebarの仲でpaddingやmarginを調整しているのでモバイルビューではみ出してしまっている
+// cssで修正する場合は以下、もしくはstatic_pages/home.erb.htmlのビュー側で修正するか！
+// http://allabout.co.jp/gm/gc/396404/
 
 /* mixins, variables, etc. */
 

@@ -1,3 +1,10 @@
+# デザイン
+# http://w-finder.com/cool
+# http://photoshopvip.net/archives/17887
+
+# リアルタイム機能
+# http://blog.mlkcca.com/backend/milkcocoa-for-ror/
+
 require 'yahoo-finance'
 class StaticPagesController < ApplicationController
   def home

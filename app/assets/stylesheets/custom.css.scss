@@ -20,6 +20,7 @@ $sidebarPaddingRight: -45px;
   box-sizing: border-box;
 }
 
+
 //newsのタイトル
 #newssidebartitle{
   margin-right: $sidebarMarginRight;
@@ -92,4 +93,10 @@ $sidebarPaddingRight: -45px;
 
 .first-col{
   padding-left: 20px;
+}
+
+.newsSideBarItemTime{
+  color:#c0c0c0;
+  // color : #f00;
+  font-size: 12px;
 }

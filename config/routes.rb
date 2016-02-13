@@ -4,6 +4,9 @@ Rails.application.routes.draw do
 
   # ニュース取得用のコントローラ
   get 'fetch/index'
+  match '/fetch',   to: 'fetch#index', via: 'get'
+
+
   get 'static_pages/home'
   root to: 'static_pages#home'
 

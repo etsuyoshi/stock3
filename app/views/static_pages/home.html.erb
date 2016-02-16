@@ -336,13 +336,8 @@ $(function () {
 
 
 
-<br>
-<br>
-<br>
-<br>
-
+<!--
 <p>Click the buttons to create and delete row(s) for the table.</p>
-
 <table id="myTable">
   <tr>
     <td>Row1 cell1</td>
@@ -357,10 +352,10 @@ $(function () {
     <td>Row3 cell2</td>
   </tr>
 </table>
-<br>
+<br> -->
 
-<button onclick="myCreateFunction()">Create row</button>
-<button onclick="myDeleteFunction()">Delete row</button>
+<!-- <button onclick="myCreateFunction()">Create row</button>
+<button onclick="myDeleteFunction()">Delete row</button> -->
 
 
 <!-- highstock チャート表示 -->
@@ -370,7 +365,7 @@ $(function () {
     <!-- candle chart -->
     <br>ヒストリカルチャート
     <!-- <div id="historical_chart"></div> -->
-    <div id="container1" style="height: 400px; min-width: 310px"></div>
+    <!-- <div id="container1" style="height: 400px; min-width: 310px"></div> -->
     <!-- bar graph -->
     <% if @h then %>
     <%= high_chart("sample", @h) %>
@@ -475,6 +470,15 @@ $(function () {
           インド SENSEX
         <% end %>
       </div>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=RTS.RS",
+           alt: "ロシア", :width => '192', :height => '96') %>
+          <br>
+          ロシア
+        <% end %>
+      </div>
     </div>
 
     <!-- 4行目 -->
@@ -506,10 +510,6 @@ $(function () {
           イギリス
         <% end %>
       </div>
-    </div>
-
-    <!-- 5行目 -->
-    <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
         <%= link_to "http://google.com" do %>
           <!-- 90, 120 -->
@@ -519,15 +519,12 @@ $(function () {
           イタリア
         <% end %>
       </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("http://ichart.finance.yahoo.com/t?s=RTS.RS",
-           alt: "ロシア", :width => '192', :height => '96') %>
-          <br>
-          ロシア
-        <% end %>
-      </div>
+    </div>
+
+    <!-- 5行目 -->
+    <div class="row">
+
+
       <!-- <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
         <%= link_to "" do %>
           <%= image_tag("",

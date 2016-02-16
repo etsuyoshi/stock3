@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
+  #news feed専用ビュー
+  #get 'feeds/show'
+  resources :feeds
+
   # get ':controller(/:action(/:id(.:format)))'
   get 'priceseries/new'
 
-  # ニュース取得用のコントローラ
+  # ニュースフィード(feed)取得用のコントローラ
   get 'fetch/index'
   match '/fetch',   to: 'fetch#index', via: 'get'
 

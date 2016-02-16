@@ -11,59 +11,66 @@ class FetchController < ApplicationController
 
     # スクレイピング先のURL
     # url = 'http://example.com/news/index.html'
-    url = 'http://jp.reuters.com/news/archive/topNews?view=page&page=4&pageSize=100'
 
-    html = open(url) do |f|
-      f.read # htmlを読み込んで変数htmlに渡す
-    end
-    p "aaa"
-    # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
-    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    noPage = 5
+    while noPage > 0 do
+      url = 'http://jp.reuters.com/news/archive/topNews?view=page&page=1&pageSize=100'
 
-    latest_id = get_latest_id()
+      html = open(url) do |f|
+        f.read # htmlを読み込んで変数htmlに渡す
+      end
 
-    p "latest = " + latest_id.to_s
+      # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
+      doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
 
-    doc.xpath('//div[@class="feature"]').each do |content|
+      latest_id = get_latest_id()
 
-      if !(content.nil?)
-        # title
-        title = content.css('h3').css('a').inner_text
+      p "latest = " + latest_id.to_s
 
-        if !(title.nil? || title == "")
-          feed_id = get_feed_id(content)
-          if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
-            p "feed = " + feed_id.to_s + ", lastest = " + latest_id.to_s
-            if latest_id < feed_id
-              # DBに未登録の情報があったらDBに保存
-              # title            = content.css('h1').to_html
-              # description      = content.to_html
-              # link             = url + '#news' + feed_id.to_s
+      doc.xpath('//div[@class="feature"]').each do |content|
 
-              url = content.css('h3').css('a').attribute('href').value
-              url = "http://jp.reuters.com" + url
-              # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
+        if !(content.nil?)
+          # title
+          title = content.css('h3').css('a').inner_text
+
+          if !(title.nil? || title == "")
+            feed_id = get_feed_id(content)
+            if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
+              p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
+              if latest_id < feed_id
+                # DBに未登録の情報があったらDBに保存
+                # title            = content.css('h1').to_html
+                # description      = content.to_html
+                # link             = url + '#news' + feed_id.to_s
+
+                url = content.css('h3').css('a').attribute('href').value
+                url = "http://jp.reuters.com" + url
+                # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
 
 
-              # p Time.at(unixtime)
+                # p Time.at(unixtime)
 
 
-              # desc
-              description = content.css('p').inner_text
+                # desc
+                description = content.css('p').inner_text
 
-              # p feed_id
-              # p title
-              # p description
-              # p url
+                # p feed_id
+                # p title
+                # p description
+                # p url
 
-              insert_feed(feed_id, title, description, url)
-              p "db挿入完了"
+                insert_feed(feed_id, title, description, url)
+                p "db挿入完了"
+              else
+                p "feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さいです。"
+                p Time.at(feed_id)
+              end
             end
           end
         end
       end
+      noPage = noPage - 1
     end
-
 
 
 

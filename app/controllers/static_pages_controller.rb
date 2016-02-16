@@ -65,7 +65,7 @@ class StaticPagesController < ApplicationController
     gon.historical_data=Priceseries.all.order(:ymd)
 
 
-    @feed_news = Feed.all.limit(10)
+    @feed_news = Feed.order("feed_id desc").limit(40)
     p @feed_news
   end
 

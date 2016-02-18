@@ -13,8 +13,9 @@ class FetchController < ApplicationController
     # url = 'http://example.com/news/index.html'
 
     noPage = 5
+
     while noPage > 0 do
-      url = 'http://jp.reuters.com/news/archive/topNews?view=page&page=1&pageSize=100'
+      url = "http://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=100"
 
       html = open(url) do |f|
         f.read # htmlを読み込んで変数htmlに渡す

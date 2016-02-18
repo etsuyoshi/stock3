@@ -1,6 +1,8 @@
 <h1>Feeds#show</h1>
 <p>Find me in app/views/feeds/show.html.erb</p>
 
-<%= @feed.title %>
+<%= link_to @feed.title, @feed.link%>: <%= @feed.feed_id %>
+<br>
 <br>
 <%= @feed.description %>
+<br>

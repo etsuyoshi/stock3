@@ -7,6 +7,18 @@
 
 require 'yahoo-finance'
 class StaticPagesController < ApplicationController
+  def nikkei
+  end
+  def dow
+  end
+  def shanghai
+  end
+  def europe
+  end
+  def commodity
+  end
+  def adr
+  end
   def home
     # bar-chart
     @end_at = Date.today

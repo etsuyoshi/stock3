@@ -1,0 +1,71 @@
+
+  <!-- １行目 -->
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+      <div id="adsidebar">
+        <a href="http://px.a8.net/svt/ejp?a8mat=2NE32A+AS6OQQ+3GGA+609HT" target="_blank">
+          <img border="0" width="300" height="250" alt="" src="http://www27.a8.net/svt/bgt?aid=160220674652&wid=003&eno=01&mid=s00000016129001009000&mc=1">
+        </a>
+        <img border="0" width="1" height="1" src="http://www15.a8.net/0.gif?a8mat=2NE32A+AS6OQQ+3GGA+609HT" alt="">
+      </div>
+    </div>
+  </div>
+
+  <Br>
+    <br>
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+      <div id="newssidebartitle">
+        <%= link_to "ニュース", feeds_path, :style=>"color:white;" %>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+      <div id="newssidebarcontents">
+        <% today = Time.now %>
+        <% @feed_news.each do |feed| %>
+          <% feed_time = Time.at(feed.feed_id.to_i) %>
+          <div class="newssidebaritem">
+            <div class="newsSideBarItemTime">
+
+
+
+              <% if feed_time.strftime('%Y').to_i == today.year.to_i &&
+                    feed_time.strftime('%m').to_i == today.month.to_i &&
+                    feed_time.strftime('%d').to_i == today.day.to_i %>
+                <% # 本日の日付なら %>
+                <%= feed_time.strftime('%H:%M') %>
+
+              <% else %>
+                <%= feed_time.strftime('%D').to_s %>
+                <br>
+                <%= feed_time.strftime('%R').to_s %>
+
+              <% end %>
+
+            </div>
+            <%= link_to feed.title , feed %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <br>
+
+
+  <div class="row">
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
+      <div id="topsidebar">
+        left side bar
+        <br>a
+        <br>b
+        <br>c
+        <br>d
+      </div>
+    </div>
+
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-1 col-lg-1">
+  </div>

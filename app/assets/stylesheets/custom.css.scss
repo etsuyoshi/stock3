@@ -20,6 +20,16 @@ $sidebarPaddingRight: -45px;
   box-sizing: border-box;
 }
 
+//newsのタイトル
+#adsidebar{
+  margin-right: $sidebarMarginRight;
+  margin-left: $sidebarMarginLeft;
+
+  padding-left: $sidebarPaddingLeft;
+  padding-right: $sidebarPaddingRight;
+
+  // text-align:
+}
 
 //newsのタイトル
 #newssidebartitle{
@@ -39,9 +49,6 @@ $sidebarPaddingRight: -45px;
   letter-spacing: 1px;
 
   // text-align:
-  :link{
-    color:#000;
-  }
 }
 //newsコンテンツ
 #newssidebarcontents {

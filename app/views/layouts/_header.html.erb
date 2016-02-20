@@ -1,0 +1,41 @@
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">世界の株価指数</a>
+      </div>
+      <ul class="nav navbar-nav">
+
+        <li class="<%= active_class(root_path) %>">
+          <%= link_to "総合", root_path %>
+        </li>
+
+        <li class="<%= active_class(feeds_path) %>">
+          <%= link_to "ニュース", feeds_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_nikkei_path) %>">
+          <%= link_to "日経平均", static_pages_nikkei_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_dow_path) %>">
+          <%= link_to "ダウ平均", static_pages_dow_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_shanghai_path) %>">
+          <%= link_to "上海総合", static_pages_shanghai_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_europe_path) %>">
+          <%= link_to "欧州株価", static_pages_europe_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_commodity_path) %>">
+          <%= link_to "商品価格", static_pages_commodity_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_adr_path) %>">
+          <%= link_to "日本株ADR", static_pages_adr_path %>
+        </li>
+      </ul>
+    </div>
+  </nav>

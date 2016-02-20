@@ -1,3 +1,5 @@
+現在の日時: xx月xx日 yy:mm 日経平均: xx,xxx.xx dow: yy:yyy.yy 上海総合: x,xxx.xx　ドル/円: 112.33 ユーロ/円: 135.38
+
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -15,6 +17,9 @@
 
         <li class="<%= active_class(static_pages_nikkei_path) %>">
           <%= link_to "日経平均", static_pages_nikkei_path %>
+        </li>
+        <li class="<%= active_class(static_pages_fx_path) %>">
+          <%= link_to "為替", static_pages_fx_path %>
         </li>
 
         <li class="<%= active_class(static_pages_dow_path) %>">

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   get 'static_pages/europe'
   get 'static_pages/commodity'
   get 'static_pages/adr'
+  get 'static_pages/fx'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

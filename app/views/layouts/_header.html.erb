@@ -34,12 +34,24 @@
           <%= link_to "欧州株価", static_pages_europe_path %>
         </li>
 
+        <li class="<%= active_class(static_pages_bitcoin_path) %>">
+          <%= link_to "Bitcoin", static_pages_bitcoin_path %>
+        </li>
+
         <li class="<%= active_class(static_pages_commodity_path) %>">
           <%= link_to "商品価格", static_pages_commodity_path %>
         </li>
 
         <li class="<%= active_class(static_pages_adr_path) %>">
           <%= link_to "日本株ADR", static_pages_adr_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_portfolio_path) %>">
+          <%= link_to "最適ポートフォリオ", static_pages_portfolio_path %>
+        </li>
+
+        <li class="<%= active_class(static_pages_kessan_path) %>">
+          <%= link_to "決算", static_pages_kessan_path %>
         </li>
       </ul>
     </div>

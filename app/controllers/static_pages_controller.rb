@@ -16,10 +16,13 @@ require 'date'
 
 
 class StaticPagesController < ApplicationController
+  # 以下各ページに限定したニュースフィードだけでいいかも。
+  # feedsモデルにカテゴリを追加→とりあえず最初はすべてのニュースで良い
   def nikkei
     @feed_news = Feed.order("feed_id desc").limit(40)
 
-    @rank = get_rank_hash
+    @up_ranks = get_rank_hash("priceup")
+    @down_ranks = get_rank_hash("pricedown")
 
   end
   def dow
@@ -34,10 +37,20 @@ class StaticPagesController < ApplicationController
   def commodity
     @feed_news = Feed.order("feed_id desc").limit(40)
   end
+  def bitcoin
+    # bitcoinに限定したニュースだけでいいかも
+    @feed_news = Feed.order("feed_id desc").limit(40)
+  end
   def adr
     @feed_news = Feed.order("feed_id desc").limit(40)
   end
   def fx
+    @feed_news = Feed.order("feed_id desc").limit(40)
+  end
+  def portfolio
+    @feed_news = Feed.order("feed_id desc").limit(40)
+  end
+  def kessan
     @feed_news = Feed.order("feed_id desc").limit(40)
   end
   def home
@@ -86,11 +99,13 @@ class StaticPagesController < ApplicationController
     # http://stackoverflow.com/questions/32899143/yahoo-finance-api-stock-ticker-lookup-only-allowing-exact-match?rq=1
     # http://d.yimg.com/aq/autoc?query=nikkei&region=US&lang=en-US&callback=YAHOO.util.ScriptNodeDataSource.callbacks
 
-    yahoo_client = YahooFinance::Client.new
-    # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
-    # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
-    data = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*10), end_date: Time::now }) # 10 days worth of data
-    p "data=#{data}"
+    # yahoo_client = YahooFinance::Client.new
+    # # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
+    # # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
+    # data = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*100), end_date: Time::now }) # 10 days worth of data
+    # p "data=#{data}"
+
+    get_price_series
 
     gon.user_name="historical data"
 
@@ -105,10 +120,106 @@ class StaticPagesController < ApplicationController
   def help
   end
 
+  def get_price_series
+    # 既に格納されている最新データを取得
 
-  def get_rank_hash
+
+    todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
+    newestYMD = Priceseries.maximum("ymd") #ex.20160122
+    newestYear = newestYMD.to_s[0,4].to_i
+    newestMonth = newestYMD.to_s[4,2].to_i
+    newestDay = newestYMD.to_s[6,2].to_i
+
+    if newestYear == todayObj.year &&
+      newestMonth == todayObj.month &&
+      newestDay   == todayObj.day
+      p "本日まで取得済み"
+    else
+      p newestYMD.to_s + "から本日まで株価取得"
+      # DBに保存されている最新データの日付
+      newestObj = Time.zone.local(newestYear, newestMonth, newestDay)
+      p newestObj
+      p Time::now
+
+      insert_PriceSeries("^N225", newestObj)
+    end
+  end
+
+
+  def insert_PriceSeries(ticker, fromYmdObj)
+
+    yahoo_client = YahooFinance::Client.new
+    # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
+    # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
+    # datas = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*4), end_date: Time::now }) # 10 days worth of data
+    datas = yahoo_client.historical_quotes(ticker, { start_date: fromYmdObj, end_date: Time::now})
+    # p datas
+
+    name = nil
+    if ticker == "^N225"
+      name = "nikkei225"
+    else
+      name = "notSet"
+    end
+    # 取得したデータ
+    # <OpenStruct
+    #  trade_date="2016-02-19",
+    #  open="16050.400391",
+    #  high="16050.459961",
+    #  low="15799.349609",
+    #  close="15967.169922",
+    #  volume="156800",
+    #  adjusted_close="15967.169922",
+    #  symbol="^N225">
+
+    # Priceseriesに格納する
+    # Priceseries(id: integer,
+    #   ticker: string,
+    #   name: string,
+    #   open: float,
+    #   high: float,
+    #   low: float,
+    #   close: float,
+    #   volume: float,
+    #   ymd: integer,
+    #   created_at: datetime,
+    #   updated_at: datetime)
+
+    datas.each do |data|
+      # from "2016-02-19"-format to "20160219"
+      datasDate = data.trade_date
+      y = datasDate[0,4].to_s
+      m = datasDate[5,2].to_s
+      d = datasDate[8,2].to_s
+
+      insertDate = y + m + d
+      p insertDate
+
+
+
+      priceOneDay = Priceseries.new(
+        :ticker => ticker, #string,
+        :name => name,#string,
+        :open => data.open,#float,
+        :high => data.high,#float,
+        :low => data.low,#float,
+        :close => data.close,#float,
+        :volume => data.volume,#float,
+        :ymd => insertDate#integer
+        )
+
+
+      priceOneDay.save
+
+
+
+    end
+  end
+
+  def get_rank_hash(priceUpOrDown)
     # 値上がり率ランキング
-    url = "http://www.nikkei.com/markets/ranking/stock/priceup.aspx"
+    # url = "http://www.nikkei.com/markets/ranking/stock/priceup.aspx"
+    url = "http://www.nikkei.com/markets/ranking/stock/" + priceUpOrDown.to_s + ".aspx"
     html = open(url) do |f|
       f.read # htmlを読み込んで変数htmlに渡す
     end

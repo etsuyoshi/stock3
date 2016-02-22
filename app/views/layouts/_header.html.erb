@@ -1,4 +1,37 @@
-現在の日時: xx月xx日 yy:mm 日経平均: xx,xxx.xx dow: yy:yyy.yy 上海総合: x,xxx.xx　ドル/円: 112.33 ユーロ/円: 135.38
+<% todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
+   month = todayObj.month
+   day   = todayObj.day
+   hour  = todayObj.hour
+   minute= todayObj.min
+
+   newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "^N225" order by ymd desc limit 1')[0]["ymd"]
+   newestNikkei = Priceseries.find_by(ticker: "^N225", ymd: newestYMD).close
+   newestDow = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD).close
+   #  なぜか最新値が取得できない
+  #  newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD).close
+   newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD.to_i-1).close
+
+
+  #  require 'yahoo-finance'
+   yahoo_client = YahooFinance::Client.new
+   yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"], [:ask, :bid, :last_trade_date])
+   ask_usdjpy = yahoodata[0].ask
+   bid_usdjpy = yahoodata[0].bid
+   usdjpy = (ask_usdjpy.to_i + bid_usdjpy.to_i)/2
+
+   ask_eurjpy = yahoodata[1].ask
+   bid_eurjpy = yahoodata[1].bid
+   eurjpy = (ask_eurjpy.to_i + bid_eurjpy.to_i)/2
+
+
+%>
+<%= "現在: " + month.to_s + "月" + day.to_s + "日 " +
+    hour.to_s + ":" + minute.to_s +
+    "  日経平均: " + (newestNikkei.round(2)).to_s +
+    "  ダウ: " + newestDow.round(2).to_s +
+    "  上海総合: " + newestShanghai.round(2).to_s +
+    "　ドル/円: " + usdjpy.to_i.round(2).to_s +
+    "  ユーロ/円: " + eurjpy.to_i.round(2).to_s %>
 
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">

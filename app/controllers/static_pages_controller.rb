@@ -5,6 +5,11 @@
 # リアルタイム機能
 # http://blog.mlkcca.com/backend/milkcocoa-for-ror/
 
+
+# historical currency data取得
+# http://stackoverflow.com/questions/3139879/how-do-i-get-currency-exchange-rates-via-an-api-such-as-google-finance?rq=1
+# http://stackoverflow.com/questions/28918968/how-to-get-historical-data-for-currency-exchange-rates-via-yahoo-finance
+
 require 'yahoo-finance'
 
 # nikkeiから値上がり率ランキング取得
@@ -23,6 +28,8 @@ class StaticPagesController < ApplicationController
 
     @up_ranks = get_rank_hash("priceup")
     @down_ranks = get_rank_hash("pricedown")
+
+    # get_test_index
 
   end
   def dow
@@ -105,11 +112,19 @@ class StaticPagesController < ApplicationController
     # data = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*100), end_date: Time::now }) # 10 days worth of data
     # p "data=#{data}"
 
-    get_price_series
+    #各インデックスをPriceseriesモデルに格納
+    get_price_series("^DJI")
+    get_price_series("^N225")
+    get_price_series("000001.SS")
+
+    # get_currency
+
+    # test用に出力するメソッド（tickerの確認など..)
+    # get_test_index
 
     gon.user_name="historical data"
 
-    # try and error
+    # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切（以下はテスト）
     gon.historical_data=Priceseries.all.order(:ymd)
 
 
@@ -120,12 +135,57 @@ class StaticPagesController < ApplicationController
   def help
   end
 
-  def get_price_series
+  def get_test_index#(ticker)
+    p "get_test_index"
+    # 銘柄コード調べ方その２＝＞yahoo finance shanghaiとググってyahoo financeのページに表示された（それらしい）インデックス
+    # http://finance.yahoo.com/q?s=%5EN225
+    # http://finance.yahoo.com/q?s=000001.SS
+    # yahoo_client = YahooFinance::Client.new
+    # datas = yahoo_client.historical_quotes("000001.SS", { start_date: Time::now-(24*60*60*4), end_date: Time::now})
+    # datas = yahoo_client.historical_quotes("USDJPY=FX", { start_date: Time::now-(24*60*60*4), end_date: Time::now})
+    # datas = yahoo_client.quotes("USDJPY=X", [:ask, :bid, :last_trade_date])
+
+
+    yahoo_client = YahooFinance::Client.new
+    datas = yahoo_client.quotes(["USDJPY=X"], [:ask, :bid, :last_trade_date])
+
+    p datas
+  end
+
+
+  def get_currency
+    p "get_currency"
+    if !@usdjpy#一度取得しても再度開くときは再取得する仕組みになってしまう
+      yahoo_client = YahooFinance::Client.new
+      @usdjpy = yahoo_client.quotes(["USDJPY=X"], [:ask, :bid, :last_trade_date])
+      p @usdjpy
+    end
+
+    p "return"
+  end
+
+  def get_price_series(ticker)
     # 既に格納されている最新データを取得
+    name = nil
+    if ticker == "^N225"
+      name = "nikkei225"
+    elsif ticker == "^DJI"
+      name = "dow"
+    elsif ticker == "000001.SS"
+      name = "shanghai"
+    else
+      name = "notSet"
+    end
 
 
     todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
-    newestYMD = Priceseries.maximum("ymd") #ex.20160122
+    # newestYMD = Priceseries.maximum("ymd") #ex.20160122
+    newestYMD = "20130101"#データがない場合に備えデフォルトを設定
+    if Priceseries.find_by(ticker: ticker)
+      # 最後の日付を取得
+      newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
+    end
+
     newestYear = newestYMD.to_s[0,4].to_i
     newestMonth = newestYMD.to_s[4,2].to_i
     newestDay = newestYMD.to_s[6,2].to_i
@@ -141,26 +201,25 @@ class StaticPagesController < ApplicationController
       p newestObj
       p Time::now
 
-      insert_PriceSeries("^N225", newestObj)
+      insert_PriceSeries(ticker, name, newestObj)
+
     end
   end
 
 
-  def insert_PriceSeries(ticker, fromYmdObj)
+  def insert_PriceSeries(ticker, name, fromYmdObj)
 
     yahoo_client = YahooFinance::Client.new
     # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
     # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
     # datas = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*4), end_date: Time::now }) # 10 days worth of data
     datas = yahoo_client.historical_quotes(ticker, { start_date: fromYmdObj, end_date: Time::now})
+
+    # dows = yahoo_client.historical_quotes("^DJI", { start_date: Time::now-(24*60*60*200), end_date: Time::now }) # 10 days worth of data
+    # p dows
+
     # p datas
 
-    name = nil
-    if ticker == "^N225"
-      name = "nikkei225"
-    else
-      name = "notSet"
-    end
     # 取得したデータ
     # <OpenStruct
     #  trade_date="2016-02-19",

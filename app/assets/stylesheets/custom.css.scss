@@ -20,6 +20,19 @@ $sidebarPaddingRight: -45px;
   box-sizing: border-box;
 }
 
+.right{
+  text-align: right;
+}
+
+// classは. idは#
+#nikkeiValue{
+  font-size: 18ex;
+}
+#deepblueBack{
+  color: #fff;
+  background-color: #0A385C;
+}
+
 //newsのタイトル
 #adsidebar{
   margin-right: $sidebarMarginRight;
@@ -148,7 +161,7 @@ table th {
 }
 table th:first-child {
   border-radius: 5px 0 0 0;
-  
+
 }
 table th:last-child {
   border-radius:0 5px 0 0;

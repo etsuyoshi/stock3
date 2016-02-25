@@ -29,11 +29,50 @@ class StaticPagesController < ApplicationController
     @up_ranks = get_rank_hash("priceup")
     @down_ranks = get_rank_hash("pricedown")
 
+    @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
+
+
+    gon.historical_data=#Priceseries.all.order(:ymd)
+    Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
+    p "nikkei225"
+    p gon.historical_data.length
+
+
+
+    if @nikkei225_now2.length == 2
+      todayVal = @nikkei225_now2[0].close.to_f
+      yesterdayVal = @nikkei225_now2[1].close.to_f
+      @returnNikkei225 = sprintf("%.2f", ((todayVal / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
+      @diffNikkei225 = sprintf("%.2f", (todayVal - yesterdayVal))
+      # @valueNikkei225 = number_to_currency(todayVal, unit: '', precision: 0)#todayVal.to_i#.jpy_comma
+      @valueNikkei225 = todayVal#本当は上のような関数を使ってカンマ区切りにしたい
+
+
+
+      # <%= (printf("%.2f", (@nikkei225_now2[0].close.to_f)).to_f).jpy_comma %><br>
+    end
+
+    print "nikkei225_now2"
+    print @valueNikkei225.class
+    print @valueNikkei225.methods
+
+    # print @nikkei225_now2[0].ymd
+    # print @nikkei225_now2[1].ymd
+
+
+
     # get_test_index
 
   end
   def dow
     @feed_news = Feed.order("feed_id desc").limit(40)
+
+    # b = 13754.4566
+    # print number_with_delimiter(b, :delimiter => ',')
+
+
+
+
   end
   def shanghai
     @feed_news = Feed.order("feed_id desc").limit(40)
@@ -125,7 +164,8 @@ class StaticPagesController < ApplicationController
     gon.user_name="historical data"
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切（以下はテスト）
-    gon.historical_data=Priceseries.all.order(:ymd)
+    gon.historical_data=#Priceseries.all.order(:ymd)
+    Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
 
 
     @feed_news = Feed.order("feed_id desc").limit(40)
@@ -320,4 +360,12 @@ class StaticPagesController < ApplicationController
 
     return rank_all
   end
+
+
+  # 整数をカンマ区切りにする
+  #  http://qiita.com/Katsumata_RYO/items/1055c2f27cbd99e67fc2
+  # def jpy_comma
+  #  self.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\1,')
+  # end
+
 end

@@ -52,8 +52,8 @@ $(function () {
 
 
 $(function() {
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?',
-     function(data) {
+    // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?',
+    //  function(data) {
       //model-db(active_record)からデータを取得してjsに渡す方法
       //http://qiita.com/s_nakamura/items/5d153f7d9db1b1190296
       // split the data set into ohlc and volume
@@ -154,7 +154,8 @@ $(function() {
           }],
 
           series: [{
-              name: 'AAPL',
+              type:'candlestick',
+              name: 'Nikkei225',
               data: ohlc,
               dataGrouping: {
                   units: groupingUnits
@@ -169,7 +170,7 @@ $(function() {
               }
           }]
       });
-    });
+    // });
 });
 
 

@@ -9,8 +9,11 @@
    newestDow = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD).close
    #  なぜか最新値が取得できない
   #  newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD).close
-   newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD.to_i-1).close
-
+  shanghaiData = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD.to_i)
+  newestShanghai = nil;
+  if shanghaiData
+   newestShanghai = shanghaiData.close
+  end
 
   #  require 'yahoo-finance'
    yahoo_client = YahooFinance::Client.new
@@ -29,7 +32,7 @@
     hour.to_s + ":" + minute.to_s +
     "  日経平均: " + (newestNikkei.round(2)).to_s +
     "  ダウ: " + newestDow.round(2).to_s +
-    "  上海総合: " + newestShanghai.round(2).to_s +
+    "  上海総合: " + ((newestShanghai!=nil) ? (newestShanghai.round(2).to_s) : "--") +
     "　ドル/円: " + usdjpy.to_i.round(2).to_s +
     "  ユーロ/円: " + eurjpy.to_i.round(2).to_s %>
 

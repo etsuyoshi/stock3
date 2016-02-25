@@ -44,24 +44,12 @@ class StaticPagesController < ApplicationController
       yesterdayVal = @nikkei225_now2[1].close.to_f
       @returnNikkei225 = sprintf("%.2f", ((todayVal / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
       @diffNikkei225 = sprintf("%.2f", (todayVal - yesterdayVal))
-      # @valueNikkei225 = number_to_currency(todayVal, unit: '', precision: 0)#todayVal.to_i#.jpy_comma
-      @valueNikkei225 = todayVal#本当は上のような関数を使ってカンマ区切りにしたい
-
-
-
-      # <%= (printf("%.2f", (@nikkei225_now2[0].close.to_f)).to_f).jpy_comma %><br>
+      @valueNikkei225 = todayVal
     end
 
-    print "nikkei225_now2"
-    print @valueNikkei225.class
-    print @valueNikkei225.methods
-
-    # print @nikkei225_now2[0].ymd
-    # print @nikkei225_now2[1].ymd
 
 
 
-    # get_test_index
 
   end
   def dow
@@ -71,11 +59,41 @@ class StaticPagesController < ApplicationController
     # print number_with_delimiter(b, :delimiter => ',')
 
 
+    gon.dow_historical=#Priceseries.all.order(:ymd)
+    Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
+
+    @dow_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
+    p "shanghai"
+    p @dow_now2[0].close.to_f
+    p @dow_now2[1].close.to_f
+    if @dow_now2.length == 2
+      @valuedow = @dow_now2[0].close.to_f
+      yesterdayVal = @dow_now2[1].close.to_f
+      @returndow = sprintf("%.2f", ((@valuedow / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
+      @diffdow = sprintf("%.2f", (@valuedow - yesterdayVal))
+    end
+
 
 
   end
   def shanghai
     @feed_news = Feed.order("feed_id desc").limit(40)
+
+    gon.shanghai_historical=#Priceseries.all.order(:ymd)
+    Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
+
+    @shanghai_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
+    p "shanghai"
+    p @shanghai_now2[0].close.to_f
+    p @shanghai_now2[1].close.to_f
+    if @shanghai_now2.length == 2
+      @valueShanghai = @shanghai_now2[0].close.to_f
+      yesterdayVal = @shanghai_now2[1].close.to_f
+      @returnShanghai = sprintf("%.2f", ((@valueShanghai / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
+      @diffShanghai = sprintf("%.2f", (@valueShanghai - yesterdayVal))
+    end
+
+
   end
   def europe
     @feed_news = Feed.order("feed_id desc").limit(40)

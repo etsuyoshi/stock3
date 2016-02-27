@@ -1,3 +1,7 @@
+# モデル構造：最新断面(Pricenewest)と時系列データ(Priceseries)の二つ取得
+# >ActiveRecord::Base.connection.tables
+
+
 # デザイン
 # http://w-finder.com/cool
 # http://photoshopvip.net/archives/17887
@@ -110,6 +114,13 @@ class StaticPagesController < ApplicationController
   end
   def fx
     @feed_news = Feed.order("feed_id desc").limit(40)
+
+    @usdjpy = PriceNewest.find_by_sql(
+    "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
+    @eurjpy = PriceNewest.find_by_sql(
+    "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
+
+
   end
   def portfolio
     @feed_news = Feed.order("feed_id desc").limit(40)

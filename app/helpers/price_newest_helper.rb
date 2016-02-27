@@ -1,0 +1,2 @@
+module PriceNewestHelper
+end

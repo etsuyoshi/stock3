@@ -1,3 +1,7 @@
+# モデル構造：最新断面(Newestprice)と時系列データ(Priceseries)の二つ取得
+# >ActiveRecord::Base.connection.tables
+
+
 # デザイン
 # http://w-finder.com/cool
 # http://photoshopvip.net/archives/17887

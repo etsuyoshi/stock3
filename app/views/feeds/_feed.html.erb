@@ -1,5 +1,6 @@
+<% feed_time = Time.at(feed.feed_id.to_i) %>
 <li>
-	<%= link_to feed.title, feed %>
-
+	<%= link_to feed.title, feed %><%= " (" + feed_time.strftime('%Y-%m-%d %H:%M').to_s + ")" %>
+	<br>
   <%= feed.description %>
 </li>

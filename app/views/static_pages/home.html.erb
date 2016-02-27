@@ -58,7 +58,7 @@ $(function() {
       //http://qiita.com/s_nakamura/items/5d153f7d9db1b1190296
       // split the data set into ohlc and volume
 
-
+      // 日経チャートを表示する
       var historicals=gon.historical_data
       // alert(historicals[0]["ymd"])
       console.log('historicals=', historicals[0])
@@ -129,7 +129,7 @@ $(function() {
       ]];
 
       // create the chart
-      $('#historical_chart').highcharts('StockChart', {
+      $('#nikkei_chart').highcharts('StockChart', {
           rangeSelector: {
               selected: 1
           },
@@ -288,7 +288,7 @@ $(function () {
   <div class = "row">
     <!-- candle stick nk225 -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
-      <div id="historical_chart" style="width:100%; height:400px;"></div>
+      <div id="nikkei_chart" style="width:100%; height:400px;"></div>
     </div>
   </div>
 

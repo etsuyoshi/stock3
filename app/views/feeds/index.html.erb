@@ -1,9 +1,11 @@
-
 <!-- 以下をtutorial/sampe_app3と比べて整形すること！ -->
+
 <ul class="feeds">
-  <%= "first id = #{@feeds.first.id}" %>
+  <%= will_paginate %>
   <% @feeds.each do |feed| %>
     <%= render feed %>
     <br>
   <% end %>
+
+  <%= will_paginate %>
 </ul>

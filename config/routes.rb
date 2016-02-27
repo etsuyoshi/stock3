@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
+  get 'price_newest/index'
+
   #news feed専用ビュー
   #get 'feeds/show'
   resources :feeds
+  resources :price_newest
 
   # get ':controller(/:action(/:id(.:format)))'
   get 'priceseries/new'

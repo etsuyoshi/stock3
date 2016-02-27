@@ -15,7 +15,8 @@
    newestShanghai = shanghaiData.close
   end
 
-  #  require 'yahoo-finance'
+  #  require 'yahoo-finance'#これがなくてもyahooFinanceは取得可能
+  # →DBで取得することにする @ PriceNewestController
    yahoo_client = YahooFinance::Client.new
    yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"], [:ask, :bid, :last_trade_date])
    ask_usdjpy = yahoodata[0].ask

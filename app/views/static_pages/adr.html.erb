@@ -1,7 +1,21 @@
+<!-- 最終的には東証価格差、東証とAdrのそれぞれの前日比（％、円）なども表示 -->
+
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
 
-    adr
+    <%= link_to "" "adrとは？→説明ページへGO!" %>
+    <br>
+    <% @adr_all.each do |adr| %>
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "" do %>
+          <!-- 90, 120 -->
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=#{adr.ticker}",
+           alt: adr.tcode, :width => '192', :height => '96') %>
+          <br>
+          <%= "#{adr.name}(#{adr.tcode})" %>
+        <% end %>
+      </div>
+    <% end %>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
     <%= render 'layouts/sidebar' %>

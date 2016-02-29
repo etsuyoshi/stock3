@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'adr/index'
+
   get 'price_newest/index'
 
   #news feed専用ビュー

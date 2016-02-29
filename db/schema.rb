@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160227053726) do
+ActiveRecord::Schema.define(version: 20160228103559) do
+
+  create_table "adrs", force: :cascade do |t|
+    t.string   "ticker"
+    t.string   "tcode"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "name"
+  end
 
   create_table "feeds", force: :cascade do |t|
     t.string   "feed_id"

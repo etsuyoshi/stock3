@@ -98,6 +98,9 @@ class StaticPagesController < ApplicationController
     end
 
 
+    p "shanghai_historical = #{gon.shanghai_historical.length}"
+
+
   end
   def europe
     @feed_news = Feed.order("feed_id desc").limit(40)
@@ -111,6 +114,12 @@ class StaticPagesController < ApplicationController
   end
   def adr
     @feed_news = Feed.order("feed_id desc").limit(40)
+
+    # adr一覧を取得する
+    @adr_all = Adr.all
+    @adr_all.each do |adr|
+      p "#{adr.ticker}, #{adr.tcode}"
+    end
   end
   def fx
     @feed_news = Feed.order("feed_id desc").limit(40)

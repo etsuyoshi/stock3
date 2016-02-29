@@ -36,7 +36,7 @@
       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
 
 
-        <div id="container" style="width:100%; height:400px;"></div>
+        <div id="shanghai_graph" style="width:100%; height:400px;"></div>
         <br>
       </div>
     </div>
@@ -128,7 +128,7 @@ $(function() {
       ]];
 
       // create the chart
-      $('#container').highcharts('StockChart', {
+      $('#shanghai_graph').highcharts('StockChart', {
           rangeSelector: {
               selected: 1
           },
@@ -153,7 +153,7 @@ $(function() {
           }],
 
           series: [{
-              // type:'candlestick', // shanghaiはohlcデータ取得できなかったため折れ線
+              // type:'candlestick', // shanghaiはyahoo-financeの時系列データでohlc形式が取得できなかったため折れ線
               name: historicals[0].ticker,
               data: ohlc,
               dataGrouping: {

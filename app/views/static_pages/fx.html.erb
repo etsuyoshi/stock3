@@ -1,4 +1,3 @@
-<script type="text/javascript">DukascopyApplet = {"type":"chart","params":{"showUI":true,"showTabs":true,"showParameterToolbar":true,"showOfferSide":true,"allowInstrumentChange":true,"allowPeriodChange":true,"allowOfferSideChange":true,"showAdditionalToolbar":true,"showDetachButton":false,"presentationType":"candle","axisX":true,"axisY":true,"legend":true,"timeline":true,"showDateSeparators":true,"showZoom":true,"crosshair":true,"borders":false,"theme":"Pastelle","uiColor":"#000","availableInstruments":"AUD/USD,EUR/USD,GBP/USD,NZD/USD,USD/CAD,USD/CHF,USD/JPY,USD/NOK,USD/SEK,USD/SGD,XAG/USD,XAU/USD,AUD/CAD,AUD/CHF,AUD/JPY,AUD/NZD,CAD/CHF,CAD/JPY,CHF/JPY,EUR/AUD,EUR/CAD,EUR/CHF,EUR/DKK,EUR/GBP,EUR/HKD,EUR/JPY,EUR/NOK,EUR/NZD,EUR/SEK,GBP/AUD,GBP/CAD,GBP/CHF,GBP/JPY,GBP/NZD,NZD/CAD,NZD/CHF,NZD/JPY,AUD/SGD,CAD/HKD,CHF/SGD,EUR/PLN,EUR/SGD,EUR/TRY,HKD/JPY,SGD/JPY,USD/DKK,USD/HKD,USD/MXN,USD/PLN,USD/RUB,USD/TRY,USD/ZAR","instrument":"EUR/USD","period":"5","offerSide":"BID","timezone":0,"live":true,"panLock":false,"width":"100%","height":"100%","adv":"popup"}};</script><script type="text/javascript" src="//freeserv.dukascopy.com/2.0/core.js"></script>
 
 
 
@@ -18,20 +17,37 @@
 
 
 
-<script type="text/javascript">DukascopyApplet = {"type":"chart","params":{"showUI":true,"showTabs":true,"showParameterToolbar":true,"showOfferSide":true,"allowInstrumentChange":true,"allowPeriodChange":true,"allowOfferSideChange":true,"showAdditionalToolbar":true,"showDetachButton":false,"presentationType":"candle","axisX":true,"axisY":true,"legend":true,"timeline":true,"showDateSeparators":true,"showZoom":true,"crosshair":true,"borders":false,"theme":"Pastelle","uiColor":"#000","availableInstruments":"AUD/USD,EUR/USD,GBP/USD,NZD/USD,USD/CAD,USD/CHF,USD/JPY,USD/NOK,USD/SEK,USD/SGD,XAG/USD,XAU/USD,AUD/CAD,AUD/CHF,AUD/JPY,AUD/NZD,CAD/CHF,CAD/JPY,CHF/JPY,EUR/AUD,EUR/CAD,EUR/CHF,EUR/DKK,EUR/GBP,EUR/HKD,EUR/JPY,EUR/NOK,EUR/NZD,EUR/SEK,GBP/AUD,GBP/CAD,GBP/CHF,GBP/JPY,GBP/NZD,NZD/CAD,NZD/CHF,NZD/JPY,AUD/SGD,CAD/HKD,CHF/SGD,EUR/PLN,EUR/SGD,EUR/TRY,HKD/JPY,SGD/JPY,USD/DKK,USD/HKD,USD/MXN,USD/PLN,USD/RUB,USD/TRY,USD/ZAR","instrument":"EUR/USD","period":"5","offerSide":"BID","timezone":0,"live":true,"panLock":false,"width":"100%","height":"100%","adv":"popup"}};</script><script type="text/javascript" src="//freeserv.dukascopy.com/2.0/core.js"></script>
-
-
 
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
     fx
-    <br>
+    <div id = "deepblueBack">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
+              <br>
+              <%= "為替(#{@usdjpy.datetrade})" %>
+              <div id="nikkeiValue">
+                <%= "usd/jpy:#{@usdjpy.pricetrade.round(2)}" %>
+                <br>
+                <%= "eur/jpy:#{@eurjpy.pricetrade.round(2)}" %>
+              </div>
 
-    <%= "#{@usdjpy.datetrade}, price:#{@usdjpy.pricetrade}, ask:#{@usdjpy.ask}, bid:#{@usdjpy.bid}" %>
-    <br>
-    <%= "#{@eurjpy.datetrade}, price:#{@eurjpy.pricetrade}, ask:#{@eurjpy.ask}, bid:#{@eurjpy.bid}" %>
-    <script type="text/javascript" src="//freeserv.dukascopy.com/2.0/core.js">
-    </script>
+              <div class="right">
+                <%= "#{@usdjpy.datetrade}, ask:#{@usdjpy.ask}, bid:#{@usdjpy.bid}" %>
+                <br>
+                <%= "#{@eurjpy.datetrade}, ask:#{@eurjpy.ask}, bid:#{@eurjpy.bid}" %>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <script type="text/javascript">DukascopyApplet = {"type":"chart","params":{"showUI":true,"showTabs":true,"showParameterToolbar":true,"showOfferSide":true,"allowInstrumentChange":true,"allowPeriodChange":true,"allowOfferSideChange":true,"showAdditionalToolbar":true,"showDetachButton":false,"presentationType":"candle","axisX":true,"axisY":true,"legend":true,"timeline":true,"showDateSeparators":true,"showZoom":true,"crosshair":true,"borders":false,"theme":"Pastelle","uiColor":"#000","availableInstruments":"AUD/USD,EUR/USD,GBP/USD,NZD/USD,USD/CAD,USD/CHF,USD/JPY,USD/NOK,USD/SEK,USD/SGD,XAG/USD,XAU/USD,AUD/CAD,AUD/CHF,AUD/JPY,AUD/NZD,CAD/CHF,CAD/JPY,CHF/JPY,EUR/AUD,EUR/CAD,EUR/CHF,EUR/DKK,EUR/GBP,EUR/HKD,EUR/JPY,EUR/NOK,EUR/NZD,EUR/SEK,GBP/AUD,GBP/CAD,GBP/CHF,GBP/JPY,GBP/NZD,NZD/CAD,NZD/CHF,NZD/JPY,AUD/SGD,CAD/HKD,CHF/SGD,EUR/PLN,EUR/SGD,EUR/TRY,HKD/JPY,SGD/JPY,USD/DKK,USD/HKD,USD/MXN,USD/PLN,USD/RUB,USD/TRY,USD/ZAR","instrument":"EUR/USD","period":"5","offerSide":"BID","timezone":0,"live":true,"panLock":false,"width":"100%","height":"100%","adv":"popup"}};</script><script type="text/javascript" src="//freeserv.dukascopy.com/2.0/core.js"></script>
 
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">

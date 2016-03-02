@@ -41,8 +41,6 @@ class StaticPagesController < ApplicationController
     p "nikkei225"
     p gon.historical_data.length
 
-
-
     if @nikkei225_now2.length == 2
       todayVal = @nikkei225_now2[0].close.to_f
       yesterdayVal = @nikkei225_now2[1].close.to_f
@@ -104,6 +102,21 @@ class StaticPagesController < ApplicationController
   end
   def europe
     @feed_news = Feed.order("feed_id desc").limit(40)
+
+    gon.europe_historical=#Priceseries.all.order(:ymd)
+    Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
+    @europe_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
+    p "shanghai"
+    p @europe_now2[0].close.to_f
+    p @europe_now2[1].close.to_f
+    if @europe_now2.length == 2
+      @valueEurope = @europe_now2[0].close.to_f
+      yesterdayVal = @europe_now2[1].close.to_f
+      @returnEurope = sprintf("%.2f", ((@valueEurope / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
+      @diffEurope = sprintf("%.2f", (@valueEurope - yesterdayVal))
+    end
+
+
   end
   def commodity
     @feed_news = Feed.order("feed_id desc").limit(40)
@@ -124,12 +137,14 @@ class StaticPagesController < ApplicationController
   def fx
     @feed_news = Feed.order("feed_id desc").limit(40)
 
+
+
     @usdjpy = PriceNewest.find_by_sql(
     "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
     @eurjpy = PriceNewest.find_by_sql(
     "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
 
-
+    p "fx = #{@usdjpy.datetrade}"
   end
   def portfolio
     @feed_news = Feed.order("feed_id desc").limit(40)
@@ -193,6 +208,8 @@ class StaticPagesController < ApplicationController
     get_price_series("^DJI")
     get_price_series("^N225")
     get_price_series("000001.SS")
+    get_price_series("^FTSE")
+
 
     # get_currency
 
@@ -251,6 +268,8 @@ class StaticPagesController < ApplicationController
       name = "dow"
     elsif ticker == "000001.SS"
       name = "shanghai"
+    elsif ticker == '^FTSE'
+      name = "FTSE"
     else
       name = "notSet"
     end

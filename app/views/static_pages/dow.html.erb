@@ -1,54 +1,13 @@
-
-<div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-    <!-- main contents field -->
-
-    <div id = "deepredBack">
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
-              <br>
-              ダウ平均
-              <div id="nikkeiValue">
-                <%= number_with_delimiter(@valuedow.to_d.floor(2), :delimiter => ',') %>
-              </div>
-              <% kigo = "+" %>
-              <% if @diffdow.to_f < 0 %>
-                <% kigo = "▲" %>
-              <% end %>
-
-              <div class="right">
-
-                <%= "前日比: " + kigo + @diffdow.to_f.abs.to_s %>
-                <%= "( " + kigo + @returndow.to_f.abs.to_s + " % )" %>
-              </div>
-              <br>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <br>
-
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
-
-
-        <div id="dow_historical" style="width:100%; height:400px;"></div>
-        <br>
-      </div>
-    </div>
-
-  </div>
-  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-    <%= render 'layouts/sidebar' %>
-  </div>
-</div>
 <!-- stock -->
+
+
+<%= include_gon %>
+
+
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
+
+
 <script>
 $(function() {
     // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?',
@@ -67,6 +26,7 @@ $(function() {
           // dataLength = data.length;
           // console.log("length=", dataLength)
           dataLength=historicals.length;
+          //alert("historicals = " + historicals.length);
       // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
       // var unixtime=data[0][0]/1000
       // alert("original unix=" + unixtime)
@@ -173,3 +133,52 @@ $(function() {
 });
 
 </script>
+
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+    <!-- main contents field -->
+
+    <div id = "deepredBack">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
+              <br>
+              ダウ平均
+              <div id="nikkeiValue">
+                <%= number_with_delimiter(@valuedow.to_d.floor(2), :delimiter => ',') %>
+              </div>
+              <% kigo = "+" %>
+              <% if @diffdow.to_f < 0 %>
+                <% kigo = "▲" %>
+              <% end %>
+
+              <div class="right">
+
+                <%= "前日比: " + kigo + @diffdow.to_f.abs.to_s %>
+                <%= "( " + kigo + @returndow.to_f.abs.to_s + " % )" %>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+
+
+        <div id="dow_historical" style="width:100%; height:400px;"></div>
+        <br>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+    <%= render 'layouts/sidebar' %>
+  </div>
+</div>

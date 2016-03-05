@@ -115,8 +115,6 @@ class StaticPagesController < ApplicationController
       @returnEurope = sprintf("%.2f", ((@valueEurope / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
       @diffEurope = sprintf("%.2f", (@valueEurope - yesterdayVal))
     end
-
-
   end
   def commodity
     @feed_news = Feed.order("feed_id desc").limit(40)
@@ -124,6 +122,9 @@ class StaticPagesController < ApplicationController
   def bitcoin
     # bitcoinに限定したニュースだけでいいかも
     @feed_news = Feed.order("feed_id desc").limit(40)
+
+    # http://bitcoin.stackexchange.com/questions/32558/api-feed-for-ohlc-vwap-data-in-close-to-real-time
+
   end
   def adr
     @feed_news = Feed.order("feed_id desc").limit(40)

@@ -1,51 +1,4 @@
-
-<div class="row">
-  <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-    <!-- main contents field -->
-
-    <div id = "deepredBack">
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          <div class="row">
-            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
-              <br>
-              上海市場平均
-              <div id="nikkeiValue">
-                <%= number_with_delimiter(@valueShanghai.to_d.floor(2), :delimiter => ',') %>
-              </div>
-              <% kigo = "+" %>
-              <% if @diffShanghai.to_f < 0 %>
-                <% kigo = "▲" %>
-              <% end %>
-
-              <div class="right">
-
-                <%= "前日比: " + kigo + @diffShanghai.to_f.abs.to_s %>
-                <%= "( " + kigo + @returnShanghai.to_f.abs.to_s + " % )" %>
-              </div>
-              <br>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <br>
-
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
-
-
-        <div id="shanghai_graph" style="width:100%; height:400px;"></div>
-        <br>
-      </div>
-    </div>
-
-  </div>
-  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-    <%= render 'layouts/sidebar' %>
-  </div>
-</div>
+<%= include_gon %>
 <!-- stock -->
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
@@ -173,3 +126,53 @@ $(function() {
 });
 
 </script>
+
+
+
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+    <!-- main contents field -->
+
+    <div id = "deepredBack">
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
+              <br>
+              上海市場平均
+              <div id="nikkeiValue">
+                <%= number_with_delimiter(@valueShanghai.to_d.floor(2), :delimiter => ',') %>
+              </div>
+              <% kigo = "+" %>
+              <% if @diffShanghai.to_f < 0 %>
+                <% kigo = "▲" %>
+              <% end %>
+
+              <div class="right">
+
+                <%= "前日比: " + kigo + @diffShanghai.to_f.abs.to_s %>
+                <%= "( " + kigo + @returnShanghai.to_f.abs.to_s + " % )" %>
+              </div>
+              <br>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+
+
+        <div id="shanghai_graph" style="width:100%; height:400px;"></div>
+        <br>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+    <%= render 'layouts/sidebar' %>
+  </div>
+</div>

@@ -202,3 +202,27 @@ table tr:hover {
   background: #bbd4ee;
   cursor:pointer;
 }
+
+
+junre_title{
+  margin: 0 0 30px 0;/*上マージン0,右マージン0,下マージン30px,左マージン0*/
+  font-size: 90%;
+  color: #333333;
+  padding: 2px 6px;/* 上下パディング5ピクセル、左右パディング10px */
+  float:left;
+	min-width:100%;
+}
+/*左ボーダー,10pxマージン*/
+#sample01{
+  border-left: 10px solid #cc3388;
+}
+
+#sample02{
+  border-left: 10px solid #cc3388;
+  border-bottom: 1px dashed #cc3388;
+}
+
+#sample03{
+  border: 1px dotted #cc3388;
+  border-left: 7px solid #cc3388;
+}

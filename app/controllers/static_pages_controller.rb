@@ -24,6 +24,11 @@ require 'time'
 require 'date'
 
 
+# for btitcoin
+require 'net/http'
+require 'uri'
+require 'json'
+
 class StaticPagesController < ApplicationController
   # 以下各ページに限定したニュースフィードだけでいいかも。
   # feedsモデルにカテゴリを追加→とりあえず最初はすべてのニュースで良い
@@ -124,8 +129,18 @@ class StaticPagesController < ApplicationController
     @feed_news = Feed.order("feed_id desc").limit(40)
 
     # http://bitcoin.stackexchange.com/questions/32558/api-feed-for-ohlc-vwap-data-in-close-to-real-time
+    gon.historical_btc =
+    Priceseries.find_by_sql("select * from priceseries where ticker = 'btci' order by 'ymd' desc")
 
+    @btc_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = 'btci' order by ymd desc limit 2")
+    if @btc_now2.length == 2
+      @valueBtc = @btc_now2[0].close.to_f
+      yesterdayVal = @btc_now2[1].close.to_f
+      @returnBtc = sprintf("%.2f", ((@valueBtc / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
+      @diffBtc = sprintf("%.2f", (@valueBtc - yesterdayVal))
+    end
   end
+
   def adr
     @feed_news = Feed.order("feed_id desc").limit(40)
 
@@ -425,5 +440,4 @@ class StaticPagesController < ApplicationController
   # def jpy_comma
   #  self.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\1,')
   # end
-
 end

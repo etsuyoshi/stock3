@@ -12,68 +12,12 @@ class FetchController < ApplicationController
     # スクレイピング先のURL
     # url = 'http://example.com/news/index.html'
 
-    noPage = 5
-
-    while noPage > 0 do
-      url = "http://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=100"
-
-      html = open(url) do |f|
-        f.read # htmlを読み込んで変数htmlに渡す
-      end
-
-      # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
-      doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
-
-      latest_id = get_latest_id()
-
-      p "latest = " + latest_id.to_s
-
-      doc.xpath('//div[@class="feature"]').each do |content|
-
-        if !(content.nil?)
-          # title
-          title = content.css('h3').css('a').inner_text
-
-          if !(title.nil? || title == "")
-            feed_id = get_feed_id(content)
-            if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
-              p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
-              if latest_id < feed_id
-                # DBに未登録の情報があったらDBに保存
-                # title            = content.css('h1').to_html
-                # description      = content.to_html
-                # link             = url + '#news' + feed_id.to_s
-
-                url = content.css('h3').css('a').attribute('href').value
-                url = "http://jp.reuters.com" + url
-                # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
+    get_news
 
 
-                # p Time.at(unixtime)
 
-
-                # desc
-                description = content.css('p').inner_text
-
-                # p feed_id
-                # p title
-                # p description
-                # p url
-
-                insert_feed(feed_id, title, description, url)
-                p "db挿入完了"
-              else
-                p "feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さいです。"
-                p Time.at(feed_id)
-              end
-            end
-          end
-        end
-      end
-      noPage = noPage - 1
-    end
-
-
+    # bitcoinの時系列データの取得
+    get_btc
 
 
 
@@ -195,5 +139,142 @@ class FetchController < ApplicationController
 
     return Time.parse(stringYMDHMS).to_i
 
+  end
+
+  def get_news
+    noPage = 5
+
+    while noPage > 0 do
+      url = "http://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=100"
+
+      html = open(url) do |f|
+        f.read # htmlを読み込んで変数htmlに渡す
+      end
+
+      # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
+      doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+
+      latest_id = get_latest_id()
+
+      p "latest = " + latest_id.to_s
+
+      doc.xpath('//div[@class="feature"]').each do |content|
+
+        if !(content.nil?)
+          # title
+          title = content.css('h3').css('a').inner_text
+
+          if !(title.nil? || title == "")
+            feed_id = get_feed_id(content)
+            if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
+              p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
+              if latest_id < feed_id
+                # DBに未登録の情報があったらDBに保存
+                # title            = content.css('h1').to_html
+                # description      = content.to_html
+                # link             = url + '#news' + feed_id.to_s
+
+                url = content.css('h3').css('a').attribute('href').value
+                url = "http://jp.reuters.com" + url
+                # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
+
+
+                # p Time.at(unixtime)
+
+
+                # desc
+                description = content.css('p').inner_text
+
+                # p feed_id
+                # p title
+                # p description
+                # p url
+
+                insert_feed(feed_id, title, description, url)
+                p "db挿入完了"
+              else
+                p "feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さいです。"
+                p Time.at(feed_id)
+              end
+            end
+          end
+        end
+      end
+      noPage = noPage - 1
+    end
+  end
+
+  def get_btc
+    # 本当は取得時ではなく定期的に実行したい
+    # http://www.coindesk.com/api/
+    # http://qiita.com/awakia/items/bd8c1385115df27c15fa
+    p "get_btc fetching.."
+    duration = 500#test用に10にする→本番は100くらい取ってもいいかもしれない
+    p "過去#{duration}日間のデータを取得しています"
+    todayY_M_D = Time.now
+    fromY_M_D = Time.now - 3600*24*duration
+
+    endDate =  todayY_M_D.strftime('%Y-%m-%d')
+    startDate =  fromY_M_D.strftime('%Y-%m-%d')
+    strUrl = "https://api.coindesk.com/v1/bpi/historical/close.json?start=#{startDate}&end=#{endDate}"
+
+    uri = URI.parse(strUrl)
+    json = Net::HTTP.get(uri)
+    result = JSON.parse(json)
+    ymd = 0
+    puts "取得した日付=#{result['bpi'].keys}"
+
+    btc_index_ticker = "btci"
+    btc_index_name="coindesk_btc_index"
+    bpis = result['bpi']
+    # p bpis
+    # coindeskのindex
+    bpis.keys.each do |key_date|#key=date
+      # p key_date
+      yyyy = key_date[0,4]
+      mm = key_date[5,2]
+      dd = key_date[8,2]
+
+      close=bpis[key_date]
+
+
+      ymd = "#{yyyy}#{mm}#{dd}"
+      ymd = ymd.to_i
+
+      # # 同一日付で当該ティッカー(btci)が存在しないかチェック
+      # p ymd
+
+      # btc_index_ticker = "^N225"
+      # btc_index_ticker="btci"
+      # ymd = 20160301
+      newData = Priceseries.find_by(
+      ticker: btc_index_ticker,
+      ymd: ymd)
+
+      if newData
+        p "存在します"
+
+        # 上書きする？
+      else
+        p "存在しません"
+
+        priceOneDay = Priceseries.new(
+          :ticker => btc_index_ticker, #string,
+          :name => btc_index_name,#string,
+          :open => close.to_f,#float,
+          :high => close.to_f,#float,
+          :low => close.to_f,#float,
+          :close => close.to_f,#float,
+          :volume => nil,#float,
+          :ymd => ymd#integer
+          )
+          
+        if priceOneDay.save
+          p "#{ymd} #{close}　保存成功"
+        else
+          p "#{ymd} #{close}　保存失敗"
+        end
+      end
+    end
   end
 end

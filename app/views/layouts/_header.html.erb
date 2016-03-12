@@ -4,6 +4,13 @@
    hour  = todayObj.hour
    minute= todayObj.min
 
+   if hour.to_s.length == 1
+     hour = "0" + hour.to_s
+   end
+   if minute.to_s.length == 1
+     minute = "0" + minute.to_s
+   end
+
    newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "^N225" order by ymd desc limit 1')[0]["ymd"]
    newestNikkei = Priceseries.find_by(ticker: "^N225", ymd: newestYMD).close
    newestDow = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD).close

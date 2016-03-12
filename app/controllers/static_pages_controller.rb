@@ -35,8 +35,13 @@ class StaticPagesController < ApplicationController
   def nikkei
     @feed_news = Feed.order("feed_id desc").limit(40)
 
-    @up_ranks = get_rank_hash("priceup")
-    @down_ranks = get_rank_hash("pricedown")
+    # @up_ranks = get_rank_hash("priceup")
+    # @down_ranks = get_rank_hash("pricedown")
+    @up_ranks = get_rank_from_db("priceup")
+    @down_ranks = get_rank_from_db("pricedown")
+
+    p "uprank = #{@up_ranks}"
+    p "downrank = #{@down_ranks}"
 
     @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
 
@@ -387,7 +392,79 @@ class StaticPagesController < ApplicationController
 
     end
   end
+  def get_rank_from_db(priceUpOrDown)
+    sort = priceUpOrDown
+    if priceUpOrDown == "priceup"
+      sort = "up"
+    elsif priceUpOrDown == "pricedown"
+      sort = "down"
+    else
+      return
+    end
 
+    rank_all = Hash.new
+    (1..30).each do |rank|
+      p rank
+      rank_info = Hash.new
+      rankModel = Rank.find_by(
+      market: "^N225",
+      rank: rank,
+      sort: sort
+      )
+
+      if !rankModel
+        next
+      end
+      # p rankModel.id
+      # p rankModel.stock_code
+      # p rankModel.name
+
+
+
+      # p "code = "  + rankModel["stock_code"].to_s
+      # p "name = " + rankModel["name"].to_s
+      # p "nowprice = " + rankModel["nowprice"].to_s
+
+      if rank
+        rank_info["rank"] = rank
+      end
+      if rankModel.stock_code
+        rank_info["stock_code"] = rankModel.stock_code
+      end
+      if rankModel.name
+        rank_info["name"] = rankModel.name
+      end
+      if rankModel.nowprice
+        rank_info["price"] = rankModel.nowprice
+      end
+      if rankModel.vsYesterday
+        # rank_info["vsYesterday"] = rankModel.changeprice
+        rank_info["vsYesterday"] = rankModel.vsYesterday
+      end
+      if rankModel.return
+        rank_info["return"] = rankModel.return
+      end
+
+
+      # :market          => "^N225",
+      # :stock_code      => stock_code,
+      # :rank            => rank,
+      # :name            => name,
+      # :sort            => upOrDown,
+      # :changerate      => ret,
+
+      # :nowprice        => price
+
+      rank_all[rank] = rank_info
+
+
+    end
+
+
+    return rank_all
+  end
+
+  # RanksControllerで実施済（定期実行予定）
   def get_rank_hash(priceUpOrDown)
     # 値上がり率ランキング
     # url = "http://www.nikkei.com/markets/ranking/stock/priceup.aspx"

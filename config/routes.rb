@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  # get 'users/new'
+  resources :users
+  get 'signup' => 'users#new'
+
+  get 'rank/index'
+
   get 'adr/index'
 
   get 'price_newest/index'

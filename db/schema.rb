@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160228103559) do
+ActiveRecord::Schema.define(version: 20160312071253) do
 
   create_table "adrs", force: :cascade do |t|
     t.string   "ticker"
@@ -54,5 +54,26 @@ ActiveRecord::Schema.define(version: 20160228103559) do
   end
 
   add_index "priceseries", ["ticker", "ymd"], name: "index_Priceseries_on_ticker_and_ymd", unique: true
+
+  create_table "ranks", force: :cascade do |t|
+    t.string   "market"
+    t.integer  "rank"
+    t.string   "name"
+    t.string   "sort"
+    t.float    "nowprice"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.string   "stock_code"
+    t.string   "vsYesterday"
+    t.string   "return"
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string   "name"
+    t.string   "email"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+    t.string   "password_digest"
+  end
 
 end

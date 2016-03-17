@@ -98,6 +98,15 @@ $sidebarPaddingRight: -45px;
 
   //background-color: #000;
 }
+
+.eventsidebaritem{
+  // height: 17px;
+  margin-left: -3px;
+  margin-right: -1px;
+  margin-bottom: 3px;
+  word-wrap: break-word;
+  // background-color: #000;
+}
 .chartLocationCustomize{
   padding-left: 100px;
 }
@@ -127,6 +136,14 @@ $sidebarPaddingRight: -45px;
   color:#c0c0c0;
   // color : #f00;
   font-size: 12px;
+}
+
+.eventSideBarItemTime{
+  background-color:#c1c1c1;
+  margin-left: -3px;
+  margin-right: -1px;
+  margin-bottom: 3px;
+  word-wrap: break-word;
 }
 
 
@@ -261,5 +278,30 @@ input {
   @extend .has-error;
   .form-control {
     color: $state-danger-text;
+  }
+}
+.checkbox {
+  margin-top: -10px;
+  margin-bottom: 10px;
+  span {
+    margin-left: 20px;
+    font-weight: normal;
+  }
+}
+
+#session_remember_me {
+  width: auto;
+  margin-left: 0;
+}
+
+/* Users index */
+
+.users {
+  list-style: none;
+  margin: 0;
+  li {
+    overflow: auto;
+    padding: 10px 0;
+    border-bottom: 1px solid $gray-lighter;
   }
 }

@@ -13,13 +13,11 @@ class FetchController < ApplicationController
     # url = 'http://example.com/news/index.html'
 
     get_news
-
-
-
+    
     # bitcoinの時系列データの取得
     get_btc
 
-
+    get_event
 
     render :text => "Done!"
   end
@@ -268,11 +266,148 @@ class FetchController < ApplicationController
           :volume => nil,#float,
           :ymd => ymd#integer
           )
-          
+
         if priceOneDay.save
           p "#{ymd} #{close}　保存成功"
         else
           p "#{ymd} #{close}　保存失敗"
+        end
+      end
+    end
+  end
+
+
+# eventを取得してイベントモデルに格納する
+  def get_event
+    p "get_event"
+    # url = "http://nikkei225jp.com"
+    url = "http://www.traders.co.jp/foreign_stocks/market_s.asp#today"
+
+    html = open(url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+
+    # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+
+    strYm = nil
+    doc.xpath('//table[@width="800px"]').children.each do |content|
+      unless content.nil?
+        if content.name == "tr"
+          if content.inner_text.include?("年") &&
+            content.inner_text.include?("月")
+
+            strYm = content.inner_text
+            strYm = strYm.gsub(/\t/, "")
+            strYm = strYm.gsub(/\n/, "")
+            strYm = strYm.gsub(/\r/, "")
+            strYm = strYm.gsub(/\s/, "")
+
+            if (strYm[0,4].to_i).is_a?(Integer)
+              yyyy = strYm[0,4].to_i
+              p "yyyy = #{yyyy}"
+              mm = strYm.match(/年.*月/)[0].sub(/年/,"").sub(/月/,"").to_i
+              p "mm = #{mm}"
+
+              strYm = yyyy * 100 + mm
+            else
+              p "|#{strYm[0,4]}| is not integer"
+            end
+
+          end
+        end
+      end
+    end
+
+    doc.xpath('//table[@bordercolor="#AAB5BB"]').children.each do |content|
+      unless content.nil?
+        if content.name == "tr"
+          date = content.children[1].inner_text
+          # if date != " 日付"
+          if !(date.include?("日付"))
+            dd = date.match(/.*（/)[0].sub(/（/,"").to_i
+            ymd = strYm.to_i * 100 + dd
+            p "ymd = #{ymd}"
+
+            # 海外のみ
+            cell = content.children[3].to_s
+
+            # cellからタグを削除
+            cell = get_cell(cell)
+
+            arrForeignContents = cell.split("<br>")
+            # arrForeignContents.each do |foreign|
+            #   p "#{date} : #{foreign}"
+            # end
+            arrForeignContents =
+            get_append_event_array(arrForeignContents)
+
+            cell = content.children[5].to_s
+            # cellからタグを削除
+            cell = get_cell(cell)
+
+            arrDomesticContents = cell.split("<br>")
+            # arrDomesticContents.each do |domestic|
+            #   p "#{date} : #{domestic}"
+            # end
+
+            arrDomesticContents =
+            get_append_event_array(arrDomesticContents)
+
+            preserve_event(arrForeignContents, ymd)
+            preserve_event(arrDomesticContents, ymd)
+          end
+        end
+      end
+    end
+  end
+
+  # 《》で囲まれている要素の次の要素を連結させる
+  # 例：《》要素→新規上場、株式分割、決算発表など
+  def get_append_event_array(arrEvent)
+    p "get_append_event_array"
+    str_tag = ""
+    flg_append = false # 連結させるべき時のみ立てるフラグ
+    arrReturn = []
+    arrEvent.each do |event|
+      if event.to_s[0] == "《"
+        # p event.to_s
+        flg_append = true
+        str_tag = event.to_s
+      else
+        if flg_append
+          strToPush = "#{str_tag}: #{event.to_s}"
+          arrReturn.push(strToPush)
+          flg_append = false
+        else
+          arrReturn.push(event.to_s)
+        end
+      end
+    end
+
+    arrReturn.each do |return_factor|
+      p return_factor
+    end
+    return arrReturn
+  end
+
+  def get_cell(strCellParam)
+    strCell = strCellParam.sub(/<td style=\"padding:5px;\" valign=\"top\"> <font size=\"2\">/, "")
+    strCell = strCell.sub(/<\/font>\n<\/td>/, "")
+    strCell = strCell.sub(/<b>/, "").sub(/<\/b>/, "")
+    strCell = strCell.sub(/\"/,"")
+    return strCell
+  end
+
+  def preserve_event(arrEvent, ymd)
+    p "preserve_event : #{arrEvent[0]}, #{ymd}"
+    # 引数で渡された配列の中のイベントを一つずつモデルに格納する
+    # 注意：すでに存在するイベントについては保存しない
+    arrEvent.each do |event|
+      if event != '-' or event != "-"
+        unless Event.find_by(ymd: ymd, name: event)
+          Event.create(ymd: ymd, name: event)
+          # p Event.last
         end
       end
     end

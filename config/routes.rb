@@ -1,28 +1,8 @@
 Rails.application.routes.draw do
-  # get 'users/new'
-  resources :users
-  get 'signup' => 'users#new'
-
-  get 'rank/index'
-
-  get 'adr/index'
-
-  get 'price_newest/index'
-
-  #news feed専用ビュー
-  #get 'feeds/show'
-  resources :feeds
-  resources :price_newest
-
-  # get ':controller(/:action(/:id(.:format)))'
-  get 'priceseries/new'
-
+  root to: 'static_pages#home'
   # ニュースフィード(feed)取得用のコントローラ
   get 'fetch/index'
   match '/fetch',   to: 'fetch#index', via: 'get'
-
-
-  root to: 'static_pages#home'
   get 'static_pages/home'
   get 'static_pages/nikkei'
   get 'static_pages/dow'
@@ -34,6 +14,26 @@ Rails.application.routes.draw do
   get 'static_pages/fx'
   get 'static_pages/portfolio'
   get 'static_pages/kessan'
+
+
+  # get ':controller(/:action(/:id(.:format)))'
+  get 'priceseries/new'
+  get 'signup' => 'users#new'
+  get 'rank/index'
+  get 'adr/index'
+  get 'price_newest/index'
+  get 'login' => 'sessions#new'
+  post 'login' => 'sessions#create'
+  delete 'logout' => 'sessions#destroy'
+
+  # get 'users/new'
+  resources :users
+
+  #news feed専用ビュー
+  #get 'feeds/show'
+  resources :feeds
+  resources :price_newest
+  resources :account_activations, only: [:edit]
 
 
   # The priority is based upon order of creation: first created -> highest priority.

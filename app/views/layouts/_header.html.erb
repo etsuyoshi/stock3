@@ -33,8 +33,6 @@
    ask_eurjpy = yahoodata[1].ask
    bid_eurjpy = yahoodata[1].bid
    eurjpy = (ask_eurjpy.to_i + bid_eurjpy.to_i)/2
-
-
 %>
 <%= "現在: " + month.to_s + "月" + day.to_s + "日 " +
     hour.to_s + ":" + minute.to_s +
@@ -90,13 +88,31 @@
           <%= link_to "日本株ADR", static_pages_adr_path %>
         </li>
 
-        <li class="<%= active_class(static_pages_portfolio_path) %>">
-          <%= link_to "最適ポートフォリオ", static_pages_portfolio_path %>
-        </li>
-
         <li class="<%= active_class(static_pages_kessan_path) %>">
           <%= link_to "決算", static_pages_kessan_path %>
         </li>
+        <li><%= link_to "Wiki", '#' %></li>
+        <!-- ログイン -->
+        <% if logged_in? %>
+          <li><%= link_to "Users", users_path %></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Account <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+              <li><%= link_to "Profile", current_user %></li>
+              <li><%= link_to "Portfolio", '#' %></li>
+              <li><%= link_to "Settings", edit_user_path(current_user) %></li>
+              <li class="divider"></li>
+              <li>
+                <%= link_to "Log out", logout_path, method: "delete" %>
+              </li>
+            </ul>
+          </li>
+        <% else %>
+          <li><%= link_to "Log in", login_path %></li>
+        <% end %>
+
       </ul>
     </div>
   </nav>

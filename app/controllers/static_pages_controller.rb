@@ -30,11 +30,12 @@ require 'uri'
 require 'json'
 
 class StaticPagesController < ApplicationController
+
   # 以下各ページに限定したニュースフィードだけでいいかも。
   # feedsモデルにカテゴリを追加→とりあえず最初はすべてのニュースで良い
   def nikkei
-    @feed_news = Feed.order("feed_id desc").limit(40)
 
+    # p "count = " + @events.count
     # @up_ranks = get_rank_hash("priceup")
     # @down_ranks = get_rank_hash("pricedown")
     @up_ranks = get_rank_from_db("priceup")
@@ -65,8 +66,6 @@ class StaticPagesController < ApplicationController
 
   end
   def dow
-    @feed_news = Feed.order("feed_id desc").limit(40)
-
     # b = 13754.4566
     # print number_with_delimiter(b, :delimiter => ',')
 
@@ -89,7 +88,6 @@ class StaticPagesController < ApplicationController
 
   end
   def shanghai
-    @feed_news = Feed.order("feed_id desc").limit(40)
 
     gon.shanghai_historical=#Priceseries.all.order(:ymd)
     Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
@@ -111,7 +109,7 @@ class StaticPagesController < ApplicationController
 
   end
   def europe
-    @feed_news = Feed.order("feed_id desc").limit(40)
+
 
     gon.europe_historical=#Priceseries.all.order(:ymd)
     Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
@@ -127,11 +125,11 @@ class StaticPagesController < ApplicationController
     end
   end
   def commodity
-    @feed_news = Feed.order("feed_id desc").limit(40)
+
   end
   def bitcoin
     # bitcoinに限定したニュースだけでいいかも
-    @feed_news = Feed.order("feed_id desc").limit(40)
+
 
     # http://bitcoin.stackexchange.com/questions/32558/api-feed-for-ohlc-vwap-data-in-close-to-real-time
     gon.historical_btc =
@@ -147,7 +145,7 @@ class StaticPagesController < ApplicationController
   end
 
   def adr
-    @feed_news = Feed.order("feed_id desc").limit(40)
+
 
     # adr一覧を取得する
     @adr_all = Adr.all
@@ -156,9 +154,6 @@ class StaticPagesController < ApplicationController
     end
   end
   def fx
-    @feed_news = Feed.order("feed_id desc").limit(40)
-
-
 
     @usdjpy = PriceNewest.find_by_sql(
     "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
@@ -168,10 +163,8 @@ class StaticPagesController < ApplicationController
     p "fx = #{@usdjpy.datetrade}"
   end
   def portfolio
-    @feed_news = Feed.order("feed_id desc").limit(40)
   end
   def kessan
-    @feed_news = Feed.order("feed_id desc").limit(40)
   end
   def home
     # bar-chart
@@ -244,7 +237,7 @@ class StaticPagesController < ApplicationController
     Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
 
 
-    @feed_news = Feed.order("feed_id desc").limit(40)
+
 
   end
 

@@ -293,9 +293,14 @@ class StaticPagesController < ApplicationController
     # newestYMD = Priceseries.maximum("ymd") #ex.20160122
     newestYMD = "20130101"#データがない場合に備えデフォルトを設定
     if Priceseries.find_by(ticker: ticker)
-      # 最後の日付を取得
+      # 最後の日付を取得->find_by_sqlだとpostgresqlで無効になる可能性があるため
+      # なるべくActiveRecord !!!!
       # newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
-      newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
+      # newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
+      newestYMD = Priceseries.where(ticker: ticker).order(ymd: :desc).limit(1)[0].ymd
+
+      # p "sql result = #{Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]}"
+      # p "ActiveRecord = #{newestYMD}"
     end
 
     newestYear = newestYMD.to_s[0,4].to_i

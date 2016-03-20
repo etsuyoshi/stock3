@@ -44,11 +44,13 @@ class StaticPagesController < ApplicationController
     p "uprank = #{@up_ranks}"
     p "downrank = #{@down_ranks}"
 
-    @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
+    # @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
+    @nikkei225_now2 = Priceseries.where(ticker: "^N225").order(ymd: :desc).limit(2)
 
 
     gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
+    Priceseries.where(ticker: "^N225").order(ymd: :desc)
+    # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
     p "nikkei225"
     p gon.historical_data.length
 
@@ -71,9 +73,12 @@ class StaticPagesController < ApplicationController
 
 
     gon.dow_historical=#Priceseries.all.order(:ymd)
-    Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
+    Priceseries.where(ticker: "^DJI").order(ymd: :desc)
+    # Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
 
-    @dow_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
+    @dow_now2 =
+    priceseries.where(ticker: "^DJI").order(ymd: :desc).limit(2)
+    # Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
     p "shanghai"
     p @dow_now2[0].close.to_f
     p @dow_now2[1].close.to_f
@@ -90,9 +95,12 @@ class StaticPagesController < ApplicationController
   def shanghai
 
     gon.shanghai_historical=#Priceseries.all.order(:ymd)
-    Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
+    Priceseries.where(ticker: "000001.SS").order(ymd: :desc)
+    # Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
 
-    @shanghai_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
+    @shanghai_now2 =
+    #Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
+    Priceseries.where(ticker: "000001.SS").order(ymd: :desc).limit(2)
     p "shanghai"
     p @shanghai_now2[0].close.to_f
     p @shanghai_now2[1].close.to_f
@@ -112,8 +120,11 @@ class StaticPagesController < ApplicationController
 
 
     gon.europe_historical=#Priceseries.all.order(:ymd)
-    Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
-    @europe_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
+    Priceseries.where(ticker: "^FTSE").order(ymd: :desc)
+    # Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
+    @europe_now2 =
+    Priceseries.where(ticker: "^FTSE").order(ymd: :desc).limit(2)
+    # Priceseries.find_by_sql("select * from Priceseries where ticker = '^FTSE' order by ymd desc limit 2")
     p "shanghai"
     p @europe_now2[0].close.to_f
     p @europe_now2[1].close.to_f
@@ -133,9 +144,12 @@ class StaticPagesController < ApplicationController
 
     # http://bitcoin.stackexchange.com/questions/32558/api-feed-for-ohlc-vwap-data-in-close-to-real-time
     gon.historical_btc =
-    Priceseries.find_by_sql("select * from priceseries where ticker = 'btci' order by 'ymd' desc")
+    Priceseries.where(ticker: "btci").order(ymd: :desc)
+    # Priceseries.find_by_sql("select * from priceseries where ticker = 'btci' order by 'ymd' desc")
 
-    @btc_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = 'btci' order by ymd desc limit 2")
+    @btc_now2 =
+    Priceseries.where(ticker: "btci").order(ymd: :desc).limit(2)
+    # Priceseries.find_by_sql("select * from Priceseries where ticker = 'btci' order by ymd desc limit 2")
     if @btc_now2.length == 2
       @valueBtc = @btc_now2[0].close.to_f
       yesterdayVal = @btc_now2[1].close.to_f
@@ -155,10 +169,14 @@ class StaticPagesController < ApplicationController
   end
   def fx
 
-    @usdjpy = PriceNewest.find_by_sql(
-    "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
-    @eurjpy = PriceNewest.find_by_sql(
-    "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
+    @usdjpy =
+    PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)
+    # PriceNewest.find_by_sql(
+    # "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
+    @eurjpy =
+    PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)
+    # PriceNewest.find_by_sql(
+    # "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
 
     p "fx = #{@usdjpy.datetrade}"
   end
@@ -234,7 +252,8 @@ class StaticPagesController < ApplicationController
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切（以下はテスト）
     gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
+    Priceseries.where(ticker: "^N225").order(ymd: :desc)
+    # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
 
 
 
@@ -293,9 +312,14 @@ class StaticPagesController < ApplicationController
     # newestYMD = Priceseries.maximum("ymd") #ex.20160122
     newestYMD = "20130101"#データがない場合に備えデフォルトを設定
     if Priceseries.find_by(ticker: ticker)
-      # 最後の日付を取得
+      # 最後の日付を取得->find_by_sqlだとpostgresqlで無効になる可能性があるため
+      # なるべくActiveRecord !!!!
       # newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
-      newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
+      # newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
+      newestYMD = Priceseries.where(ticker: ticker).order(ymd: :desc).limit(1)[0].ymd
+
+      # p "sql result = #{Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]}"
+      # p "ActiveRecord = #{newestYMD}"
     end
 
     newestYear = newestYMD.to_s[0,4].to_i

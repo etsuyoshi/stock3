@@ -294,7 +294,8 @@ class StaticPagesController < ApplicationController
     newestYMD = "20130101"#データがない場合に備えデフォルトを設定
     if Priceseries.find_by(ticker: ticker)
       # 最後の日付を取得
-      newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
+      # newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
+      newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
     end
 
     newestYear = newestYMD.to_s[0,4].to_i

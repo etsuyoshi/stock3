@@ -177,8 +177,11 @@ class StaticPagesController < ApplicationController
     PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
-
-    p "fx = #{@usdjpy.datetrade}"
+    if @usdjpy && @eurjpy
+      p "usdjpy = #{@usdjpy.datetrade}"
+      p "eurjpy = #{@eurjpy}"
+      p "fx = #{@usdjpy.datetrade}"
+    end
   end
   def portfolio
   end
@@ -236,17 +239,15 @@ class StaticPagesController < ApplicationController
     # data = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*100), end_date: Time::now }) # 10 days worth of data
     # p "data=#{data}"
 
+    # ここらへんは全てfetch_controllerに寄せるべき
     #各インデックスをPriceseriesモデルに格納
     get_price_series("^DJI")
     get_price_series("^N225")
     get_price_series("000001.SS")
     get_price_series("^FTSE")
 
-
-    # get_currency
-
     # test用に出力するメソッド（tickerの確認など..)
-    # get_test_index
+    get_fx_index
 
     gon.user_name="historical data"
 
@@ -263,8 +264,8 @@ class StaticPagesController < ApplicationController
   def help
   end
 
-  def get_test_index#(ticker)
-    p "get_test_index"
+  def get_fx_index#(ticker)
+    p "get_fx_index"
     # 銘柄コード調べ方その２＝＞yahoo finance shanghaiとググってyahoo financeのページに表示された（それらしい）インデックス
     # http://finance.yahoo.com/q?s=%5EN225
     # http://finance.yahoo.com/q?s=000001.SS

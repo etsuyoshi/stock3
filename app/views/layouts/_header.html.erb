@@ -11,12 +11,16 @@
      minute = "0" + minute.to_s
    end
 
-   newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "^N225" order by ymd desc limit 1')[0]["ymd"]
-   newestNikkei = Priceseries.find_by(ticker: "^N225", ymd: newestYMD).close
-   newestDow = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD).close
+  #  newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "^N225" order by ymd desc limit 1')[0]["ymd"]
+  newestYMD = Priceseries.where(ticker: "^N225").order(ymd: :desc).limit(1)[0].ymd
+  #  newestNikkei = Priceseries.find_by(ticker: "^N225", ymd: newestYMD).close
+  newestNikkei = Priceseries.where(ticker: "^N225", ymd: newestYMD).close
+  #  newestDow = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD).close
+  newestDow = Priceseries.where(ticker: "^DJI", ymd: newestYMD).close
    #  なぜか最新値が取得できない
   #  newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD).close
-  shanghaiData = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD.to_i)
+  # shanghaiData = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD.to_i)
+  shanghaiData = Priceseries.where(ticker: "000001.SS", ymd: newestYMD.to_i)
   newestShanghai = nil;
   if shanghaiData
    newestShanghai = shanghaiData.close

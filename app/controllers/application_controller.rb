@@ -20,4 +20,16 @@ class ApplicationController < ActionController::Base
      endYmd = endDay.strftime('%Y%m%d').to_i
      @events = Event.where(ymd: (startYmd)..(endYmd)).order("ymd").limit(200)
    end
+
+
+   private
+  #  ユーザーのログインを確認する
+  def logged_in_user
+
+    unless logged_in?
+      store_location
+      flash[:danger] = "Please log in"
+      redirect_to login_url
+    end
+  end
 end

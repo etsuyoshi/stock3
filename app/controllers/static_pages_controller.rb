@@ -77,7 +77,7 @@ class StaticPagesController < ApplicationController
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
 
     @dow_now2 =
-    priceseries.where(ticker: "^DJI").order(ymd: :desc).limit(2)
+    Priceseries.where(ticker: "^DJI").order(ymd: :desc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
     p "shanghai"
     p @dow_now2[0].close.to_f
@@ -170,11 +170,11 @@ class StaticPagesController < ApplicationController
   def fx
 
     @usdjpy =
-    PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)
+    PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
     @eurjpy =
-    PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)
+    PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
 

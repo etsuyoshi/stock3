@@ -203,16 +203,16 @@ $(function () {
 
   $(function () {
 
-    $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
+    // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
         alert("でた！！！！")
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
 
         // Correct UK to GB in data
-        $.each(data, function () {
-            if (this.code === 'UK') {
-                this.code = 'GB';
-            }
-        });
+        // $.each(data, function () {
+        //     if (this.code === 'UK') {
+        //         this.code = 'GB';
+        //     }
+        // });
 
         $('#container_map').highcharts('Map', {
             chart : {
@@ -248,7 +248,7 @@ $(function () {
                 mapData: mapData,
                 name: 'Population 2013',
                 joinBy: ['iso-a2', 'code'],
-                data: data,
+                // data: nil,//data,
                 minSize: 4,
                 maxSize: '12%',
                 tooltip: {
@@ -257,7 +257,7 @@ $(function () {
             }]
         });
 
-    });
+    // });
 });
 </script>
 

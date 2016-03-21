@@ -168,7 +168,6 @@ class StaticPagesController < ApplicationController
     end
   end
   def fx
-
     @usdjpy =
     PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(

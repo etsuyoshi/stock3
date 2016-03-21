@@ -204,7 +204,7 @@ $(function () {
   $(function () {
 
     // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
-        alert("でた！！！！")
+
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
 
         // Correct UK to GB in data
@@ -215,6 +215,7 @@ $(function () {
         // });
 
         $('#container_map').highcharts('Map', {
+
             chart : {
                 borderWidth : 1
             },
@@ -224,7 +225,7 @@ $(function () {
             },
 
             subtitle : {
-                text : 'Demo of Highcharts map with bubbles'
+                text : 'テストだよ'
             },
 
             legend: {
@@ -256,6 +257,7 @@ $(function () {
                 }
             }]
         });
+        alert("でた！！！！")
 
     // });
 });

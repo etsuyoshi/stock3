@@ -7,19 +7,23 @@
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
               <br>
-              <%= "為替(#{@usdjpy.datetrade})" %>
-              <div id="nikkeiValue">
-                <%= "usd/jpy:#{@usdjpy.pricetrade.round(2)}" %>
-                <br>
-                <%= "eur/jpy:#{@eurjpy.pricetrade.round(2)}" %>
-              </div>
+              <% if @usdjpy && @eurjpy %>
+                <%= "為替(#{@usdjpy.datetrade})" %>
+                <div id="nikkeiValue">
+                  <%= "usd/jpy:#{@usdjpy.pricetrade.round(2)}" %>
+                  <br>
+                  <%= "eur/jpy:#{@eurjpy.pricetrade.round(2)}" %>
+                </div>
 
-              <div class="right">
-                <%= "#{@usdjpy.datetrade}, ask:#{@usdjpy.ask}, bid:#{@usdjpy.bid}" %>
+                <div class="right">
+                  <%= "#{@usdjpy.datetrade}, ask:#{@usdjpy.ask}, bid:#{@usdjpy.bid}" %>
+                  <br>
+                  <%= "#{@eurjpy.datetrade}, ask:#{@eurjpy.ask}, bid:#{@eurjpy.bid}" %>
+                </div>
                 <br>
-                <%= "#{@eurjpy.datetrade}, ask:#{@eurjpy.ask}, bid:#{@eurjpy.bid}" %>
-              </div>
-              <br>
+              <% else %>
+                <%= "nullです。" %>
+              <% end %>
             </div>
           </div>
         </div>

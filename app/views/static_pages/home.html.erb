@@ -204,7 +204,7 @@ $(function () {
   $(function () {
 
     $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
-
+        alert("でた！！！！")
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
 
         // Correct UK to GB in data

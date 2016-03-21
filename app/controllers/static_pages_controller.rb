@@ -173,17 +173,16 @@ class StaticPagesController < ApplicationController
     PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
-    p "usdjpy=#{@usdjpy}"
     @eurjpy =
     PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
-    if @usdjpy && @eurjpy
-      p "usdjpy = #{@usdjpy.datetrade}"
-      p "usdjpy = #{@usdjpy.ask}"
-      p "eurjpy = #{@eurjpy}"
-      p "fx = #{@usdjpy.datetrade}"
-    end
+    # if @usdjpy && @eurjpy
+    #   p "usdjpy = #{@usdjpy.datetrade}"
+    #   p "usdjpy = #{@usdjpy.ask}"
+    #   p "eurjpy = #{@eurjpy}"
+    #   p "fx = #{@usdjpy.datetrade}"
+    # end
   end
   def portfolio
   end

@@ -13,13 +13,15 @@ class FetchController < ApplicationController
     # url = 'http://example.com/news/index.html'
 
     get_news
-    
+
     # bitcoinの時系列データの取得
     get_btc
 
     get_event
 
-    render :text => "Done!"
+    # render :text => "Done!"
+    # 最新データの取得
+    render 'price_newest/index'
   end
 
   private
@@ -73,7 +75,7 @@ class FetchController < ApplicationController
     # http://qiita.com/mogulla3/items/195ae5d8ad574dfc6baa
     image_url = nil
     stringYMDHMS = nil
-    p isToday
+    p "isToday = #{isToday}"
     if isToday
       # 当日記事の場合は画像URLから発行時刻を図るしかない
       p content.xpath('div[@class="photo"]').length
@@ -110,21 +112,40 @@ class FetchController < ApplicationController
 
 
       # am or pmで判別して、pmの場合でhh<13ならば12を追加する
-      if hh_article < 13 && timestamp.match(/.pm/) != nil then #am-pm judge
+      if hh_article < 12 && timestamp.match(/.pm/) != nil then #am-pm judge
         hh_article = hh_article + 12
       end
 
       stringYMDHMS=yyyy_article.to_s + "-" + month_article.to_s + "-" + dd_article.to_s + " " + hh_article.to_s + ":" + mm_article.to_s + ":00"
       p stringYMDHMS
+      p "exit"
     else
       p timestamp
       # 前日以前の場合はtimestampに年月日時分が記載されているのでそこから抽出する
       timestamp = timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
+      p timestamp
       yyyy_article = timestamp[0,4].to_i
+      p yyyy_article
       month_article = timestamp.match(/ .*月/)[0].sub(/ /, "").sub(/月/, "").to_i
+      if month_article > 12
+        month_article = month_article - 12
+      end
+      p month_article
       dd_article = timestamp.match(/月 .*日/)[0].sub(/ /, "").sub(/日/, "").sub(/月/, "").to_i
+      if dd_article > 31
+        dd_article = dd_article - 31
+      end
+      p dd_article
       hh_article = timestamp.match(/日 .*:/)[0].sub(/ /, "").sub(/:/, "").sub(/日/, "").to_i
+      if hh_article > 24
+        hh_article = hh_article - 24
+      end
+      p hh_article
       mm_article = timestamp.match(/:.* /)[0].sub(/ /, "").sub(/:/, "").to_i
+      if mm_article > 60
+        mm_article = mm_article - 60
+      end
+
       p "y:" + yyyy_article.to_s
       p "month:" + month_article.to_s
       p "day:" + dd_article.to_s
@@ -134,6 +155,9 @@ class FetchController < ApplicationController
       stringYMDHMS=yyyy_article.to_s + "-" + month_article.to_s + "-" + dd_article.to_s + " " + hh_article.to_s + ":" + mm_article.to_s + ":00"
       p stringYMDHMS
     end
+    p "param = #{stringYMDHMS}"
+    p "params2 = #{Time.parse(stringYMDHMS)}"
+    p "get_feed_id = #{Time.parse(stringYMDHMS).to_i}"
 
     return Time.parse(stringYMDHMS).to_i
 

@@ -45,11 +45,11 @@ class StaticPagesController < ApplicationController
     p "downrank = #{@down_ranks}"
 
     # @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
-    @nikkei225_now2 = Priceseries.where(ticker: "^N225").order(ymd: :desc).limit(2)
+    @nikkei225_now2 = Priceseries.where(ticker: "^N225").order(ymd: :asc).limit(2)
 
 
     gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^N225").order(ymd: :desc)
+    Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
     p "nikkei225"
     p gon.historical_data.length
@@ -61,23 +61,19 @@ class StaticPagesController < ApplicationController
       @diffNikkei225 = sprintf("%.2f", (todayVal - yesterdayVal))
       @valueNikkei225 = todayVal
     end
-
-
-
-
-
   end
+
   def dow
     # b = 13754.4566
     # print number_with_delimiter(b, :delimiter => ',')
 
 
     gon.dow_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^DJI").order(ymd: :desc)
+    Priceseries.where(ticker: "^DJI").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
 
     @dow_now2 =
-    Priceseries.where(ticker: "^DJI").order(ymd: :desc).limit(2)
+    Priceseries.where(ticker: "^DJI").order(ymd: :asc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
     p "shanghai"
     p @dow_now2[0].close.to_f
@@ -88,19 +84,17 @@ class StaticPagesController < ApplicationController
       @returndow = sprintf("%.2f", ((@valuedow / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
       @diffdow = sprintf("%.2f", (@valuedow - yesterdayVal))
     end
-
-
-
   end
+
   def shanghai
 
     gon.shanghai_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "000001.SS").order(ymd: :desc)
+    Priceseries.where(ticker: "000001.SS").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
 
     @shanghai_now2 =
     #Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
-    Priceseries.where(ticker: "000001.SS").order(ymd: :desc).limit(2)
+    Priceseries.where(ticker: "000001.SS").order(ymd: :asc).limit(2)
     p "shanghai"
     p @shanghai_now2[0].close.to_f
     p @shanghai_now2[1].close.to_f
@@ -113,6 +107,9 @@ class StaticPagesController < ApplicationController
 
 
     p "shanghai_historical = #{gon.shanghai_historical.length}"
+    gon.shanghai_historical.each do |sh|
+      p sh
+    end
 
 
   end
@@ -120,10 +117,10 @@ class StaticPagesController < ApplicationController
 
 
     gon.europe_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^FTSE").order(ymd: :desc)
+    Priceseries.where(ticker: "^FTSE").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
     @europe_now2 =
-    Priceseries.where(ticker: "^FTSE").order(ymd: :desc).limit(2)
+    Priceseries.where(ticker: "^FTSE").order(ymd: :asc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^FTSE' order by ymd desc limit 2")
     p "shanghai"
     p @europe_now2[0].close.to_f
@@ -144,11 +141,11 @@ class StaticPagesController < ApplicationController
 
     # http://bitcoin.stackexchange.com/questions/32558/api-feed-for-ohlc-vwap-data-in-close-to-real-time
     gon.historical_btc =
-    Priceseries.where(ticker: "btci").order(ymd: :desc)
+    Priceseries.where(ticker: "btci").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = 'btci' order by 'ymd' desc")
 
     @btc_now2 =
-    Priceseries.where(ticker: "btci").order(ymd: :desc).limit(2)
+    Priceseries.where(ticker: "btci").order(ymd: :asc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = 'btci' order by ymd desc limit 2")
     if @btc_now2.length == 2
       @valueBtc = @btc_now2[0].close.to_f
@@ -252,12 +249,9 @@ class StaticPagesController < ApplicationController
     gon.user_name="historical data"
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切（以下はテスト）
-    gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^N225").order(ymd: :desc)
+    gon.historical_data=
+    Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-
-
-
 
   end
 
@@ -317,7 +311,7 @@ class StaticPagesController < ApplicationController
       # なるべくActiveRecord !!!!
       # newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
       # newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
-      newestYMD = Priceseries.where(ticker: ticker).order(ymd: :desc).limit(1)[0].ymd
+      newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
 
       # p "sql result = #{Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]}"
       # p "ActiveRecord = #{newestYMD}"

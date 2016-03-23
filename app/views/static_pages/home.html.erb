@@ -17,7 +17,7 @@
 <script>
 $(function () {
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
-
+      //  console.log("data=" + data);
         // create the chart
         $('#container').highcharts('StockChart', {
 
@@ -77,9 +77,11 @@ $(function() {
           var year=ymd.substring(0, 4);
           var month=ymd.substring(4, 6);
           var day=ymd.substring(6, 8);
-          var ts = year+"-"+month+"-"+day+" 00:00:00";//"2011-10-14 00:00:00";
-          ts=String(ts)
+          var ts = String(year+"-"+month+"-"+day+" 00:00:00");//"2011-10-14 00:00:00";
+          console.log(ts);
           var unixtime1=Date.parse( ts.replace( /-/g, '/') )
+          console.log("ymd:"+ymd+",unix="+unixtime1);
+          // 1367247600000
 
           // alert(ymd)
           // alert(year)
@@ -88,6 +90,8 @@ $(function() {
           // alert(ts)
           // alert( Date.parse( ts.replace( /-/g, '/') ) / 1000 );
           // alert("unixtime="+unixtime1)
+
+          // console.log("unixtime1=" + unixtime1)
 
           var open=historicals[i]["open"];
           var high=historicals[i]["high"];
@@ -118,6 +122,7 @@ $(function() {
 
 
       }
+
 
       // set the allowed units for data grouping
       var groupingUnits = [[
@@ -201,7 +206,7 @@ $(function () {
 
 });
 
-  jQuery(function () {
+  $(function () {
 
     // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
 
@@ -214,7 +219,7 @@ $(function () {
         //     }
         // });
 
-        jQuery('#container_map').highcharts('Map', {
+        $('#container_map').highcharts('Map', {
 
             chart : {
                 borderWidth : 1

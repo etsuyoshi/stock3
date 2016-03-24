@@ -238,13 +238,13 @@ class StaticPagesController < ApplicationController
 
     # ここらへんは全てfetch_controllerに寄せるべき
     #各インデックスをPriceseriesモデルに格納
-    get_price_series("^DJI")
-    get_price_series("^N225")
-    get_price_series("000001.SS")
-    get_price_series("^FTSE")
-
-    # test用に出力するメソッド（tickerの確認など..)
-    get_fx_index
+    # get_price_series("^DJI")
+    # get_price_series("^N225")
+    # get_price_series("000001.SS")
+    # get_price_series("^FTSE")
+    #
+    # # test用に出力するメソッド（tickerの確認など..)
+    # get_fx_index
 
     gon.user_name="historical data"
 

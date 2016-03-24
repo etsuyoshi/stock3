@@ -236,15 +236,9 @@ class StaticPagesController < ApplicationController
     # data = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*100), end_date: Time::now }) # 10 days worth of data
     # p "data=#{data}"
 
-    # ここらへんは全てfetch_controllerに寄せるべき
-    #各インデックスをPriceseriesモデルに格納
-    # get_price_series("^DJI")
-    # get_price_series("^N225")
-    # get_price_series("000001.SS")
-    # get_price_series("^FTSE")
-    #
-    # # test用に出力するメソッド（tickerの確認など..)
-    # get_fx_index
+
+    # test用に出力するメソッド（tickerの確認など..)
+    get_fx_index#fx取得のみ
 
     gon.user_name="historical data"
 
@@ -287,124 +281,6 @@ class StaticPagesController < ApplicationController
     p "return"
   end
 
-  def get_price_series(ticker)
-    # 既に格納されている最新データを取得
-    name = nil
-    if ticker == "^N225"
-      name = "nikkei225"
-    elsif ticker == "^DJI"
-      name = "dow"
-    elsif ticker == "000001.SS"
-      name = "shanghai"
-    elsif ticker == '^FTSE'
-      name = "FTSE"
-    else
-      name = "notSet"
-    end
-
-
-    todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
-    # newestYMD = Priceseries.maximum("ymd") #ex.20160122
-    newestYMD = "20130101"#データがない場合に備えデフォルトを設定
-    if Priceseries.find_by(ticker: ticker)
-      # 最後の日付を取得->find_by_sqlだとpostgresqlで無効になる可能性があるため
-      # なるべくActiveRecord !!!!
-      # newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
-      # newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
-      newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
-
-      # p "sql result = #{Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]}"
-      # p "ActiveRecord = #{newestYMD}"
-    end
-
-    newestYear = newestYMD.to_s[0,4].to_i
-    newestMonth = newestYMD.to_s[4,2].to_i
-    newestDay = newestYMD.to_s[6,2].to_i
-
-    if newestYear == todayObj.year &&
-      newestMonth == todayObj.month &&
-      newestDay   == todayObj.day
-      p "本日まで取得済み"
-    else
-      p newestYMD.to_s + "から本日まで株価取得"
-      # DBに保存されている最新データの日付
-      newestObj = Time.zone.local(newestYear, newestMonth, newestDay)
-      p newestObj
-      p Time::now
-
-      insert_PriceSeries(ticker, name, newestObj)
-
-    end
-  end
-
-
-  def insert_PriceSeries(ticker, name, fromYmdObj)
-
-    yahoo_client = YahooFinance::Client.new
-    # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
-    # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
-    # datas = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*4), end_date: Time::now }) # 10 days worth of data
-    datas = yahoo_client.historical_quotes(ticker, { start_date: fromYmdObj, end_date: Time::now})
-
-    # dows = yahoo_client.historical_quotes("^DJI", { start_date: Time::now-(24*60*60*200), end_date: Time::now }) # 10 days worth of data
-    # p dows
-
-    # p datas
-
-    # 取得したデータ
-    # <OpenStruct
-    #  trade_date="2016-02-19",
-    #  open="16050.400391",
-    #  high="16050.459961",
-    #  low="15799.349609",
-    #  close="15967.169922",
-    #  volume="156800",
-    #  adjusted_close="15967.169922",
-    #  symbol="^N225">
-
-    # Priceseriesに格納する
-    # Priceseries(id: integer,
-    #   ticker: string,
-    #   name: string,
-    #   open: float,
-    #   high: float,
-    #   low: float,
-    #   close: float,
-    #   volume: float,
-    #   ymd: integer,
-    #   created_at: datetime,
-    #   updated_at: datetime)
-
-    datas.each do |data|
-      # from "2016-02-19"-format to "20160219"
-      datasDate = data.trade_date
-      y = datasDate[0,4].to_s
-      m = datasDate[5,2].to_s
-      d = datasDate[8,2].to_s
-
-      insertDate = y + m + d
-      p insertDate
-
-
-
-      priceOneDay = Priceseries.new(
-        :ticker => ticker, #string,
-        :name => name,#string,
-        :open => data.open,#float,
-        :high => data.high,#float,
-        :low => data.low,#float,
-        :close => data.close,#float,
-        :volume => data.volume,#float,
-        :ymd => insertDate#integer
-        )
-
-
-      priceOneDay.save
-
-
-
-    end
-  end
   def get_rank_from_db(priceUpOrDown)
     sort = priceUpOrDown
     if priceUpOrDown == "priceup"
@@ -530,4 +406,117 @@ class StaticPagesController < ApplicationController
   # def jpy_comma
   #  self.to_s.gsub(/(\d)(?=(\d{3})+(?!\d))/, '\1,')
   # end
+
+  def get_price_newest
+
+    # ドル、ユーロ、英ポンド、ドイツマルク、フランスフラン、イタリアリラ、スイスフラン、中国元、ロシアルーブル
+    cur = ["JPY", "USD", "EUR", "GBP", "DEM", "FRF", "ITL", "CHF", "CNY", "RUB"]
+    ticker =[]
+    no_cur = 0
+    cur.each do |cur1|
+      cur.each do |cur2|
+        if cur1 != cur2
+          ticker[no_cur]= String(cur1 + cur2 + "=X")
+          p "no= #{no_cur}, ticker=#{ticker[no_cur]}"
+          no_cur = no_cur + 1
+        end
+      end
+    end
+    ticker[ticker.length] = "^N225"
+    ticker[ticker.length+1] = "^DJI"
+    ticker[ticker.length+2] = "000001.SS"
+
+    p "length = " + ticker.length.to_s
+
+
+    # ticker = ["USDJPY=X", "EURJPY=X"];
+#     ticker = [
+#       "USDJPY=X", "EURJPY=X", "GBPJPY=X", "DEMJPY=X", "FRFJPY=X", "ITLJPY=X", "CHFJPY=X", "CNYJPY=X", "RUBJPY=X",
+#        "^N225", "^DJI", "000001.SS"];
+      #  http://www.oanda.com/convert/fxdaily?redirected=1&exch=JPY&format=HTML&dest=GET+CUSTOM+TABLE&sel_list=GBP_DEM_FRF_ITL_CHF_JPY_CNY_RUB_USD_EUR
+      p "price_newest_controller = " + ticker.to_s
+    # 今は最初のコードしか取得できていない
+
+
+    # 将来的に別メソッドにする
+    # get_yahoo_data(ticker)
+
+    # yahooからtickerコードの最新情報を取得する
+    yahoo_client = YahooFinance::Client.new
+    yahoodata =
+      yahoo_client.quotes(
+        [ticker],#続けて取得する場合はカンマ区切りで配列にして渡すex. ["USDJPY=X, EURJPY=X"],
+        [:last_trade_price, :ask, :bid, :last_trade_date])
+    # yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"])
+    # p "ddddata = #{yahoodata}"
+
+    i = 0;
+    yahoodata.each do |ydata|
+
+      p "ydata = #{ydata}, ticker = #{ticker[i]}"
+
+      if ydata.last_trade_price == "N/A"
+        p "データなし"
+      else
+
+        ask_usdjpy = ydata.ask.to_d
+        bid_usdjpy = ydata.bid.to_d
+        date_usdjpy = ydata.last_trade_date.to_s
+        price_usdjpy = ydata.last_trade_price.to_d
+        # test
+        # date_usdjpy = "12/31/2014"
+
+
+        # p "ask = #{ask_usdjpy}"
+        # p "bid = #{bid_usdjpy}"
+        # p "date = #{date_usdjpy}"
+        # p "price = #{price_usdjpy}"
+        # date_usdjpyをyyyymmdd形式に変換
+        month = date_usdjpy.match(/\d*\//)[0].sub(/\//,"").to_i#最初の/の前の数字
+        day = date_usdjpy.match(/\/\d*\//)[0].sub(/\//,"").sub(/\//,"").to_i#/**/で囲まれた数字
+        year = date_usdjpy.match(/\/\d{4}/)[0].sub(/\//,"").to_i#/の後の４桁の数字
+        # p "month = #{month}"
+        # p "day = #{day}"
+        # p "year = #{year}"
+
+        date = Time.local(year, month, day, 10, 00, 00)
+        # p "date = #{date.strftime('%Y%m%d')}"
+
+        # DBに挿入
+        insert_price_data(ticker[i],
+         price_usdjpy,
+          date.strftime('%Y%m%d'),
+           ask_usdjpy, bid_usdjpy)
+
+      end
+      i = i + 1
+    end
+  end
+
+  # パラメータdateはYYYYMMDDとする
+  def insert_price_data(ticker, price, date, ask, bid)
+    # PriceNewest(id: integer, ticker: string, pricetrade: float, datetrade: integer, ask: float, bid: float, created_at: datetime, updated_at: datetime)
+    # [#<OpenStruct last_trade_price=\"113.9850\", ask=\"114.0000\", bid=\"113.9850\", last_trade_date=\"2/27/2016\", previous_trade_date=nil, previous_trade_price=nil>
+
+    # すでにそのティッカーコードで同じ日付があれば取得しないようにする
+    if !(PriceNewest.find_by(ticker: ticker, datetrade: date))
+      pricedata = PriceNewest.new(
+        :ticker           => ticker,
+        :pricetrade       => price,
+        :datetrade        => date,#ymd
+        :ask              => ask,
+        :bid              => bid
+      )
+      p "insert below.."
+      p "ticker = #{pricedata.ticker}"
+      p "pricetrade = #{pricedata.pricetrade}"
+      p "datetrade = #{pricedata.datetrade}"
+      p "ask = #{pricedata.ask}"
+      p "bid = #{pricedata.bid}"
+      pricedata.save
+    else
+      p "そのデータはすでに存在します=>#{PriceNewest.find_by(ticker: ticker, datetrade: date)}"
+    end
+
+  end
 end

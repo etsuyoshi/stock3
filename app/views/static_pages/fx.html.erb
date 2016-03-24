@@ -83,6 +83,75 @@
     <!-- TradingView Widget END -->
 
 
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+
+        為替レート一覧
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+            <% if @up_ranks.length > 0 %>
+              <table>
+                <tr>
+                  <th>順位</th>
+                  <th>コード</th>
+                  <th>上昇率ランキング</th>
+                  <th>騰落率(%)</th>
+                  <th>価格</th>
+                  <th>前日比</th>
+                </tr>
+                <% @up_ranks.each do |rank_info| %>
+                  <% if rank_info.kind_of?(Array) %>
+                    <% stock_info = rank_info[1] %>
+
+                    <!-- 10位までに限定：ボタンとかで50位まで表示するオプションをつけてもいいかも -->
+                    <% if stock_info["rank"].to_i <= 10 %>
+                      <tr>
+                        <td><%= stock_info["rank"] %></td>
+                        <td><%= stock_info["stock_code"] %></td>
+                        <td><%= stock_info["name"] %></td>
+                        <td><%= stock_info["return"] %></td>
+                        <td><%= stock_info["price"] %></td>
+                        <td><%= stock_info["vsYesterday"] %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                <% end %>
+
+                <tr>
+                  <th>順位</th>
+                  <th>コード</th>
+                  <th>下落率ランキング</th>
+                  <th>騰落率(%)</th>
+                  <th>価格</th>
+                  <th>前日比</th>
+                </tr>
+                <!-- カラム幅を揃えるため同一テーブルで表示 -->
+                <% @down_ranks.each do |rank_info| %>
+                  <% if rank_info.kind_of?(Array) %>
+                    <% stock_info = rank_info[1] %>
+
+                    <!-- 10位までに限定：ボタンとかで50位まで表示するオプションをつけてもいいかも -->
+                    <% if stock_info["rank"].to_i <= 10 %>
+                      <tr>
+                        <td><%= stock_info["rank"] %></td>
+                        <td><%= stock_info["stock_code"] %></td>
+                        <td><%= stock_info["name"] %></td>
+                        <td><%= stock_info["return"] %></td>
+                        <td><%= stock_info["price"] %></td>
+                        <td><%= stock_info["vsYesterday"] %></td>
+                      </tr>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </table>
+            <% end %><!-- if @up_ranks.length > 0 -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+
 
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">

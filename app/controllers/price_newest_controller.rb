@@ -3,9 +3,32 @@
 class PriceNewestController < ApplicationController
   def index
 
-    # ticker = ["USDJPY=X", "EURJPY=X"];
-    ticker = ["USDJPY=X", "EURJPY=X", "^N225", "^DJI", "000001.SS"];
+    # ドル、ユーロ、英ポンド、ドイツマルク、フランスフラン、イタリアリラ、スイスフラン、中国元、ロシアルーブル
+    cur = ["JPY", "USD", "EUR", "GBP", "DEM", "FRF", "ITL", "CHF", "CNY", "RUB"]
+    ticker =[]
+    no_cur = 0
+    cur.each do |cur1|
+      cur.each do |cur2|
+        if cur1 != cur2
+          ticker[no_cur]= String(cur1 + cur2 + "=X")
+          p "no= #{no_cur}, ticker=#{ticker[no_cur]}"
+          no_cur = no_cur + 1
+        end
+      end
+    end
+    ticker[ticker.length] = "^N225"
+    ticker[ticker.length+1] = "^DJI"
+    ticker[ticker.length+2] = "000001.SS"
 
+    p "length = " + ticker.length.to_s
+
+
+    # ticker = ["USDJPY=X", "EURJPY=X"];
+#     ticker = [
+#       "USDJPY=X", "EURJPY=X", "GBPJPY=X", "DEMJPY=X", "FRFJPY=X", "ITLJPY=X", "CHFJPY=X", "CNYJPY=X", "RUBJPY=X",
+#        "^N225", "^DJI", "000001.SS"];
+      #  http://www.oanda.com/convert/fxdaily?redirected=1&exch=JPY&format=HTML&dest=GET+CUSTOM+TABLE&sel_list=GBP_DEM_FRF_ITL_CHF_JPY_CNY_RUB_USD_EUR
+      p "price_newest_controller = " + ticker.to_s
     # 今は最初のコードしか取得できていない
 
 
@@ -19,7 +42,7 @@ class PriceNewestController < ApplicationController
         [ticker],#続けて取得する場合はカンマ区切りで配列にして渡すex. ["USDJPY=X, EURJPY=X"],
         [:last_trade_price, :ask, :bid, :last_trade_date])
     # yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"])
-    # p "data = #{yahoodata}"
+    # p "ddddata = #{yahoodata}"
 
     i = 0;
     yahoodata.each do |ydata|

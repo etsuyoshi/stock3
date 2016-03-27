@@ -179,6 +179,37 @@ class StaticPagesController < ApplicationController
     #   p "eurjpy = #{@eurjpy}"
     #   p "fx = #{@usdjpy.datetrade}"
     # end
+
+    # hashにして全通貨の組み合わせを格納
+    p "aaa"
+    @hash_fx = Hash.new
+    @hash_fx["date"] = @usdjpy.datetrade
+    @arr_keys = Array.new
+
+    PriceNewest.where(datetrade: @usdjpy.datetrade).each do |pricenewest|
+      @hash_fx[pricenewest.ticker] = pricenewest.pricetrade
+      # p "hash_fx:#{pricenewest.ticker} = #{@hash_fx[pricenewest.ticker]}"
+      # p @arr_keys.include?(pricenewest.ticker.first(3))
+      unless @arr_keys.include?(pricenewest.ticker.first(3))
+        if pricenewest.ticker.last(2) == "=X"
+          @arr_keys.push((pricenewest.ticker).first(3))
+          # p "push => #{(pricenewest.ticker).first(3)}"
+        end
+      # else
+        # p "exists => #{pricenewest.ticker.first(3)}"
+      end
+    end
+
+    # @hash_fx.each do |hash|
+    #   p "hash_fx = #{hash}"
+    # end
+    #
+    # p "length = #{@arr_keys.count}"
+    # @arr_keys.each do |key|
+    #   p "key = #{key}"
+    # end
+
+
   end
   def portfolio
   end

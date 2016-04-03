@@ -6,6 +6,15 @@
     <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
+
+    <!-- You can use open graph tags to customize link previews.
+    Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
+  	<meta property="og:url"           content="http://ancient-retreat-91103.herokuapp.com/" />
+  	<meta property="og:type"          content="website" />
+  	<meta property="og:title"         content="stock and finance" />
+  	<meta property="og:description"   content="株価と金融情勢" />
+  	<meta property="og:image"         content="http://financesociety.business.uconn.edu/wp-content/uploads/sites/936/2014/09/B.jpg" />
+
   </head>
   <body>
   <%= render 'layouts/header' %>

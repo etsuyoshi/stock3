@@ -1,0 +1,47 @@
+<% cache url do %>
+  <ul class="sharing list-inline">
+    <li class="hatena">
+      <a href="http://b.hatena.ne.jp/entry/<%= url %>"
+         class="hatena-bookmark-button"
+         rel="nofollow"
+         data-hatena-bookmark-layout="standard-balloon"
+      ><img src="http://b.st-hatena.com/images/entry-button/button-only.gif"
+            alt="Add to Hatena Bookmark" /></a>
+    </li>
+    <div id="fb-root"></div>
+    <li class="facebook">
+      <div class="fb-like"
+           data-share="false"
+           data-layout="button_count"
+           data-show-faces="false"
+           data-font="verdana"
+           data-href="<%= url %>"></div>
+    </li>
+    <li class="facebook_share">
+      <div class="fb-share-button"
+           data-type="button_count"
+           data-font="verdana"
+           data-href="<%= url %>"></div>
+    </li>
+    <li class="twitter">
+      <a href="http://twitter.com/share"
+         class="twitter-share-button"
+         rel="nofollow"
+         data-url="<%= url %>"
+         data-via="<%= Settings.twitter.data_via %>"
+         data-counturl="<%= url %>">Tweet</a>
+    </li>
+    <li class="googleplus">
+      <div class="g-plusone"
+           data-size="medium"
+           data-href="<%= url %>"></div>
+    </li>
+    <li class="pocket">
+      <a href="https://getpocket.com/save"
+         class="pocket-btn" data-lang="en"
+         data-save-url="<%= url %>"
+         data-pocket-count="horizontal"
+         data-pocket-align="left">Pocket</a>
+    </li>
+  </ul>
+<% end %>

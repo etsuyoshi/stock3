@@ -1,4 +1,44 @@
+<% todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
+   year  = todayObj.year
+   month = todayObj.month
+   day   = todayObj.day
 
+   if month.to_s.length == 1
+      month = "0" + month.to_s
+   end
+   if day.to_s.length == 1
+      day = "0" + day.to_s
+   end
+
+
+   hour  = todayObj.hour
+   minute= todayObj.min
+
+   if hour.to_s.length == 1
+     hour = "0" + hour.to_s
+   end
+   if minute.to_s.length == 1
+     minute = "0" + minute.to_s
+   end
+
+   youbi = todayObj.strftime("%A")
+   youbi = youbi.downcase
+   if youbi == "monday"
+     youbi = "月曜日"
+   elsif youbi == "tuesday"
+     youbi = "火曜日"
+   elsif youbi == "wednesday"
+     youbi = "水曜日"
+   elsif youbi == "thursday"
+     youbi = "木曜日"
+   elsif youbi == "friday"
+     youbi = "金曜日"
+   elsif youbi == "saturday"
+     youbi = "土曜日"
+   elsif youbi == "sunday"
+     youbi = "日曜日"
+   end
+%>
 
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
@@ -35,15 +75,17 @@
       </div>
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-          2016/03/27
+          <%= year.to_s + "/" + month.to_s + "/" + day.to_s %>
           <br>
-          月曜日
+          <%= youbi %>
           <br>
-          ◾︎Tokyo
           <br>
-          ◾︎London
           <br>
-          ◾︎NewYork
+          <%= "◾︎Tokyo   " + hour.to_s + ":" + minute.to_s %>
+          <br>
+          <%= "◾︎London  " + get_London_hour(hour.to_i).to_s + ":" + minute.to_s %>
+          <br>
+          <%= "◾︎NewYork " + get_NewYork_hour(hour.to_i).to_s + ":" + minute.to_s %>
         </div>
       </div>
     </div>

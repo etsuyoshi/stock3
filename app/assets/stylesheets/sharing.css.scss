@@ -7,14 +7,14 @@
 .social-area-syncer {
 	width: 100% ;
 	// min-height: 190px ;
-	background: #F5F1E9 ;	/* 背景色 */
+	// background: #F5F1E9 ;	/* 背景色 */
 	padding: 0.1em 0 ;
 }
 
 /* デスクトップPCでは高さを拡張する */
 @media screen and ( min-width:480px ) {
 	.social-area-syncer {
-		min-height: 119px ;
+		// min-height: 119px ;
 	}
 }
 

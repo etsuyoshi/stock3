@@ -571,7 +571,9 @@ class FetchController < ApplicationController
   def get_price_newest
 
     # ticker = ["USDJPY=X", "EURJPY=X"];
-    ticker = ["^N225", "^DJI", "000001.SS"];
+    # nikkei, dji, 上海総合、CSI300, 上海B株、深センB株、上海Ａ株, 深センＡ株, HangSeng, 香港H株指数
+    ticker = ["^N225", "^DJI", "000001.SS", "000300.SS", "000003.SS", "399108.SZ",
+      "000002.SS", "399107.SZ", "^HIS", "^HSCE"];
     currencies = ["JPY", "USD", "EUR", "AUD", "CNY", "CHF", "CAD", "HKD", "ITL"];
     # usd jpy eur cny gbp gem chf cad aud itl
     currencies.each do |cur1|
@@ -594,7 +596,7 @@ class FetchController < ApplicationController
     yahoodata =
       yahoo_client.quotes(
         [ticker],#続けて取得する場合はカンマ区切りで配列にして渡すex. ["USDJPY=X, EURJPY=X"],
-        [:last_trade_price, :ask, :bid, :last_trade_date])
+        [:last_trade_price, :ask, :bid, :last_trade_date, :previous_trade_price])
     # yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"])
     # p "data = #{yahoodata}"
 

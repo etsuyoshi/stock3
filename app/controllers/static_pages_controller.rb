@@ -264,7 +264,6 @@ class StaticPagesController < ApplicationController
     # end
 
     # hashにして全通貨の組み合わせを格納
-    p "aaa"
     @hash_fx = Hash.new
     @hash_fx["date"] = @usdjpy.datetrade
     @arr_keys = Array.new

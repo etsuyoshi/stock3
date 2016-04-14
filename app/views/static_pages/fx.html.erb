@@ -1,27 +1,22 @@
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-    fx
     <div id = "deepblueBack">
       <div class="row">
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
               <br>
-              <% if @usdjpy && @eurjpy %>
-                <%= "為替(#{@usdjpy.datetrade})" %>
+              <% if @usdjpy%>
+                <%= "ドル円(#{@usdjpy.datetrade})" %>
                 <div id="nikkeiValue">
-                  <%= "usd/jpy:#{@usdjpy.pricetrade.round(2)}" %>
-                  <br>
-                  <%= "eur/jpy:#{@eurjpy.pricetrade.round(2)}" %>
-
-                  <BR>
+                  <%= @usdjpy.pricetrade.round(2) %>
                     <!-- TradingView Widget END -->
                 </div>
 
                 <div class="right">
-                  <%= "#{@usdjpy.datetrade}, ask:#{@usdjpy.ask}, bid:#{@usdjpy.bid}" %>
+                  <%= "前日比: #{(@usdjpy.pricetrade - @usdjpy.previoustrade).round(2)}(#{((@usdjpy.pricetrade / @usdjpy.previoustrade-1)*100).round(2)}%)" %>
                   <br>
-                  <%= "#{@eurjpy.datetrade}, ask:#{@eurjpy.ask}, bid:#{@eurjpy.bid}" %>
+                  <%= "ASK:#{@usdjpy.ask}, BID:#{@usdjpy.bid}" %>
                 </div>
                 <br>
               <% else %>
@@ -36,51 +31,54 @@
 
     <br>
 
-    <!-- TradingView Widget BEGIN -->
-    <script type="text/javascript" src="https://d33t3vvu2t2yu5.cloudfront.net/tv.js"></script>
-    <script type="text/javascript">
-    new TradingView.widget({
-      "width": '99%',
-      "height": 610,
-      "symbol": "FX:USDJPY",
-      "interval": "D",
-      "timezone": "Etc/UTC",
-      "theme": "White",
-      "style": "1",
-      "locale": "ja",
-      "toolbar_bg": "#f1f3f6",
-      "allow_symbol_change": true,
-      "hideideas": true,
-      "show_popup_button": true,
-      "popup_width": "1000",
-      "popup_height": "650",
-      "no_referral_id": true
-    });
-    </script>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11 col-md-offset-1 col-lg-offset-1">
+        <!-- TradingView Widget BEGIN -->
+        <script type="text/javascript" src="https://d33t3vvu2t2yu5.cloudfront.net/tv.js"></script>
+        <script type="text/javascript">
+        new TradingView.widget({
+          "width": '99%',
+          "height": 610,
+          "symbol": "FX:USDJPY",
+          "interval": "D",
+          "timezone": "Etc/UTC",
+          "theme": "White",
+          "style": "1",
+          "locale": "ja",
+          "toolbar_bg": "#f1f3f6",
+          "allow_symbol_change": true,
+          "hideideas": true,
+          "show_popup_button": true,
+          "popup_width": "1000",
+          "popup_height": "650",
+          "no_referral_id": true
+        });
+        </script>
 
 
-    <br>
-    <script type="text/javascript" src="https://d33t3vvu2t2yu5.cloudfront.net/tv.js"></script>
-    <script type="text/javascript">
-    new TradingView.widget({
-      "width": '99%',
-      "height": 610,
-      "symbol": "FX:EURJPY",
-      "interval": "D",
-      "timezone": "Etc/UTC",
-      "theme": "White",
-      "style": "1",
-      "locale": "ja",
-      "toolbar_bg": "#f1f3f6",
-      "allow_symbol_change": true,
-      "hideideas": true,
-      "show_popup_button": true,
-      "popup_width": "1000",
-      "popup_height": "650",
-      "no_referral_id": true
-    });
-    </script>
-
+        <br>
+        <script type="text/javascript" src="https://d33t3vvu2t2yu5.cloudfront.net/tv.js"></script>
+        <script type="text/javascript">
+        new TradingView.widget({
+          "width": '99%',
+          "height": 610,
+          "symbol": "FX:EURJPY",
+          "interval": "D",
+          "timezone": "Etc/UTC",
+          "theme": "White",
+          "style": "1",
+          "locale": "ja",
+          "toolbar_bg": "#f1f3f6",
+          "allow_symbol_change": true,
+          "hideideas": true,
+          "show_popup_button": true,
+          "popup_width": "1000",
+          "popup_height": "650",
+          "no_referral_id": true
+        });
+        </script>
+      </div>
+    </div>
 
 
 

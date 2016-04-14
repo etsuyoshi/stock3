@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160320035929) do
+ActiveRecord::Schema.define(version: 20160410064218) do
 
   create_table "adrs", force: :cascade do |t|
     t.string   "ticker"
@@ -55,8 +55,9 @@ ActiveRecord::Schema.define(version: 20160320035929) do
     t.integer  "datetrade"
     t.float    "ask"
     t.float    "bid"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.float    "previoustrade"
   end
 
   create_table "priceseries", force: :cascade do |t|

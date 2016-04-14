@@ -1,0 +1,155 @@
+
+     url = "http://nikkei225jp.com/china/"
+     html = open(url) do |f|
+       f.read # htmlを読み込んで変数htmlに渡す
+     end
+
+     # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
+     doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+     rank_all = Hash.new
+     counter = 1
+    #  doc.xpath('//table[@class="tbl nytbl"]').xpath('tr').each do |content|
+    #    counter = counter + 1
+    #    p counter.to_s + "," + content.to_s
+    #    # if content.xpath('tr').xpath('td').inner_text.to_i == 1
+    #    #   p content.xpath('tr').xpath('td').xpath('a').inner_text
+    #    # else
+    #    #   p content.xpath('tr').xpath('td').xpath('a').inner_text
+    #    # end
+     #
+    #    shanghai_info = Hash.new
+    #    title = content.xpath('th[@class="thj"]/p[@class="size01"]').inner_text
+    #    p "title = " + title.to_s
+     #
+    #    if arrIndices.include?(title.to_s)
+    #     #  p content.xpath('div[@class="val2 valN"]').inner_text.to_s
+    #     # p content.xpath('div[@id="V321"]').inner_text
+    #     # p content.xpath('td[@class="rap"]/div[@id="V321"]/p').inner_text
+    #     p content.xpath('td[@class="rap"]/div[@class="hl"]').children.to_s
+    #     p "target = " + content.xpath('div[id="C321"]').children.to_s
+    #     # http://stackoverflow.com/questions/3593237/using-nokogiri-and-xpath-to-get-nodes-with-multiple-attributes
+    #    end
+    #  end
+
+###########
+    #  p doc.xpath('//div[@id="body1"]/div[@id="body4"]/div[@id="outline"]/div[@id="main1"]/div[@id="main2"]')
+     doc.xpath('//div[@id="body1"]/div[@id="body4"]/div[@id="outline"]/div[@id="main1"]/div[@id="main2"]').children.each do |win1|
+        # p "win1 = " + win1.inner_html.to_s
+        # /div[@class="win1"]/div[@class="win2"]/table[@class="tbl nytbl"]/table')
+
+        win1.xpath('div[@class="win2"]/table[@class="tbl nytbl"]').children.each do |tbl_child|
+          # p tbl_child.inner_html
+          name = tbl_child.xpath('th[@class="thj"]/p[@class="size01"]').inner_html
+          # p name
+          if name != ""
+            if arrIndices.include?(name)
+              p "取得対象指数"
+              # p tbl_child.inner_html
+              tbl_child.children.each do |row_table|
+                p row_table.inner_html
+                rate = row_table.xpath('div[@id="C324"]').inner_html
+                p "rate = " + rate.to_s
+              end
+              # p tbl_child.xpath('td[@class="rap"]/div[@id="C324"]/span[@class="chng"]').inner_html
+            else
+              p "取得対象外"
+            end
+          end
+        end
+     end
+     p doc.xpath('div[@class="win1"]/div[@class="win2"]/table[@class="tbl nytbl"]/tbody').children
+     p doc.xpath('div[@class="win1"]/div[@class="win2"]/table[@class="tbl nytbl"]/tbody').children.count
+     doc.xpath('div[@class="win1"]/div[@class="win2"]/table[@class="tbl nytbl"]/tbody').children.each do |content|
+       name = content.xpath('th[@class="thj"]/p[@class="size01"]').inner_html
+      #  p content.xpath('th[@class="thj"]').inner_html
+      #  if name != ""
+         p "title = " + name.to_s
+      #  end
+       ratio = content.xpath('td[@class="rap"]/div[@id="C324"]/span[@class="chng"]').inner_html
+      #  if ratio != ""
+         p ("ratio = " + ratio.to_s)
+      #  end
+
+       value = content.xpath('td[@class="rap"]/div[@id="V324"]/p').inner_text
+      #  if value != ""
+         p ("value = " + value.to_s)
+      #  end
+     end
+###########
+
+
+
+     p "aaa"
+     html2 = %{
+<div class="win1">
+  <div class="win2">
+    <table class="tbl nytbl" cellspacing="0" cellpadding="0">
+      <caption class="topcp">
+        <span class="cap3">中国 香港 アジア 株価指数 自動更新</span>
+        <a href="/asia/" target="_self" class="clink" style="width:150px;">アジア株価一覧</a>
+      </caption>
+      <tbody>
+        <tr>
+          <th class="thj">
+            <p class="size01">上海総合指数 中国</p>
+            <a href="http://finance.yahoo.com/q?s=000001.SS" class="ylink" style="width:20px;">Y!</a>
+          </th>
+          <td class="rap"><div id="C321" class="chg2 chg2N"><span class="chng" style="color:rgb(161,69,69)">▼0.78%</span></div><div id="V321" class="val2 valN"><p>2,984.96</p></div><div class="hl"><div id="H321" class="hi"> H:2,996.17</div><div id="L321" class="lo"> L:2,960.46</div></div><div id="Z321" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-23.46</div><div id="T321" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td>
+        </tr>
+        <tr>
+          <th class="thj">
+            <p class="size01">CSI300指数 中国</p>
+            <a href="http://finance.yahoo.com/q?s=000300.SS" class="ylink" style="width:20px;">Y!</a>
+          </th>
+          <td class="rap">
+            <div id="C324" class="chg2 chg2N">
+              <span class="chng" style="color:rgb(159,71,71)">▼0.73%</span>
+            </div>
+            <div id="V324" class="val2 valN">
+              <p>3,185.73</p>
+            </div>
+            <div class="hl">
+              <div id="H324" class="hi"> H:3,197.77</div>
+                <div id="L324" class="lo"> L:3,163.30</div>
+              </div>
+              <div id="Z324" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-23.56</div>
+              <div id="T324" class="tim2">
+                <span style="color:#ccc;background-color:#777;" class="scol">04/08</span>
+              </div>
+          </td>
+        </tr>
+        <tr><th class="thj"><p class="size01">上海Ｂ株 中国</p><a href="http://finance.yahoo.com/q?s=000003.SS" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C323" class="chg2 chg2N"><span class="chng" style="color:rgb(161,69,69)">▼0.78%</span></div><div id="V323" class="val2 valN"><p>373.33</p></div><div class="hl"><div id="H323" class="hi"> H:374.82</div><div id="L323" class="lo"> L:371.30</div></div><div id="Z323" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-2.93</div><div id="T323" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">深センＢ株 中国</p><a href="http://finance.yahoo.com/q?s=399108.SZ" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C322" class="chg2 chg2N"><span class="chng" style="color:rgb(162,68,68)">▼0.79%</span></div><div id="V322" class="val2 valN"><p>1,134.41</p></div><div class="hl"><div id="H322" class="hi"> H:1,139.71</div><div id="L322" class="lo"> L:1,128.10</div></div><div id="Z322" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-9.00</div><div id="T322" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">上海Ａ株 中国</p><a href="http://finance.yahoo.com/q?s=000002.SS" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C327" class="chg2 chg2N"><span class="chng" style="color:rgb(161,69,69)">▼0.78%</span></div><div id="V327" class="val2 valN"><p>3,123.71</p></div><div class="hl"><div id="H327" class="hi"> H:3,135.44</div><div id="L327" class="lo"> L:3,098.03</div></div><div id="Z327" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-24.55</div><div id="T327" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">深センＡ株 中国</p><a href="http://finance.yahoo.com/q?s=399107.SZ" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C326" class="chg2 chg2N"><span class="chng" style="color:rgb(163,67,67)">▼0.83%</span></div><div id="V326" class="val2 valN"><p>2,002.32</p></div><div class="hl"><div id="H326" class="hi"> H:2,009.07</div><div id="L326" class="lo"> L:1,976.61</div></div><div id="Z326" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-16.68</div><div id="T326" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">HangSeng 香港</p><a href="http://finance.yahoo.com/q?s=^HIS" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C331" class="chg2 chg2N"><span class="chng" style="color:rgb(80,130,80)">▲0.51%</span></div><div id="V331" class="val2 valN"><p>20,370.40</p></div><div class="hl"><div id="H331" class="hi"> H:20,370.44</div><div id="L331" class="lo"> L:20,045.47</div></div><div id="Z331" class="zen2 zen2N" style="color: rgb(0, 128, 0);">+104.35</div><div id="T331" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">Nifty インド</p><a href="http://finance.yahoo.com/q?s=^NSEI" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C352" class="chg2 chg2N"><span class="chng" style="color:rgb(95,119,95)">▲0.12%</span></div><div id="V352" class="val2 valN"><p>7,555.20</p></div><div class="hl"><div id="H352" class="hi"> H:7,569.35</div><div id="L352" class="lo"> L:7,526.70</div></div><div id="Z352" class="zen2 zen2N" style="color: rgb(0, 128, 0);">+8.75</div><div id="T352" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">04/08</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">為替 ドル円</p><a href="http://finance.yahoo.com/q?s=USDJPY=X" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C511" class="chg2 chg2N"><span class="chng" style="color:rgb(134,96,96)">▼0.11%</span></div><div id="V511" class="val2 valN"><p>108.10</p></div><div class="hl"><div id="H511" class="hi"> H:109.90</div><div id="L511" class="lo"> L:107.69</div></div><div id="Z511" class="zen2 zen2N" style="color: rgb(234, 34, 34);">-0.12</div><div id="T511" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">05:59</span></div></td></tr>
+        <tr><th class="thj"><p class="size01">為替 ドル元</p><a href="http://finance.yahoo.com/q?s=USDCNY=X" class="ylink" style="width:20px;">Y!</a></th><td class="rap"><div id="C563" class="chg2 chg2N"><span class="chng" style="color:rgb(98,116,98)">▲0.04%</span></div><div id="V563" class="val2 valN"><p>6.4658</p></div><div class="hl"><div id="H563" class="hi"> H:6.4796</div><div id="L563" class="lo"> L:6.4630</div></div><div id="Z563" class="zen2 zen2N" style="color: rgb(0, 128, 0);">+0.0028</div><div id="T563" class="tim2"><span style="color:#ccc;background-color:#777;" class="scol">05:59</span></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+}
+
+# .xpath("//div[@id='foo']/div[@id='bar']/dl")
+doc2 = Nokogiri::HTML.parse(html2)
+# content2 = doc2#.xpath("//div[@id='foo']/div[@id='bar' and @class='baz bang']/dl")
+#   .xpath('//div[@class="win1"]/div[@class="win2"]/table[@class="tbl nytbl"]/tbody')
+#   .inner_html
+
+# puts "content2 = " + content2
+
+p "bbb"
+doc2.xpath('//div[@class="win1"]/div[@class="win2"]/table[@class="tbl nytbl"]/tbody').children.each do |content|
+  # p "ppp = " + content.to_s
+  ratio = content.xpath('td[@class="rap"]/div[@id="C324"]/span[@class="chng"]').inner_html
+  if ratio != ""
+    p ratio
+  end
+  value = content.xpath('td[@class="rap"]/div[@id="V324"]/p').inner_text
+  if value != ""
+    p value
+  end
+end
+p "ccc"

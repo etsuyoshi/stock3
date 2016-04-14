@@ -571,7 +571,9 @@ class FetchController < ApplicationController
   def get_price_newest
 
     # ticker = ["USDJPY=X", "EURJPY=X"];
-    ticker = ["^N225", "^DJI", "000001.SS"];
+    # nikkei, dji, 上海総合、CSI300, 上海B株、深センB株、上海Ａ株, 深センＡ株, HangSeng, 香港H株指数
+    ticker = ["^N225", "^DJI", "000001.SS", "000300.SS", "000003.SS", "399108.SZ",
+      "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII"];
     currencies = ["JPY", "USD", "EUR", "AUD", "CNY", "CHF", "CAD", "HKD", "ITL"];
     # usd jpy eur cny gbp gem chf cad aud itl
     currencies.each do |cur1|
@@ -594,7 +596,7 @@ class FetchController < ApplicationController
     yahoodata =
       yahoo_client.quotes(
         [ticker],#続けて取得する場合はカンマ区切りで配列にして渡すex. ["USDJPY=X, EURJPY=X"],
-        [:last_trade_price, :ask, :bid, :last_trade_date])
+        [:last_trade_price, :ask, :bid, :last_trade_date, :previous_close])
     # yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"])
     # p "data = #{yahoodata}"
 
@@ -611,6 +613,7 @@ class FetchController < ApplicationController
         bid_usdjpy = ydata.bid.to_d
         date_usdjpy = ydata.last_trade_date.to_s
         price_usdjpy = ydata.last_trade_price.to_d
+        previous_price = ydata.previous_close.to_d
         # test
         # date_usdjpy = "12/31/2014"
 
@@ -634,7 +637,8 @@ class FetchController < ApplicationController
         insert_price_data(ticker[i],
          price_usdjpy,
           date.strftime('%Y%m%d'),
-           ask_usdjpy, bid_usdjpy)
+           ask_usdjpy, bid_usdjpy,
+           previous_price)
 
       end
       i = i + 1
@@ -642,7 +646,7 @@ class FetchController < ApplicationController
   end
 
   # パラメータdateはYYYYMMDDとする
-  def insert_price_data(ticker, price, date, ask, bid)
+  def insert_price_data(ticker, price, date, ask, bid, previous)
     # PriceNewest(id: integer, ticker: string, pricetrade: float, datetrade: integer, ask: float, bid: float, created_at: datetime, updated_at: datetime)
     # [#<OpenStruct last_trade_price=\"113.9850\", ask=\"114.0000\", bid=\"113.9850\", last_trade_date=\"2/27/2016\", previous_trade_date=nil, previous_trade_price=nil>
 
@@ -653,7 +657,8 @@ class FetchController < ApplicationController
         :pricetrade       => price,
         :datetrade        => date,#ymd
         :ask              => ask,
-        :bid              => bid
+        :bid              => bid,
+        :previoustrade    => previous
       )
       p "insert below.."
       p "ticker = #{pricedata.ticker}"
@@ -661,6 +666,7 @@ class FetchController < ApplicationController
       p "datetrade = #{pricedata.datetrade}"
       p "ask = #{pricedata.ask}"
       p "bid = #{pricedata.bid}"
+      p "previous=#{pricedata.previoustrade}"
       pricedata.save
     else
       p "そのデータはすでに存在します=>#{PriceNewest.find_by(ticker: ticker, datetrade: date)}"

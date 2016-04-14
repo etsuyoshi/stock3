@@ -106,10 +106,76 @@ class StaticPagesController < ApplicationController
     end
 
 
-    p "shanghai_historical = #{gon.shanghai_historical.length}"
-    gon.shanghai_historical.each do |sh|
-      p sh
+    # p "shanghai_historical = #{gon.shanghai_historical.length}"
+    # gon.shanghai_historical.each do |sh|
+    #   p sh
+    # end
+
+
+
+    # http://nikkei225jp.com/china/
+    # 中国上海アジア市場のスクレイピング
+    @arrIndices =
+    ["上海総合指数 中国",
+     "CSI300指数 中国",
+     "上海Ｂ株 中国",
+     "深センＢ株 中国",
+     "上海Ａ株 中国",
+     "深センＡ株 中国",
+     "HangSeng 香港",
+     "H株指数 香港",
+     "レッドチップ指数 香港",
+     "韓国",
+     "加権 台湾",
+     "為替 ドル円",
+     "為替 ドル元",
+     "ユーロ元"]
+     arrIndexTickers =
+     ["000001.SS",#上海総合指数 中国
+      "000300.SS",#CSI300指数 中国
+      "000003.SS",#上海Ｂ株 中国
+      "399108.SZ",#深センＢ株 中国
+      "000002.SS",#上海Ａ株 中国
+      "399107.SZ",#深センＡ株 中国
+      "^HIS",#HangSeng 香港
+      "^HSCE",#H株指数 香港
+      "^HSCC",#レッドチップ
+      "^KS11",#韓国
+      "^TWII",#台湾
+      "USDJPY=X",#ドル円
+      "USDCNY=X",#ドル元
+      "EURCNY=X"#ユーロ元
+    ]
+    # 二つの配列からhashを作成する
+    ary = [arrIndexTickers,@arrIndices].transpose
+    @hash_key_name_asia = Hash[*ary.flatten]
+    arrActiveRecord =  PriceNewest.where(ticker: arrIndexTickers).order(datetrade: :desc)
+    # p "count = " + arrActiveRecord.count.to_s + "," + @arrIndices.count.to_s
+    # @asia_newest_dataをarrIndicese(arrIndexTickers)と同じ並び順でデータを格納する
+    @asia_newest_data = []
+    arrIndexTickers.each do |ticker|
+      # p ticker
+      arrActiveRecord.each do |record|
+        if record.ticker == ticker
+          @asia_newest_data.push(record)
+          # p @asia_newest_data.last.ticker
+          break
+        end
+      end
     end
+    # example
+    # p "newest = " + @asia_newest_data[0].ticker.to_s
+    # p "newest = " + @asia_newest_data[0].pricetrade.to_s
+    # p "newest = " + @asia_newest_data[0].previoustrade.to_s
+    # p "newest = " + @asia_newest_data[1].ticker.to_s
+
+    cnt = 0
+    @asia_newest_data.each do |asia|
+      p asia.ticker.to_s + "(" + asia.pricetrade.to_s + ")" +asia.datetrade.to_s +
+        @arrIndices[cnt]
+      cnt = cnt + 1
+    end
+
 
 
   end
@@ -156,7 +222,24 @@ class StaticPagesController < ApplicationController
   end
 
   def adr
-
+    @hash_adr = {
+      :SNE => "6758.T",
+      :CAJ => "7751.T",
+      :ATE => "6857.T",
+      :NJ  => "6594.T",
+      :KYO => "6971.T",
+      # :KNM => "",
+      :TM  => "4704.T",
+      :HMC => "7267.T",
+      :NTT => "9432.T",
+      :DCM => "9437.T",
+      # :IIJI=> "",
+      # :UBIC=> "",
+      # :MFJ => "",
+      :MTU => "8306.T",
+      :SMFG=> "8316.T",
+      :NMR => "8604.T",
+      :IX  => "8591.T"}
 
     # adr一覧を取得する
     @adr_all = Adr.all
@@ -181,7 +264,6 @@ class StaticPagesController < ApplicationController
     # end
 
     # hashにして全通貨の組み合わせを格納
-    p "aaa"
     @hash_fx = Hash.new
     @hash_fx["date"] = @usdjpy.datetrade
     @arr_keys = Array.new

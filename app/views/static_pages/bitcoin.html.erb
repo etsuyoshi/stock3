@@ -166,6 +166,7 @@ $(function() {
 
     <br>
 
+<!-- グラフ -->
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
         <div id="btc_historical" style="width:100%; height:400px;"></div>
@@ -174,7 +175,71 @@ $(function() {
     </div>
 
 
+    <br>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+        <junre_title id="sample03"> 関連ニュース </junre_title>
 
+        <% @bitcoinNews.each do |news| %>
+          <% if news %>
+            <%= link_to news["title"] , news["url"] %>
+            <br>
+          <% end %>
+
+        <% end %>
+
+      </div>
+    </div>
+
+    <br>
+<!-- 基本情報 -->
+    <% if @hash_fundamentals %>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+          <table>
+            <tr>
+              <% @hash_fundamentals.keys.each do |key| %>
+                <th><%= key %></th>
+              <% end %>
+            </tr>
+            <tr>
+              <% @hash_fundamentals.values.each do |fundamental| %>
+                <td><%= fundamental %></td>
+              <% end %>
+            </tr>
+          </table>
+        </div>
+      </div>
+    <% end %>
+    <br>
+    <% arrGraphs = [
+      "http://bitcoincharts.com/charts/coinbaseUSD/orderbook.png",
+      "http://bitcoincharts.com/charts/coinbaseUSD/orderbook0.02.png",
+      "http://bitcoincharts.com/charts/coinbaseUSD/accumulated_orderbook.png",
+      "http://bitcoincharts.com/charts/coinbaseUSD/accumulated_orderbook0.02.png",
+      "http://bitcoin.sipa.be/speed-lin-ever.png",
+      "http://bitcoin.sipa.be/speed-lin.png",
+      "http://bitcoin.sipa.be/speed-lin-10k.png",
+      "http://bitcoin.sipa.be/speed-lin-2k.png",
+      "http://bitcoin.sipa.be/speed-ever.png",
+      "http://bitcoin.sipa.be/speed.png",
+      "http://bitcoin.sipa.be/work.png",
+      "http://bitcoin.sipa.be/growth.png",
+      "http://bitcoin.sipa.be/growth-10k.png"
+    ] %>
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+        <junre_title id="sample03"> market depth </junre_title>
+      </div>
+    </div>
+    <% arrGraphs.each do |graph_url| %>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+          <%= image_tag(graph_url,
+           alt: "orderbook", :width => '100%', :height => '100%') %>
+        </div>
+      </div>
+    <% end %>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
     <%= render 'layouts/sidebar' %>

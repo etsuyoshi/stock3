@@ -84,6 +84,9 @@ class StaticPagesController < ApplicationController
       @returndow = sprintf("%.2f", ((@valuedow / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
       @diffdow = sprintf("%.2f", (@valuedow - yesterdayVal))
     end
+
+
+
   end
 
   def shanghai
@@ -219,6 +222,61 @@ class StaticPagesController < ApplicationController
       @returnBtc = sprintf("%.2f", ((@valueBtc / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
       @diffBtc = sprintf("%.2f", (@valueBtc - yesterdayVal))
     end
+
+
+
+
+    # 難易度などのテーブル取得
+    # http://bitcoincharts.com/markets/coinbaseUSD.html
+
+    url = "http://bitcoincharts.com/markets/coinbaseUSD.html"
+    html = open(url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    rank_all = Hash.new
+    p "start"
+    @hash_fundamentals = Hash.new
+    doc.xpath('//body[@class=""]/div[@id="header"]/div[@class="container_12"]')
+      .xpath('div[@class="networkinfo grid_8 right"]').children.each do |content|
+
+      if content.xpath('table/tr').count > 0
+        content.xpath('table/tr').each do |row|
+          key = row.xpath('td')[0].inner_html
+          value = row.xpath('td')[1].inner_html
+          @hash_fundamentals[key] = value
+        end
+      end
+    end
+
+    # ビットコインニュース
+    url = "http://btcnews.jp"
+    html = open(url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    rank_all = Hash.new
+    p "start"
+    @bitcoinNews = []
+    doc.xpath('//article').each do |article|
+      # p "article:" + article.inner_html
+      title = article.xpath('a').attribute('title').value
+      url = article.xpath('a').attribute('href').value
+      entry_date = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').inner_html
+      # published = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]/abbr')
+      # p published
+
+      hash = Hash.new
+      hash["title"] = title
+      hash["url"] = url
+      hash["entry_date"] = entry_date
+      # hash["published"] = published
+      @bitcoinNews[@bitcoinNews.count + 1] = hash
+    end
+
+    p @bitcoinNews
+
+
   end
 
   def adr

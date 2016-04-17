@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'password_resets/new'
+
+  get 'password_resets/edit'
+
   root to: 'static_pages#home'
   # ニュースフィード(feed)取得用のコントローラ
   get 'fetch/index'
@@ -29,6 +33,7 @@ Rails.application.routes.draw do
   # get 'users/new'
   resources :users
   resources :account_activations, only: [:edit]
+  resources :password_resets,     only: [:new, :create, :edit, :update]
   resources :posts
 
   #news feed専用ビュー

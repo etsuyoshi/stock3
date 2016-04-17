@@ -28,13 +28,14 @@ Rails.application.routes.draw do
 
   # get 'users/new'
   resources :users
+  resources :account_activations, only: [:edit]
   resources :posts
 
   #news feed専用ビュー
   #get 'feeds/show'
   resources :feeds
   resources :price_newest
-  
+
 
 
   # The priority is based upon order of creation: first created -> highest priority.

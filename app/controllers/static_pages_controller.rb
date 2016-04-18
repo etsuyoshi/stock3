@@ -256,24 +256,51 @@ class StaticPagesController < ApplicationController
     end
     doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
     rank_all = Hash.new
-    p "start"
     @bitcoinNews = []
     doc.xpath('//article').each do |article|
       # p "article:" + article.inner_html
       title = article.xpath('a').attribute('title').value
       url = article.xpath('a').attribute('href').value
       entry_date = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').inner_html
-      # published = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]/abbr')
-      # p published
+      # published = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]')
+      # p published.children
+      # published.children.each do |child|
+      #   p "a " + child.attribute("title").to_s
+      # end
+      published = nil
+      article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
+        published = child.attribute("title").to_s
+      end
 
       hash = Hash.new
       hash["title"] = title
       hash["url"] = url
       hash["entry_date"] = entry_date
-      # hash["published"] = published
+      hash["published"] = published
       @bitcoinNews[@bitcoinNews.count + 1] = hash
     end
 
+    url = "https://news.bitcoin.com/"
+    html = open(url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    rank_all = Hash.new
+    doc.xpath('//div[@class="td_module_12 td_module_wrap td-animation-stack"]').each do |article|
+      # title
+      title = article.xpath('div[@class="item-details"]/h3[@class="entry-title td-module-title"]/a').inner_text
+      # time
+      published = article.xpath('div[@class="item-details"]/div[@class="meta-info"]/div[@class="td-post-date"]/time').attribute("datetime").value
+      # link
+      url = article.xpath('div[@class="item-details"]/h3[@class="entry-title td-module-title"]/a').attribute("href").value
+      hash = Hash.new
+      hash["title"] = title
+      hash["url"] = url
+      hash["published"] = published
+      @bitcoinNews[@bitcoinNews.count + 1] = hash
+
+    end
+    # 本番データに入れる時にはFeedsモデルに格納する(keyは臨機応変に修正)
     p @bitcoinNews
 
 

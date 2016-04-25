@@ -11,7 +11,7 @@ class FetchController < ApplicationController
 
     get_bitcoin_news
 
-    return
+    
 
     # スクレイピング先のURL
     # url = 'http://example.com/news/index.html'
@@ -47,6 +47,7 @@ class FetchController < ApplicationController
       :link             => link
     )
     feed.save
+    p "#{feed_id}保存成功"
   end
 
   # DBに保存されている最新のfeed_id(unixtime)を取得
@@ -57,6 +58,16 @@ class FetchController < ApplicationController
     end
     latest_id = row["feed_id"].to_i
     return latest_id
+  end
+
+  def get_reserved_unix_time()
+    rows = Feed.pluck(:feed_id).last(100)
+    if rows.nil?
+      return nil
+    else
+      # return rows.to_i
+      return rows
+    end
   end
 
 
@@ -179,7 +190,13 @@ class FetchController < ApplicationController
   # まだ作り途中
   def get_bitcoin_news
     # 最後のニュースのunixtimeを取得する
-    latest_id = get_latest_id()
+    # latest_id = get_latest_id()
+
+    # 今までに格納したunixtimeを取得する
+    arrReservedUnixTime =
+    get_reserved_unix_time()
+
+    # p "arrReservedUnixTime = #{arrReservedUnixTime}"
 
 
     # ビットコインニュース
@@ -235,14 +252,15 @@ class FetchController < ApplicationController
         p "datetime = #{published_datetime.to_i} : #{title}"
         hash["published"] = published_datetime
         # @bitcoinNews[@bitcoinNews.count + 1] = hash
-        p "latest_id = #{latest_id}"
+        # p "latest_id = #{latest_id}"
         p "published = #{published_datetime.to_i}"
 
         # if latest_id < published_datetime.to_i then
-        if false then
+        # published_datetime.to_iを今までに格納したかどうか
+        unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
           # titleがDBに保存されていなければ、という条件に設定する
-          # insert_feed(published_datetime.to_i,
-          # title, nil, url )
+          insert_feed(published_datetime.to_i,
+          title, nil, url)
 
           p "published = #{published_datetime.to_i}"
           p "title = #{title}"
@@ -285,10 +303,10 @@ class FetchController < ApplicationController
 
       # if latest_id < published_datetime.to_i then
         # DBに保存されている最新ニュースより新しいニュースなので格納する
-      if false then
+      unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
         # titleがDBに保存されていなければ、という条件に設定する
-        # insert_feed(published_datetime.to_i,
-        # title, nil, url )
+        insert_feed(published_datetime.to_i,
+        title, nil, url )
 
         p "published = #{published_datetime.to_i}"
         p "title = #{title}"

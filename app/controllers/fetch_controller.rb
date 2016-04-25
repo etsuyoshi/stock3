@@ -18,12 +18,14 @@ class FetchController < ApplicationController
     # ここらへんは全てfetch_controllerに寄せるべき
     #各インデックスをPriceseriesモデルに格納
     get_price_series("^DJI")
+
+    return
     get_price_series("^N225")
     get_price_series("000001.SS")
     get_price_series("^FTSE")
 
     return
-    
+
     get_price_newest#最新データの取得
 
     get_news

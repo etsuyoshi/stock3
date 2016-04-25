@@ -9,6 +9,10 @@ class FetchController < ApplicationController
 
   def index
 
+    get_bitcoin_news
+
+    
+
     # スクレイピング先のURL
     # url = 'http://example.com/news/index.html'
     # ここらへんは全てfetch_controllerに寄せるべき
@@ -20,7 +24,6 @@ class FetchController < ApplicationController
 
 
     get_price_newest#最新データの取得
-
 
     get_news
 
@@ -44,9 +47,10 @@ class FetchController < ApplicationController
       :link             => link
     )
     feed.save
+    p "#{feed_id}保存成功"
   end
 
-  # DBに保存されている最新のfeed_idを取得
+  # DBに保存されている最新のfeed_id(unixtime)を取得
   def get_latest_id()
     row = Feed.order("feed_id desc").first
     if row.nil?
@@ -54,6 +58,16 @@ class FetchController < ApplicationController
     end
     latest_id = row["feed_id"].to_i
     return latest_id
+  end
+
+  def get_reserved_unix_time()
+    rows = Feed.pluck(:feed_id).last(100)
+    if rows.nil?
+      return nil
+    else
+      # return rows.to_i
+      return rows
+    end
   end
 
 
@@ -172,6 +186,136 @@ class FetchController < ApplicationController
     return Time.parse(stringYMDHMS).to_i
 
   end
+
+  # まだ作り途中
+  def get_bitcoin_news
+    # 最後のニュースのunixtimeを取得する
+    # latest_id = get_latest_id()
+
+    # 今までに格納したunixtimeを取得する
+    arrReservedUnixTime =
+    get_reserved_unix_time()
+
+    # p "arrReservedUnixTime = #{arrReservedUnixTime}"
+
+
+    # ビットコインニュース
+    url = "http://btcnews.jp"
+    html = open(url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    rank_all = Hash.new
+    # @bitcoinNews = []
+    doc.xpath('//article').each do |article|
+      # p "article:" + article.inner_html
+      title = article.xpath('a').attribute('title').value
+      url = article.xpath('a').attribute('href').value
+      entry_date = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').inner_html
+
+      p "#{title}, #{entry_date}"
+      published = nil
+      article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
+        p "pattern A"
+        published = child.attribute("title").to_s
+      end
+      if published == nil || published.equal?("") then
+        p "pattern B"
+        article.xpath('div[@class="feat-right"]/div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
+          published = child.attribute('title').to_s
+        end
+      end
+
+      if published == nil || published.equal?("") then
+        # 本当はpublishedなしでも適当に日付設定して保存したい
+        p "publishedなし #{title}, #{url}, #{entry_date}"
+      else
+        p "published = #{published}"
+
+        hash = Hash.new
+        hash["title"] = title
+        hash["url"] = url
+        hash["entry_date"] = entry_date
+        #transform
+        # from "published"=>"2016-04-19T12:00:41+00:00"
+        # to 2016-02-17 02:42:05(Feed.created_at form)
+        years    =    published[0, 4].to_i
+        months   =    published[5, 2].to_i
+        dates    =    published[8, 2].to_i
+        hours    =    published[11,2].to_i
+        minutes  =    published[14,2].to_i
+        seconds  =    published[17,2].to_i
+        p "#{years}, #{months}, #{dates}, #{hours}, #{minutes}, #{seconds}"
+        published_datetime =
+        Time.local(years, months, dates,
+                   hours, minutes, seconds)
+        p "datetime = #{published_datetime.to_i} : #{title}"
+        hash["published"] = published_datetime
+        # @bitcoinNews[@bitcoinNews.count + 1] = hash
+        # p "latest_id = #{latest_id}"
+        p "published = #{published_datetime.to_i}"
+
+        # if latest_id < published_datetime.to_i then
+        # published_datetime.to_iを今までに格納したかどうか
+        unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
+          # titleがDBに保存されていなければ、という条件に設定する
+          insert_feed(published_datetime.to_i,
+          title, nil, url)
+
+          p "published = #{published_datetime.to_i}"
+          p "title = #{title}"
+          p "url = #{url}"
+
+        end
+      end
+    end
+
+    url = "https://news.bitcoin.com/"
+    html = open(url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    rank_all = Hash.new
+    doc.xpath('//div[@class="td_module_12 td_module_wrap td-animation-stack"]').each do |article|
+      # title
+      title = article.xpath('div[@class="item-details"]/h3[@class="entry-title td-module-title"]/a').inner_text
+      # time
+      published = article.xpath('div[@class="item-details"]/div[@class="meta-info"]/div[@class="td-post-date"]/time').attribute("datetime").value
+      # link
+      url = article.xpath('div[@class="item-details"]/h3[@class="entry-title td-module-title"]/a').attribute("href").value
+      hash = Hash.new
+      hash["title"] = title
+      hash["url"] = url
+      #transform
+      # from "published"=>"2016-04-19T12:00:41+00:00"
+      # to 2016-02-17 02:42:05(Feed.created_at form)
+      years    =    published[0, 4].to_i
+      months   =    published[5, 2].to_i
+      dates    =    published[8, 2].to_i
+      hours    =    published[11,2].to_i
+      minutes  =    published[14,2].to_i
+      seconds  =    published[17,2].to_i
+      published_datetime =
+      Time.local(years, months, dates,
+                 hours, minutes, seconds)
+      hash["published"] = published_datetime
+      # @bitcoinNews[@bitcoinNews.count + 1] = hash
+
+      # if latest_id < published_datetime.to_i then
+        # DBに保存されている最新ニュースより新しいニュースなので格納する
+      unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
+        # titleがDBに保存されていなければ、という条件に設定する
+        insert_feed(published_datetime.to_i,
+        title, nil, url )
+
+        p "published = #{published_datetime.to_i}"
+        p "title = #{title}"
+        p "url = #{url}"
+
+      end
+    end
+  end
+
 
   def get_news
     noPage = 5

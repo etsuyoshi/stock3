@@ -249,6 +249,8 @@ class StaticPagesController < ApplicationController
       end
     end
 
+
+    # ここからfetch_controller
     # ビットコインニュース
     url = "http://btcnews.jp"
     html = open(url) do |f|
@@ -262,6 +264,10 @@ class StaticPagesController < ApplicationController
       title = article.xpath('a').attribute('title').value
       url = article.xpath('a').attribute('href').value
       entry_date = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').inner_html
+
+      p "#{title}, #{entry_date}"
+      # <span class="feat_time entry-date"><abbr class="published" title="2016-04-21T18:32:25+00:00">2016年4月21日</abbr></span>
+
       # published = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]')
       # p published.children
       # published.children.each do |child|
@@ -269,15 +275,43 @@ class StaticPagesController < ApplicationController
       # end
       published = nil
       article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
+        p "pattern A"
         published = child.attribute("title").to_s
       end
+      if published == nil || published.equal?("") then
+        p "pattern B"
+        article.xpath('div[@class="feat-right"]/div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
+          published = child.attribute('title').to_s
+        end
+      end
 
-      hash = Hash.new
-      hash["title"] = title
-      hash["url"] = url
-      hash["entry_date"] = entry_date
-      hash["published"] = published
-      @bitcoinNews[@bitcoinNews.count + 1] = hash
+      if published == nil || published.equal?("") then
+        # 本当はpublishedなしでも適当に日付設定して保存したい
+        p "publishedなし #{title}, #{url}, #{entry_date}"
+      else
+        p "published = #{published}"
+
+        hash = Hash.new
+        hash["title"] = title
+        hash["url"] = url
+        hash["entry_date"] = entry_date
+        #transform
+        # from "published"=>"2016-04-19T12:00:41+00:00"
+        # to 2016-02-17 02:42:05(Feed.created_at form)
+        years    =    published[0, 4].to_i
+        months   =    published[5, 2].to_i
+        dates    =    published[8, 2].to_i
+        hours    =    published[11,2].to_i
+        minutes  =    published[14,2].to_i
+        seconds  =    published[17,2].to_i
+        p "#{years}, #{months}, #{dates}, #{hours}, #{minutes}, #{seconds}"
+        published_datetime =
+        Time.local(years, months, dates,
+                   hours, minutes, seconds)
+        p "#{published_datetime.to_i} : #{title}"
+        hash["published"] = published_datetime
+        @bitcoinNews[@bitcoinNews.count + 1] = hash
+      end
     end
 
     url = "https://news.bitcoin.com/"
@@ -296,10 +330,23 @@ class StaticPagesController < ApplicationController
       hash = Hash.new
       hash["title"] = title
       hash["url"] = url
-      hash["published"] = published
+      #transform
+      # from "published"=>"2016-04-19T12:00:41+00:00"
+      # to 2016-02-17 02:42:05(Feed.created_at form)
+      years    =    published[0, 4].to_i
+      months   =    published[5, 2].to_i
+      dates    =    published[8, 2].to_i
+      hours    =    published[11,2].to_i
+      minutes  =    published[14,2].to_i
+      seconds  =    published[17,2].to_i
+      published_datetime =
+      Time.local(years, months, dates,
+                 hours, minutes, seconds)
+      hash["published"] = published_datetime
       @bitcoinNews[@bitcoinNews.count + 1] = hash
-
     end
+    # ここまでfetch
+
     # 本番データに入れる時にはFeedsモデルに格納する(keyは臨機応変に修正)
     p @bitcoinNews
 

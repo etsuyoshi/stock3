@@ -11,7 +11,7 @@ class FetchController < ApplicationController
 
     get_bitcoin_news
 
-    
+    return
 
     # スクレイピング先のURL
     # url = 'http://example.com/news/index.html'

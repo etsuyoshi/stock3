@@ -182,7 +182,7 @@ $(function() {
 
         <% @bitcoinNews.each do |news| %>
           <% if news %>
-            <%= link_to news["title"] , news["url"] %>
+            <%= link_to news.title, news.link %>
             <br>
           <% end %>
 

@@ -346,8 +346,8 @@ class StaticPagesController < ApplicationController
     #   @bitcoinNews[@bitcoinNews.count + 1] = hash
     # end
     # ここまでfetch
+    @bitcoinNews = Feed.tagged_with("bitcoin")
 
-    
 
     # 本番データに入れる時にはFeedsモデルに格納する(keyは臨機応変に修正)
     p @bitcoinNews

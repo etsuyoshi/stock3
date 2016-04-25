@@ -18,11 +18,8 @@ class FetchController < ApplicationController
     # ここらへんは全てfetch_controllerに寄せるべき
     #各インデックスをPriceseriesモデルに格納
     get_price_series("^DJI")
-
-
     get_price_series("^N225")
     get_price_series("000001.SS")
-    return
     get_price_series("^FTSE")
 
     return

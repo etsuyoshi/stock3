@@ -11,7 +11,7 @@ class FetchController < ApplicationController
 
     get_bitcoin_news
 
-    
+
 
     # スクレイピング先のURL
     # url = 'http://example.com/news/index.html'
@@ -21,11 +21,16 @@ class FetchController < ApplicationController
     get_price_series("^N225")
     get_price_series("000001.SS")
     get_price_series("^FTSE")
+    # ここまではエラーなしで通過したことがある。
+    # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
 
 
     get_price_newest#最新データの取得
 
     get_news
+
+
+
 
     # bitcoinの時系列データの取得
     get_btc

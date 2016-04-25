@@ -22,9 +22,9 @@ class FetchController < ApplicationController
     get_price_series("000001.SS")
     get_price_series("^FTSE")
 
-
-    get_price_newest#最新データの取得
     return
+    get_price_newest#最新データの取得
+
     get_news
 
 

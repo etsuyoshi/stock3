@@ -28,10 +28,7 @@ class FetchController < ApplicationController
     get_price_newest#最新データの取得
 
     get_news
-
-
-
-
+    
     # bitcoinの時系列データの取得
     get_btc
 
@@ -53,6 +50,17 @@ class FetchController < ApplicationController
     )
     feed.save
     p "#{feed_id}保存成功"
+  end
+
+  def insert_feed_with_label(feed_id, title, description, link, feedlabel)
+    feed = Feed.new(
+      :feed_id          => feed_id,
+      :title            => title,
+      :description      => description,
+      :link             => link
+    )
+    feed.tag_list.add(feedlabel)
+    feed.save
   end
 
   # DBに保存されている最新のfeed_id(unixtime)を取得
@@ -264,8 +272,8 @@ class FetchController < ApplicationController
         # published_datetime.to_iを今までに格納したかどうか
         unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
           # titleがDBに保存されていなければ、という条件に設定する
-          insert_feed(published_datetime.to_i,
-          title, nil, url)
+          insert_feed_with_label(published_datetime.to_i,
+          title, nil, url, "bitcoin")
 
           p "published = #{published_datetime.to_i}"
           p "title = #{title}"
@@ -310,8 +318,10 @@ class FetchController < ApplicationController
         # DBに保存されている最新ニュースより新しいニュースなので格納する
       unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
         # titleがDBに保存されていなければ、という条件に設定する
-        insert_feed(published_datetime.to_i,
-        title, nil, url )
+        # insert_feed(published_datetime.to_i,
+        # title, nil, url )
+        insert_feed_with_label(published_datetime.to_i,
+        title, nil, url, "bitcoin")
 
         p "published = #{published_datetime.to_i}"
         p "title = #{title}"

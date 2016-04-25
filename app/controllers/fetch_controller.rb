@@ -24,11 +24,11 @@ class FetchController < ApplicationController
 
 
     get_price_newest#最新データの取得
-
+    return
     get_news
 
 
-        return
+
 
     # bitcoinの時系列データの取得
     get_btc

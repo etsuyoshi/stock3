@@ -1,101 +1,104 @@
-<!-- 最終的には東証価格差、東証とAdrのそれぞれの前日比（％、円）なども表示 -->
-◇NYSE □Nasdaq市場 上場全銘柄（16社）	　OTC(店頭)市場 主要銘柄
-http://adr-stock.com/japan/
-
-<br>
-<h1>
+<div class="row">
+  <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11 col-md-offset-1 col-lg-offset-1">
+  <h1>
   ADR銘柄
-</h1>
+  </h1>
 
-こんな感じで動かしたいなー
-http://www.180.co.jp/world_etf_adr/adr/about.htm
+  </div>
+</div>
+<br>
 
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-    <%= link_to '#' "ADR(米国預託証券)とは？→説明ページへGO!" %><br>
-    米国の銀行に預けられた(日本などの)海外株式を担保にして作られた証券のこと。
-    <br>この証券は元の株式と同じような動きをするため、米国の投資家はドルでこの証券を売買できるため、自国の通貨で日本などの海外の証券に直接投資できるメリットがある。
-    <br>
-    <h2>
-      主な銘柄
-    </h2>
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-        <% num = 0 %>
-        <% @adr_all.each do |adr| %>
-          <!-- adr銘柄が主な銘柄リスト@hash_adrに存在していれば -->
-          <% if @hash_adr[adr.ticker.to_sym] %>
-            <% num = num + 1 %>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
-              <div class="row">
-                <%= num %>
-                <%= "#{adr.name}(#{adr.tcode}, #{adr.ticker})" %>
-              </div>
-              <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
-                  <%= link_to "" do %>
-                    ADR
-                    <!-- 90, 120 -->
-                    <%= image_tag("http://ichart.finance.yahoo.com/t?s=#{adr.ticker}",
-                     alt: adr.tcode, :width => '192', :height => '96') %>
-                    <br>
-                  <% end %>
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11 col-md-offset-1 col-lg-offset-1">
+      <%= link_to "ADR(米国預託証券)とは？→説明ページへGO!", detail_adr_url %><br>
+      米国の銀行に預けられている(日本企業の)株式を担保につくられた証券のこと。
+      <br>この証券は元の株式と同じような値動きをするため、米国の投資家はドルでこの証券を売買でき、
+      自国の通貨で日本などの海外の証券に直接投資できるメリットがある。
+
+      <br>
+      <h2>
+        主な銘柄
+      </h2>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+          <% num = 0 %>
+          <% @adr_all.each do |adr| %>
+            <!-- adr銘柄が主な銘柄リスト@hash_adrに存在していれば -->
+            <% if @hash_adr[adr.ticker.to_sym] %>
+              <% num = num + 1 %>
+              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
+                <div class="row">
+                  <%= num %>
+                  <%= "#{adr.name}(#{adr.tcode}, #{adr.ticker})" %>
                 </div>
-                <!-- 相対するADR銘柄 -->
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
-                  <%= link_to "" do %>
-                    東証
-                    <!-- 90, 120 -->
-                    <%= image_tag("http://gchart.yahoo.co.jp/t?s=#{@hash_adr[adr.ticker.to_sym]}",
-                     alt: adr.tcode, :width => '192', :height => '96') %>
-                    <br>
-                  <% end %>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
+                    <%= link_to "" do %>
+                      ADR
+                      <!-- 90, 120 -->
+                      <%= image_tag("http://ichart.finance.yahoo.com/t?s=#{adr.ticker}",
+                       alt: adr.tcode, :width => '192', :height => '96') %>
+                      <br>
+                    <% end %>
+                  </div>
+                  <!-- 相対するADR銘柄 -->
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
+                    <%= link_to "" do %>
+                      東証
+                      <!-- 90, 120 -->
+                      <%= image_tag("http://gchart.yahoo.co.jp/t?s=#{@hash_adr[adr.ticker.to_sym]}",
+                       alt: adr.tcode, :width => '192', :height => '96') %>
+                      <br>
+                    <% end %>
+                  </div>
                 </div>
               </div>
-            </div>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
     </div>
 
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-
-        <h2>
-          その他の銘柄
-        </h2>
-        <% @adr_all.each do |adr| %>
-          <% if !@hash_adr[adr.ticker.to_sym] %>
-            <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
-              <div class="row">
-                <%= "#{adr.name}(#{adr.tcode}, #{adr.ticker})" %>
-              </div>
-              <div class="row">
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
-
-                  <%= link_to "" do %>
-                    ADR
-                    <!-- 90, 120 -->
-                    <%= image_tag("http://ichart.finance.yahoo.com/t?s=#{adr.ticker}",
-                     alt: adr.tcode, :width => '192', :height => '96') %>
-                    <br>
-
-                  <% end %>
+        <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11 col-md-offset-1 col-lg-offset-1">
+          <h2>
+            その他の銘柄
+          </h2>
+          <% @adr_all.each do |adr| %>
+            <% if !@hash_adr[adr.ticker.to_sym] %>
+              <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
+                <div class="row">
+                  <%= "#{adr.name}(#{adr.tcode}, #{adr.ticker})" %>
                 </div>
-                <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
-                  <%= link_to "" do %>
-                    東証
-                    <!-- 90, 120 -->
-                    <%= image_tag("http://gchart.yahoo.co.jp/t?s=#{adr.tcode}.T",
-                     alt: adr.tcode, :width => '192', :height => '96') %>
-                    <br>
-                  <% end %>
+                <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
+
+                    <%= link_to "" do %>
+                      ADR
+                      <!-- 90, 120 -->
+                      <%= image_tag("http://ichart.finance.yahoo.com/t?s=#{adr.ticker}",
+                       alt: adr.tcode, :width => '192', :height => '96') %>
+                      <br>
+
+                    <% end %>
+                  </div>
+                  <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="border: 0.5px solid #009000">
+                    <%= link_to "" do %>
+                      東証
+                      <!-- 90, 120 -->
+                      <%= image_tag("http://gchart.yahoo.co.jp/t?s=#{adr.tcode}.T",
+                       alt: adr.tcode, :width => '192', :height => '96') %>
+                      <br>
+                    <% end %>
+                  </div>
                 </div>
               </div>
-            </div>
+            <% end %>
           <% end %>
-        <% end %>
+        </div>
       </div>
     </div>
   </div>

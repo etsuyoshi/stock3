@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   get 'password_resets/new'
 
+
+
   get 'password_resets/edit'
 
   root to: 'static_pages#home'
@@ -19,6 +21,9 @@ Rails.application.routes.draw do
   get 'static_pages/portfolio'
   get 'static_pages/kessan'
 
+  # http://stackoverflow.com/questions/15536123/rails-link-to-static-pages-issue
+  get 'static_pages/detail_adr', :as => 'detail_adr'
+# get "staticpages/faq", :as => 'faq_page'
 
   # get ':controller(/:action(/:id(.:format)))'
   get 'priceseries/new'

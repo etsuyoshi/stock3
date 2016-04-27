@@ -3,6 +3,8 @@
 ・ニュースにタグ付けする
 ・個別ニュースに関連ニュースを表示する
 ・トップページの地図に世界の株指数の騰落率バブルを描画する
+・特定銘柄に投資しているユーザーに別の銘柄の(分散)投資を進めるorビットコイン投資を進める
+・特定領域に興味があるユーザーに対して別の関連ニュースを知らせる
 <!-- http://www.bhyuu.com/drilldown-maps-and-funnell-charts-on-the-same-page-using-highcharts/ -->
 <!-- http://suzumenote.com/tech/46 -->
 <!-- http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/maps/demo/latlon-advanced/ -->
@@ -221,7 +223,6 @@ $(function () {
         //         this.code = 'GB';
         //     }
         // });
-
         $('#container_map').highcharts('Map', {
 
             chart : {
@@ -229,11 +230,11 @@ $(function () {
             },
 
             title: {
-                text: 'World population 2013 by country'
+                text: 'World rate by country'
             },
 
             subtitle : {
-                text : 'テストだよ'
+                text : '各国の株式市場の騰落率'
             },
 
             legend: {
@@ -247,26 +248,33 @@ $(function () {
                 }
             },
 
+            mapNavigation: {
+                enabled: true
+            },
             series : [{
                 name: 'Countries',
                 mapData: mapData,
                 color: '#E0E0E0',
                 enableMouseTracking: false
-            }, {
+            }, {//こうやって連結すればバブルチャートと領域の色などを同時に描画できそう
+                //リターン：色　＆　バブル：取引量
                 type: 'mapbubble',
                 mapData: mapData,
-                name: 'Population 2013',
+                name: 'change rate',
                 joinBy: ['iso-a2', 'code'],
-                // data: nil,//data,
-                minSize: 4,
-                maxSize: '12%',
+                data: gon.country_return,
+                dataLabels: {
+                    enabled: true,
+                    color: '#FFFFFF',
+                    format: '{point.code}'
+                },
+                minSize: 20,
+                maxSize: '20%',
                 tooltip: {
-                    pointFormat: '{point.code}: {point.z} thousands'
+                    pointFormat: '{point.code}: {point.z} %'
                 }
             }]
         });
-
-
     // });
 });
 </script>

@@ -28,7 +28,7 @@ class FetchController < ApplicationController
     get_price_newest#最新データの取得
 
     get_news
-    
+
     # bitcoinの時系列データの取得
     get_btc
 
@@ -730,9 +730,10 @@ class FetchController < ApplicationController
   def get_price_newest
 
     # ticker = ["USDJPY=X", "EURJPY=X"];
-    # nikkei, dji, 上海総合、CSI300, 上海B株、深センB株、上海Ａ株, 深センＡ株, HangSeng, 香港H株指数
+    # nikkei, dji=>取得不能, 上海総合、CSI300, 上海B株、深センB株、上海Ａ株, 深センＡ株, HangSeng, 香港H株指数,S&P,ロシア,ブラジル
     ticker = ["^N225", "^DJI", "000001.SS", "000300.SS", "000003.SS", "399108.SZ",
-      "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII"];
+      "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII", "^GSPC", "DAX", "^FTSE", "^HSI",
+       "RTS.RS", "^BVSP","^GSPTSE", "^AORD", "^JKSE", "EZA"];
     currencies = ["JPY", "USD", "EUR", "AUD", "CNY", "CHF", "CAD", "HKD", "ITL"];
     # usd jpy eur cny gbp gem chf cad aud itl
     currencies.each do |cur1|
@@ -742,7 +743,8 @@ class FetchController < ApplicationController
         end
       end
     end
-
+    # 地図に使うソブリンストックインデックス
+    # n225, hsce(hansen)?^hsi, ks11(kankoku), twii(taiwan),^ftse(england), ^GSPC(S&P), dax(german)
 
     # 今は最初のコードしか取得できていない
 

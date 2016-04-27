@@ -1,70 +1,81 @@
+
 <% chart_common_url = "http://ichart.finance.yahoo.com/t?s=" %>
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11 col-md-offset-1 col-lg-offset-1">
 
-    東京工業取引所
-    http://www8.cao.go.jp/kisei-kaikaku/kaigi/meeting/2013/wg/sogyo/130425/item1-2.pdf
-    <br>
-    <junre_title id="sample03"> 資源 </junre_title>
+      <h1>
+        商品(コモディティ)
+      </h1>
 
-      <% metals_name = "金", "銀", "銅", "白金", "パラジウム" %>
-      <% metals = [ "GLD", "SLV", "CPER", "PPLT", "PALL"] %>
+      <br><br>
+      <junre_title id="sample03"> 資源 </junre_title>
+
+        <% metals_name = "金", "銀", "銅", "白金", "パラジウム" %>
+        <% metals = [ "GLD", "SLV", "CPER", "PPLT", "PALL"] %>
+        <% noArray = 0 %>
+        <% metals.each do |metal| %>
+          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+            <%= link_to "" do %>
+              <!-- 90, 120 -->
+              <%= image_tag("#{chart_common_url}#{metal}",
+               alt: metals_name[noArray], :width => '192', :height => '96') %>
+              <br>
+              <%= metals_name[noArray] %>
+              <% noArray = noArray + 1 %>
+            <% end %>
+          </div>
+        <% end %>
+
+      <br><br>
+      <junre_title id="sample03"> 穀物 </junre_title>
+      <% grains = ["corn", "soyb", "sgg"]
+       grains_name = ["とうもろこし", "大豆", "粗糖"] %>
+
       <% noArray = 0 %>
-      <% metals.each do |metal| %>
+      <% grains.each do |grain| %>
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
           <%= link_to "" do %>
-            <!-- 90, 120 -->
-            <%= image_tag("#{chart_common_url}#{metal}",
-             alt: metals_name[noArray], :width => '192', :height => '96') %>
+            <%= image_tag("#{chart_common_url}#{grain}",
+            alt: grains_name[noArray], :width => '192', :height => '96') %>
             <br>
-            <%= metals_name[noArray] %>
-            <% noArray = noArray + 1 %>
+            <%= grains_name[noArray] %>
+            <% noArray = noArray  + 1 %>
           <% end %>
         </div>
       <% end %>
 
-    <br>
-    <junre_title id="sample03"> 穀物 </junre_title>
-    <% grains = ["corn", "soyb", "sgg"]
-     grains_name = ["とうもろこし", "大豆", "粗糖"] %>
+      <br><br>
+      <junre_title id="sample03"> エネルギー </junre_title>
+      <% energies = ["wti", "uco", "uso"]
+         energies_name = ["WTI原油", "UCO", "USO"] %>
+      <% noArray = 0 %>
+      <% energies.each do |energy| %>
+        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+          <%= link_to "" do %>
+            <%= image_tag("#{chart_common_url}#{energy}",
+            alt: energies_name[noArray], :widht => '192', :height => '96') %>
+            <br>
+            <%= energies_name[noArray] %>
+            <% noArray = noArray + 1 %>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
 
-    <% noArray = 0 %>
-    <% grains.each do |grain| %>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <%= image_tag("#{chart_common_url}#{grain}",
-          alt: grains_name[noArray], :width => '192', :height => '96') %>
-          <br>
-          <%= grains_name[noArray] %>
-          <% noArray = noArray  + 1 %>
-        <% end %>
-      </div>
-    <% end %>
-
-    <br>
-    <junre_title id="sample03"> エネルギー </junre_title>
-    <% energies = ["wti", "uco", "uso"]
-       energies_name = ["WTI原油", "UCO", "USO"] %>
-    <% noArray = 0 %>
-    <% energies.each do |energy| %>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <%= image_tag("#{chart_common_url}#{energy}",
-          alt: energies_name[noArray], :widht => '192', :height => '96') %>
-          <br>
-          <%= energies_name[noArray] %>
-          <% noArray = noArray + 1 %>
-        <% end %>
-      </div>
-    <% end %>
-    oil
-    WTI（ウエスト・テキサス・インターミディエート）
-    Brent Blend(北海ブレント)
-    Dubai(ドバイ原油)
-    上記２指数についてはyahooでは取得できないようなので以下を使用？
-    UCO -> http://finance.yahoo.com/q?s=UCO
-    USO -> http://finance.yahoo.com/q?s=USO
-
+    <br><br>
+    <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11 col-md-offset-1 col-lg-offset-1">
+      oil
+      WTI（ウエスト・テキサス・インターミディエート）
+      Brent Blend(北海ブレント)
+      Dubai(ドバイ原油)
+      上記２指数についてはyahooでは取得できないようなので以下を使用？
+      UCO -> http://finance.yahoo.com/q?s=UCO
+      USO -> http://finance.yahoo.com/q?s=USO
+      <br>
+      東京工業取引所
+      http://www8.cao.go.jp/kisei-kaikaku/kaigi/meeting/2013/wg/sogyo/130425/item1-2.pdf
+    </div>
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
     <%= render 'layouts/sidebar' %>

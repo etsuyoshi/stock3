@@ -21,6 +21,9 @@ class FetchController < ApplicationController
     get_price_series("^N225")
     get_price_series("000001.SS")
     get_price_series("^FTSE")
+
+    # yahoo_client.historical_quotes("7203", { start_date: Time::now-3600*24*3, end_date: Time::now})
+    get_price_series("7203")
     # ここまではエラーなしで通過したことがある。
     # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
 
@@ -618,6 +621,8 @@ class FetchController < ApplicationController
       name = "shanghai"
     elsif ticker == '^FTSE'
       name = "FTSE"
+    elsif ticker.to_s.downcase == '7203'
+      name = "TOYOTA(7203.T)"
     else
       name = "notSet"
     end
@@ -627,8 +632,7 @@ class FetchController < ApplicationController
     # newestYMD = Priceseries.maximum("ymd") #ex.20160122
     newestYMD = "20130101"#データがない場合に備えデフォルトを設定
     if Priceseries.find_by(ticker: ticker)
-      # 最後の日付を取得->find_by_sqlだとpostgresqlで無効になる可能性があるため
-      # なるべくActiveRecord !!!!
+      # 最後の日付を取得->find_by_sqlだとpostgresqlで無効になる可能性があるため→なるべくActiveRecord !!!!
       # newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "' + ticker + '" order by ymd desc limit 1')[0]["ymd"]
       # newestYMD = Priceseries.find_by_sql("select * from priceseries where ticker = '" + ticker + "' order by ymd desc limit 1 ")[0]["ymd"]
       newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
@@ -734,7 +738,8 @@ class FetchController < ApplicationController
     ticker = ["^N225", "^DJI", "000001.SS", "000300.SS", "000003.SS", "399108.SZ",
       "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII", "^GSPC", "^FTSE", "^HSI",
        "RTS.RS", "^BVSP","^GSPTSE", "^AORD", "^JKSE", "EZA",
-       "^NZ50", "^AXJO", "^STI", "^GDAXI", "FTSEMIB.MI", "^MERV", "^MXX"];
+       "^NZ50", "^AXJO", "^STI", "^GDAXI", "FTSEMIB.MI", "^MERV", "^MXX",
+       "^KLSE", "^SSMI"];
     currencies = ["JPY", "USD", "EUR", "AUD", "CNY", "CHF", "CAD", "HKD", "ITL"];
     # usd jpy eur cny gbp gem chf cad aud itl
     currencies.each do |cur1|

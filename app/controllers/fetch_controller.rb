@@ -732,8 +732,9 @@ class FetchController < ApplicationController
     # ticker = ["USDJPY=X", "EURJPY=X"];
     # nikkei, dji=>取得不能, 上海総合、CSI300, 上海B株、深センB株、上海Ａ株, 深センＡ株, HangSeng, 香港H株指数,S&P,ロシア,ブラジル
     ticker = ["^N225", "^DJI", "000001.SS", "000300.SS", "000003.SS", "399108.SZ",
-      "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII", "^GSPC", "DAX", "^FTSE", "^HSI",
-       "RTS.RS", "^BVSP","^GSPTSE", "^AORD", "^JKSE", "EZA"];
+      "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII", "^GSPC", "^FTSE", "^HSI",
+       "RTS.RS", "^BVSP","^GSPTSE", "^AORD", "^JKSE", "EZA",
+       "^NZ50", "^AXJO", "^STI", "^GDAXI", "FTSEMIB.MI", "^MERV", "^MXX"];
     currencies = ["JPY", "USD", "EUR", "AUD", "CNY", "CHF", "CAD", "HKD", "ITL"];
     # usd jpy eur cny gbp gem chf cad aud itl
     currencies.each do |cur1|

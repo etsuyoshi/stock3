@@ -347,6 +347,7 @@ class StaticPagesController < ApplicationController
 
     # tickerとcodeの対応表(codeはhighchartsの地名に使うもの)
     # http://www.benricho.org/translate/countrycode.html
+    # http://www.yahoo-help.jp/app/answers/detail/p/546/a_id/45388/~/指数や為替の情報を表示したい
     # http://finance.yahoo.com/q?s=%5EBVSP
     tickerTable =
     [{ticker:"^N225", code:"JP"},
@@ -359,9 +360,17 @@ class StaticPagesController < ApplicationController
      {ticker:"^KS11", code:"KR"},#korea
      {ticker:"^TWII", code:"TW"},#taiwan
      {ticker:"^GSPC", code:"US"},#S&P
-     {ticker:"DAX", code:"DE"},#German
+    #  {ticker:"DAX", code:"DE"},#German
      {ticker:"^FTSE", code:"GB"},#FTSE100(england)
-     {ticker:"^HSI", code:"CN"}];#HangSengIndex
+     {ticker:"^HSI", code:"CN"},#HangSengIndex
+     {ticker:"^NZ50", code:"NZ"},
+     {ticker:"^AXJO", code:"AT"},
+     {ticker:"^STI", code:"SG"},
+     {ticker:"^GDAXI", code:"DE"},#german
+     {ticker:"FTSEMIB.MI", code:"IT"},
+     {ticker:"^MERV", code:"AR"},
+     {ticker:"^MXX", code:"MX"}
+     ];
     #  ex. tickerTable[0][:ticker]=>"^N225"
 
     # ハッシュ形式を要素とする配列を作成する=>描画に使用する

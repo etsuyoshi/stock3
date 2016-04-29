@@ -106,7 +106,7 @@ $(function () {//３番目に表示される
 
 
         // create the chart
-        $('#container').highcharts('StockChart', {
+        $('#container_toyota').highcharts('StockChart', {
 
 
             rangeSelector : {
@@ -288,7 +288,7 @@ $(function () {
 
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
         // Create the chart
-        $('#container_chart').highcharts('StockChart', {
+        $('#container_apple').highcharts('StockChart', {
 
 
             rangeSelector : {
@@ -439,9 +439,9 @@ $(function () {
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
     http://www.investopedia.com/articles/investing/102314/understanding-benchmark-oils-brent-blend-wti-and-dubai.asp
   <div class = "row">
-    <!-- line chart -->
+    <!-- candle stick nk225 -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
-      <div id="container_chart" style="width:100%; height:400px;"></div>
+      <div id="nikkei_chart" style="width:100%; height:400px;"></div>
     </div>
   </div>
 
@@ -456,18 +456,16 @@ $(function () {
   <div class = "row">
     <!-- candle stick @apple -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
-      <div id="container" style="width:100%; height:400px;"></div>
+      <div id="container_toyota" style="width:100%; height:400px;"></div>
     </div>
   </div>
-
 
   <div class = "row">
-    <!-- candle stick nk225 -->
+    <!-- line chart -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
-      <div id="nikkei_chart" style="width:100%; height:400px;"></div>
+      <div id="container_apple" style="width:100%; height:400px;"></div>
     </div>
   </div>
-
 
 
   <div class="row">

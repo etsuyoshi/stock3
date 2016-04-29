@@ -3,9 +3,10 @@
 
 ・悩み
 先物の売買していた時、長期トレンドと短期トレンドを確認して行きたかったがパッと見で確認出来る場所がなかった
-マップ比較
+他国の騰落率の様子（特にいつなのか)
 値動きをもたらすニュースの即時確認
 値動きがあった時のボリューム（出来高を伴って上昇している→下落リスクは薄い、薄い出来で上昇している→下落リスク高い)
+なぜ今値動きが生じているのかのイベント解説
 
 →技術的に分足などのボリュームを取得できるapiはないかもしれない
 
@@ -244,11 +245,11 @@ $(function () {
             },
 
             title: {
-                text: 'World return-rate by country'
+                text: 'World Return-Rate'
             },
 
             subtitle : {
-                text : '各国の株式市場の騰落率'
+                text : '各国の株式市場の騰落率(直近の引け値からの現値騰落率)'
             },
 
             legend: {
@@ -298,7 +299,8 @@ $(function () {
                   states:{
                     hover:{
                       lineWidth: 1,
-                      lineColor: 'white'
+                      lineColor: 'blue',
+                      fillColor:'#0000ff'
                     }
                   }
                 }
@@ -326,7 +328,15 @@ $(function () {
                         [0, 'rgba(255,255,255,0.5)'],
                         [1, Highcharts.Color(Highcharts.getOptions().colors[5]).setOpacity(0.5).get('rgba')]
                     ]
-                },lineColor:'#999999'
+                },
+                lineColor:'#999999',
+                states:{
+                  hover:{
+                    lineWidth: 1,
+                    lineColor: 'red',
+                    fillColor:'#ff0000'
+                  },
+                }
               }
             }]
         });

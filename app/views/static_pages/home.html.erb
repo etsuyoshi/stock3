@@ -1,4 +1,18 @@
 <%= include_gon %>
+・方針：
+
+・悩み
+先物の売買していた時、長期トレンドと短期トレンドを確認して行きたかったがパッと見で確認出来る場所がなかった
+マップ比較
+値動きをもたらすニュースの即時確認
+値動きがあった時のボリューム（出来高を伴って上昇している→下落リスクは薄い、薄い出来で上昇している→下落リスク高い)
+
+→技術的に分足などのボリュームを取得できるapiはないかもしれない
+
+
+
+
+・参考：http://www.machinima.com(最初のLP面白い→使えないかな？)
 ・def bitcoin関数内で実行しているビットコイン関連のニュースをfetch時に取得してニュースDBに格納する
 ・ニュースにタグ付けする
 ・個別ニュースに関連ニュースを表示する
@@ -230,7 +244,7 @@ $(function () {
             },
 
             title: {
-                text: 'World rate by country'
+                text: 'World return-rate by country'
             },
 
             subtitle : {
@@ -240,21 +254,19 @@ $(function () {
             legend: {
                 enabled: false
             },
-
             mapNavigation: {
                 enabled: true,
                 buttonOptions: {
                     verticalAlign: 'bottom'
                 }
             },
-
             mapNavigation: {
                 enabled: true
             },
             series : [{
                 name: 'Countries',
                 mapData: mapData,
-                color: '#E0E0E0',
+                // color: '#E0E0E0',
                 enableMouseTracking: false
             }, {//こうやって連結すればバブルチャートと領域の色などを同時に描画できそう
                 //リターン：色　＆　バブル：取引量
@@ -262,17 +274,60 @@ $(function () {
                 mapData: mapData,
                 name: 'change rate',
                 joinBy: ['iso-a2', 'code'],
-                data: gon.country_return,
+                data: gon.country_return_plus,
                 dataLabels: {
                     enabled: true,
                     color: '#FFFFFF',
                     format: '{point.code}'
                 },
                 minSize: 20,
-                maxSize: '20%',
+                maxSize: '30%',
                 tooltip: {
                     pointFormat: '{point.code}: {point.z} %'
+                },
+
+                marker: {
+                  fillColor: {
+                      radialGradient: { cx: 0.4, cy: .3, r: .7 },
+                      stops: [
+                          [0, 'rgba(255,255,255,0.5)'],
+                          [1, Highcharts.Color(Highcharts.getOptions().colors[0]).setOpacity(0.5).get('rgba')]
+                      ]
+                  },
+                  lineColor:'#999999',
+                  states:{
+                    hover:{
+                      lineWidth: 1,
+                      lineColor: 'white'
+                    }
+                  }
                 }
+            },{
+              type: 'mapbubble',
+              mapData: mapData,
+              name: 'change rate',
+              joinBy: ['iso-a2', 'code'],
+              data: gon.country_return_minus,
+              dataLabels: {
+                  enabled: true,
+                  color: '#FFFFFF',
+                  format: '{point.code}'
+              },
+              minSize: 20,
+              maxSize: '30%',
+              tooltip: {
+                  pointFormat: '{point.code}: ▲{point.z} %'
+              },
+
+              marker: {
+                fillColor: {
+                    radialGradient: { cx: 0.4, cy: .3, r: .7 },
+                    stops: [
+                        [0, 'rgba(255,255,255,0.5)'],
+                        [1, Highcharts.Color(Highcharts.getOptions().colors[5]).setOpacity(0.5).get('rgba')]
+                    ]
+                },lineColor:'#999999'
+              }
             }]
         });
     // });

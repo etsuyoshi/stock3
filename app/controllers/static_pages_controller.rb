@@ -340,6 +340,7 @@ class StaticPagesController < ApplicationController
     @categories = @start_at.upto(@end_at).to_a
     @data = [5, 6, 3, 1, 2, 4, 7]
 
+    # map描画に必要なデータ取得
     # test-data
     # http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json
 # BRVM
@@ -363,19 +364,42 @@ class StaticPagesController < ApplicationController
      {ticker:"^HSI", code:"CN"}];#HangSengIndex
     #  ex. tickerTable[0][:ticker]=>"^N225"
 
-    gon.country_return =[]
+    # ハッシュ形式を要素とする配列を作成する=>描画に使用する
+    # [{code: country-code, z: country-return},{},{}..]
+    gon.country_return_plus =[]
+    gon.country_return_minus = []
     tickerTable.each do |hash|
       ticker=hash[:ticker]
       code=hash[:code]
-      eachPriceNewest = PriceNewest.where(ticker:ticker).order(datetrade: :asc).limit(1)[0]
+      eachPriceNewest = PriceNewest.where(ticker:ticker).order(datetrade: :desc).limit(1)[0]
       # newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
       returnStock = eachPriceNewest.pricetrade/eachPriceNewest.previoustrade-1
-      hashReturn = {code: code, z:(sprintf("%.2f",returnStock*100))}
-      gon.country_return.push(hashReturn)
+
+      if returnStock >= 0
+        # hashReturn = {code: code, z:(sprintf("%.2f",returnStock*100))}
+        hashReturn = {
+          code: code,
+          z: returnStock*100
+        }
+        gon.country_return_plus.push(hashReturn)
+      else
+        # hashReturn = {code: code, z:(sprintf("%.2f",returnStock*100))}
+        hashReturn = {
+          code: code,
+          z: -returnStock*100
+        }
+        gon.country_return_minus.push(hashReturn)
+      end
+
+      # p "ticker=#{ticker}, return=#{returnStock}, now=#{eachPriceNewest.pricetrade},prev=#{eachPriceNewest.previoustrade},date=#{eachPriceNewest.datetrade}"
     end
+    p "gon.country_return_minus=#{gon.min_return_minus}"
+    p "gon.country_return_plus=#{gon.min_return_plus}"
+
+
 
     #  returnはPriceNewestで獲得可能=pricetrade/previoustrade(以下は例)
-    # ex. gon.country_return=
+    #  ex. gon.country_return=
     # [{code: "AF", z:3000},
     #  {code: "AL", z:2000},
     #  {code: "JP", z:1000}];

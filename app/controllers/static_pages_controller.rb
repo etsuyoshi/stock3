@@ -369,8 +369,11 @@ class StaticPagesController < ApplicationController
      {ticker:"^GDAXI", code:"DE"},#german
      {ticker:"FTSEMIB.MI", code:"IT"},
      {ticker:"^MERV", code:"AR"},
-     {ticker:"^MXX", code:"MX"}
+     {ticker:"^MXX", code:"MX"},
+     {ticker:"^KLSE", code:"MY"},
+     {ticker:"^SSMI", code:"CH"}
      ];
+    #  "^KLSE", "^SSMI"
     #  ex. tickerTable[0][:ticker]=>"^N225"
 
     # ハッシュ形式を要素とする配列を作成する=>描画に使用する
@@ -467,9 +470,13 @@ class StaticPagesController < ApplicationController
     gon.user_name="historical data"
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切（以下はテスト）
-    gon.historical_data=
+    gon.historical_nikkei=
     Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
+
+    # toyota stock
+    gon.historical_toyota =
+    Priceseries.where(ticker: "7203").order(ymd: :asc)
 
   end
 

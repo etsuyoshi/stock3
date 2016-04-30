@@ -7,6 +7,8 @@
     <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
     <%= csrf_meta_tags %>
 
+    <%= analytics_init if Rails.env.production? %>
+
     <!-- You can use open graph tags to customize link previews.
     Learn more: https://developers.facebook.com/docs/sharing/webmasters -->
   	<meta property="og:url"           content="http://ancient-retreat-91103.herokuapp.com/" />

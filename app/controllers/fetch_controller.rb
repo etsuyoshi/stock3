@@ -739,7 +739,8 @@ class FetchController < ApplicationController
       "000002.SS", "399107.SZ", "^HIS", "^HSCE", "^HSCC", "^KS11", "^TWII", "^GSPC", "^FTSE", "^HSI",
        "RTS.RS", "^BVSP","^GSPTSE", "^AORD", "^JKSE", "EZA",
        "^NZ50", "^AXJO", "^STI", "^GDAXI", "FTSEMIB.MI", "^MERV", "^MXX",
-       "^KLSE", "^SSMI"];
+       "^KLSE", "^SSMI",
+       "7203"];
     currencies = ["JPY", "USD", "EUR", "AUD", "CNY", "CHF", "CAD", "HKD", "ITL"];
     # usd jpy eur cny gbp gem chf cad aud itl
     currencies.each do |cur1|

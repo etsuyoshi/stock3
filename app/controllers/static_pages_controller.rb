@@ -469,7 +469,7 @@ class StaticPagesController < ApplicationController
 
     gon.user_name="historical data"
 
-    # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切（以下はテスト）
+    # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切
     gon.historical_nikkei=
     Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")

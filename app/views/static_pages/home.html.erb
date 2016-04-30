@@ -54,17 +54,17 @@ $(function () {//３番目に表示される(TOYOTA)
       //  console.log("data=" + data);
 
         // create data
-        var historicals = gon.historical_toyota
+        // var historicals = gon.historical_toyota
+        var historicals = gon.historical["7203"]
         var ohlc = [],
-            volume = [],
-            // dataLength = data.length;
+            volume = [];
             // console.log("length=", dataLength)
-            dataLength=historicals.length;
+            // dataLength = historicals.length;
         // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
         // var unixtime=data[0][0]/1000
         // alert("original unix=" + unixtime)
 
-        for (i = 0; i < dataLength&&i<historicals.length; i++) {
+        for (i = 0; i < historicals.length; i++) {
             var ymd=String(historicals[i]["ymd"])
             var year=ymd.substring(0, 4);
             var month=ymd.substring(4, 6);
@@ -118,8 +118,56 @@ $(function () {//３番目に表示される(TOYOTA)
             [1, 2, 3, 4, 6]
         ]];
 
+        // 2位以降docomo9437done, ntt9432, jt2914, kddi9433, MUFG8306, softbank9984,日本郵政6178,ゆうちょ7282,honda7267
 
-        // create the chart
+        //create the chart:docomo
+        // $('#container_docomo').highcharts('StockChart', {
+        //
+        //
+        //     rangeSelector : {
+        //         selected : 1
+        //     },
+        //
+        //     title : {
+        //       // http://www.nikkei.com/markets/ranking/stock/caphigh.aspx
+        //         text : 'NTTドコモ株(9437.T)'
+        //     },
+        //     yAxis: [{
+        //         title: {
+        //             text: 'price'
+        //         },
+        //         height: 170,
+        //         lineWidth: 2
+        //     }, {
+        //         title: {
+        //             text: 'Volume'
+        //         },
+        //         top: 250,
+        //         height: 40,
+        //         offset: 0,
+        //         lineWidth: 2
+        //     }],
+        //
+        //     series : [{
+        //         type : 'candlestick',
+        //         name : 'Toyota 7203.T',
+        //         data : ohlc,
+        //         dataGrouping: {
+        //             units: groupingUnits
+        //         }
+        //     },{
+        //       type: 'column',
+        //       name: 'Volume',
+        //       data: volume,
+        //       yAxis: 1,
+        //       dataGrouping: {
+        //           units: groupingUnits
+        //       }
+        //     }
+        //   ]
+        // });
+
+        // create the chart:toyota
         $('#container_toyota').highcharts('StockChart', {
 
 
@@ -129,7 +177,6 @@ $(function () {//３番目に表示される(TOYOTA)
 
             title : {
               // http://www.nikkei.com/markets/ranking/stock/caphigh.aspx
-              // 2位以降docomo9437, ntt9432, jt2914, kddi9433, MUFG8306, softbank9984,日本郵政6178,ゆうちょ7282,honda7267
                 text : 'トヨタ株(7203.T)'
             },
             yAxis: [{
@@ -155,22 +202,23 @@ $(function () {//３番目に表示される(TOYOTA)
                 dataGrouping: {
                     units: groupingUnits
                 }
-            },{
-              type: 'column',
-              name: 'Volume',
-              data: volume,
-              yAxis: 1,
-              dataGrouping: {
-                  units: groupingUnits
+              },{
+                type: 'column',
+                name: 'Volume',
+                data: volume,
+                yAxis: 1,
+                dataGrouping: {
+                    units: groupingUnits
+                }
               }
-            }
-          ]
+            ]
         });
     });
 });
 
 // parameterを渡す設計にすれば一つのjqueryで複数のデータに対して実行できるが、、
 // cssで呼び出すときにどうやってパラメータを渡すのであろうか。。
+// appleみたいにjsonを返すapi経由でもらうとか？
 $(function() {
     // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?',
     //  function(data) {
@@ -179,21 +227,22 @@ $(function() {
       // split the data set into ohlc and volume
 
       // 日経チャートを表示する
-      var historicals=gon.historical_nikkei
+      // var historicals=gon.historical_nikkei
+      var historicals = gon.historical["^N225"]
       // var historicals = gon.historical[ticker]
       // alert(historicals[0]["ymd"])
       // console.log('historicals=', historicals[0])
-
+      // console.log('style=', style);
       var ohlc = [],
-          volume = [],
+          volume = [];
           // dataLength = data.length;
           // console.log("length=", dataLength)
-          dataLength=historicals.length;
+      // alert(historicals.length)
       // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
       // var unixtime=data[0][0]/1000
       // alert("original unix=" + unixtime)
 
-      for (i = 0; i < dataLength&&i<historicals.length; i++) {
+      for (i = 0; i<historicals.length; i++) {
           var ymd=String(historicals[i]["ymd"])
           var year=ymd.substring(0, 4);
           var month=ymd.substring(4, 6);
@@ -260,7 +309,7 @@ $(function() {
               selected: 1
           },
           title: {
-              text: "トヨタ(7203)"
+              text: "日経平均"
               //historicals[0]["name"]//gon.user_name//arrayData[0]//gon.user_name
               // text: array[0]["20151230"]//gon.@pseries.
           },
@@ -446,7 +495,7 @@ $(function () {
 });
 </script>
 
-<h1>japanchart</h1>
+<h1>Japan Chart</h1>
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
     http://www.investopedia.com/articles/investing/102314/understanding-benchmark-oils-brent-blend-wti-and-dubai.asp
@@ -584,10 +633,10 @@ $(function () {
       </div>
       <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
         <%= link_to "http://www.google.com" do %>
-          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^KS11",
-          alt: "韓国", :width => '192', :height => '96') %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=^JKSE",
+          alt: "インドネシア", :width => '192', :height => '96') %>
           <br>
-          韓国
+          インドネシア
         <% end %>
       </div>
       <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
@@ -601,6 +650,14 @@ $(function () {
     </div>
     <!-- 2行目 -->
     <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+        <%= link_to "http://www.google.com" do %>
+          <%= image_tag("http://ichart.finance.yahoo.com/t?s=000001.SS",
+          alt: "中国", :width => '192', :height => '96') %>
+          <br>
+          中国
+        <% end %>
+      </div>
       <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
         <%= link_to "http://google.com" do %>
           <%= image_tag("http://ichart.finance.yahoo.com/t?s=^TWII",

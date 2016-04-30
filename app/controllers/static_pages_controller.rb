@@ -470,13 +470,27 @@ class StaticPagesController < ApplicationController
     gon.user_name="historical data"
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切
-    gon.historical_nikkei=
-    Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-
-    # toyota stock
-    gon.historical_toyota =
+    historical_nikkei=
+    Priceseries.where(ticker: "^N225").order(ymd: :asc)
+    historical_toyota =
     Priceseries.where(ticker: "7203").order(ymd: :asc)
+    historical_docomo =
+    Priceseries.where(ticker: "9437").order(ymd: :asc)
+    historical_mufg =
+    Priceseries.where(ticker: "8306").order(ymd: :asc)
+
+
+    gon.historical = {};
+    gon.historical["^N225"] = historical_nikkei
+    gon.historical["7203"] = historical_toyota
+    gon.historical["9437"] = historical_docomo
+    gon.historical["8306"] = historical_mufg
+
+    # p "gon.historical = #{gon.historical["^N225"]}"
+
+    # p "0 = #{gon.historical["^N225"][0]}"
+
 
   end
 

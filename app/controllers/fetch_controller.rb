@@ -23,7 +23,9 @@ class FetchController < ApplicationController
     get_price_series("^FTSE")
 
     # yahoo_client.historical_quotes("7203", { start_date: Time::now-3600*24*3, end_date: Time::now})
-    get_price_series("7203")
+    get_price_series("7203")#toyota
+    get_price_series("9437")#docomo
+    get_price_series("8306")#mufg
     # ここまではエラーなしで通過したことがある。
     # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
 

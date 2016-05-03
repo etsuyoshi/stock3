@@ -354,3 +354,62 @@ span.picture {
     border: 0;
   }
 }
+
+// 参考：http://webnonotes.com/css/css-list/
+// _study.html.erb
+.defaultlist
+,.defaultlist li{
+	padding:0px;
+	margin:0px;
+}
+
+.defaultlist li{
+	list-style-type:none !important;
+	list-style-image:none !important;
+	margin: 5px 0px 5px 0px !important;
+}
+
+.smalllist li{
+	position:relative;
+	padding-left:20px;
+}
+.smalllist li:before{
+	content:'';
+	height:0px;
+	width: 90%;
+	display:block;
+	position:absolute;
+	top:18px;
+	left:0px;
+	// border-bottom: 1px dashed #aaa;
+}
+.smalllist li:after{
+	content:'';
+	display:block;
+	position:absolute;
+	background:#aaa;
+	width:5px;
+	height:5px;
+	top:7px;
+	left:5px;
+	border-radius: 5px;
+}
+
+.diamond li{
+	position:relative;
+	padding-left:20px;
+}
+
+.diamond li:after{
+	content:'';
+	display:block;
+	position:absolute;
+	background:#aaa;
+	width:9px;
+	height:9px;
+	top:5px;
+	left:5px;
+	transform:rotate(-45deg);
+	-webkit-transform:rotate(-45deg);
+	-o-transform:rotate(-45deg);
+}

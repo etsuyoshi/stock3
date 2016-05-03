@@ -41,8 +41,8 @@ class StaticPagesController < ApplicationController
     @up_ranks = get_rank_from_db("priceup")
     @down_ranks = get_rank_from_db("pricedown")
 
-    p "uprank = #{@up_ranks}"
-    p "downrank = #{@down_ranks}"
+    # p "uprank = #{@up_ranks}"
+    # p "downrank = #{@down_ranks}"
 
     # @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
     @nikkei225_now2 = Priceseries.where(ticker: "^N225").order(ymd: :asc).limit(2)
@@ -51,8 +51,8 @@ class StaticPagesController < ApplicationController
     gon.historical_data=#Priceseries.all.order(:ymd)
     Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-    p "nikkei225"
-    p gon.historical_data.length
+    # p "nikkei225"
+    # p gon.historical_data.length
 
     if @nikkei225_now2.length == 2
       todayVal = @nikkei225_now2[0].close.to_f
@@ -178,10 +178,8 @@ class StaticPagesController < ApplicationController
         @arrIndices[cnt]
       cnt = cnt + 1
     end
-
-
-
   end
+
   def europe
 
 
@@ -465,7 +463,7 @@ class StaticPagesController < ApplicationController
 
 
     # test用に出力するメソッド（tickerの確認など..)
-    get_fx_index#fx取得のみ
+    # get_fx_index#fx取得のみ
 
     gon.user_name="historical data"
 
@@ -475,17 +473,18 @@ class StaticPagesController < ApplicationController
     Priceseries.where(ticker: "^N225").order(ymd: :asc)
     historical_toyota =
     Priceseries.where(ticker: "7203").order(ymd: :asc)
-    historical_docomo =
-    Priceseries.where(ticker: "9437").order(ymd: :asc)
-    historical_mufg =
-    Priceseries.where(ticker: "8306").order(ymd: :asc)
+    # これ以上取得項目を増やすと致命的に遅くなるので描画グラフは二つまでにする。
+    # historical_docomo =
+    # Priceseries.where(ticker: "9437").order(ymd: :asc)
+    # historical_mufg =
+    # Priceseries.where(ticker: "8306").order(ymd: :asc)
 
 
     gon.historical = {};
     gon.historical["^N225"] = historical_nikkei
     gon.historical["7203"] = historical_toyota
-    gon.historical["9437"] = historical_docomo
-    gon.historical["8306"] = historical_mufg
+    # gon.historical["9437"] = historical_docomo
+    # gon.historical["8306"] = historical_mufg
 
     # p "gon.historical = #{gon.historical["^N225"]}"
 
@@ -497,6 +496,7 @@ class StaticPagesController < ApplicationController
   def help
   end
 
+  # test用のみ。
   def get_fx_index#(ticker)
     p "get_fx_index"
     # 銘柄コード調べ方その２＝＞yahoo finance shanghaiとググってyahoo financeのページに表示された（それらしい）インデックス
@@ -538,7 +538,7 @@ class StaticPagesController < ApplicationController
 
     rank_all = Hash.new
     (1..30).each do |rank|
-      p rank
+      # p rank
       rank_info = Hash.new
       rankModel = Rank.find_by(
       market: "^N225",

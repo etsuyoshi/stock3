@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+
+  # get 'study_pages/*path', to: 'study_pages#show'
+  get 'study_pages/*path', to: 'study_pages#show'
+  get 'study_pages/home'
+  get 'study_pages/help'
+
   get 'password_resets/new'
 
 

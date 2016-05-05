@@ -6,6 +6,7 @@
 /* mixins, variables, etc. */
 
 $grayMediumLight: #eaeaea;
+
 $lightGray: #999;
 $grayLighter: #999;
 
@@ -412,4 +413,73 @@ span.picture {
 	transform:rotate(-45deg);
 	-webkit-transform:rotate(-45deg);
 	-o-transform:rotate(-45deg);
+}
+
+// 講座の本文と目次
+#studyframe {
+  border-top:1px solid $grayMediumLight;
+  border-right:1px solid $grayMediumLight;
+  border-bottom:1px solid $grayMediumLight;
+  border-left:1px solid $grayMediumLight;
+}
+
+
+
+// 講座の目次
+#studyindex {
+  margin-bottom: 50px;
+  padding-bottom: 30px;
+  // border-top:1px solid $grayMediumLight;
+  // border-right:1px solid $grayMediumLight;
+  border-bottom:1px solid #000;
+  // border-left:1px solid $grayMediumLight;
+  //border-right:1px double $grayMediumLight;
+  //border-left:1px dotted $grayMediumLight;
+  //border-bottom:1px dashed $grayMediumLight;
+
+  // background-color:#ffe;
+
+  //border-top: 1px solid $grayMediumLight;
+}
+
+#studytitle {
+
+}
+
+//講座本文
+#studycontents {
+  // 本文の行間
+  line-height: 180%;
+
+  display: block;
+  font-size: 1.1em;
+  margin-top: 1em;
+  margin-bottom: 1em;
+  margin-left: 0;
+  margin-right: 0;
+  // font-weight: bold
+}
+
+.studytips{
+  font-size: 0.76em;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  border-radius: 5px;
+  border-style: solid;
+  border-color: $grayMediumLight;
+  border-width: 1px;
+
+
+  background-color:#eee;
+  opacity: 0.78;//透明性
+
+  border-top: 1px solid $grayMediumLight;
 }

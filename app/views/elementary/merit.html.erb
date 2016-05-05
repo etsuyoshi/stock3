@@ -1,2 +1,25 @@
 <%= @path if Rails.env.development? %>
-<%= render 'layouts/studyIndex' %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+    <%= render 'layouts/studyIndex' %>
+    <div id="studytitle">
+      <h3>
+        株式運用のメリット
+      </h3>
+    </div>
+    <div id="studycontents">
+      上場審査によるフィルタリング<br>
+      成長企業への長期投資<br>
+      配当収入<br>
+      IPO<br>
+      ニーサ<br>
+      お金は寝かせるのはもったいない<br>
+      分散投資(厳選された投資先の中でバリエーションが豊富)によるダウンサイドリスクの限定<br>
+      上昇局面だけではない下落局面でももうける方法<br>
+
+      【経済学的】経済は物価が上がる前提で成長しているため貨幣を保有しているだけでは資産が目減りしてしまう<br>
+    </div>
+  </div>
+</div>

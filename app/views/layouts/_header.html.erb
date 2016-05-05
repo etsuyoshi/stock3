@@ -33,15 +33,19 @@
 
   #  require 'yahoo-finance'#これがなくてもyahooFinanceは取得可能
   # →DBで取得することにする @ PriceNewestController
-   yahoo_client = YahooFinance::Client.new
-   yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"], [:ask, :bid, :last_trade_date])
-   ask_usdjpy = yahoodata[0].ask
-   bid_usdjpy = yahoodata[0].bid
-   usdjpy = (ask_usdjpy.to_i + bid_usdjpy.to_i)/2
+  #  yahoo_client = YahooFinance::Client.new
+  #  yahoodata = yahoo_client.quotes(["USDJPY=X, EURJPY=X"], [:ask, :bid, :last_trade_date])
+  #  ask_usdjpy = yahoodata[0].ask
+  #  bid_usdjpy = yahoodata[0].bid
+  #  usdjpy = (ask_usdjpy.to_i + bid_usdjpy.to_i)/2
 
-   ask_eurjpy = yahoodata[1].ask
-   bid_eurjpy = yahoodata[1].bid
-   eurjpy = (ask_eurjpy.to_i + bid_eurjpy.to_i)/2
+   usdjpy = PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc)[0].pricetrade
+   eurjpy = PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc)[0].pricetrade
+
+
+  #  ask_eurjpy = yahoodata[1].ask
+  #  bid_eurjpy = yahoodata[1].bid
+  #  eurjpy = (ask_eurjpy.to_i + bid_eurjpy.to_i)/2
 %>
 <%= "現在: " + month.to_s + "月" + day.to_s + "日 " +
     hour.to_s + ":" + minute.to_s +
@@ -52,76 +56,76 @@
     "  ユーロ/円: " + eurjpy.to_i.round(2).to_s %>
 
 <nav class="navbar navbar-inverse">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">世界の株価指数</a>
-      </div>
-      <ul class="nav navbar-nav">
-
-        <li class="<%= active_class(root_path) %>">
-          <%= link_to "総合", root_path %>
-        </li>
-
-        <li class="<%= active_class(feeds_path) %>">
-          <%= link_to "ニュース", feeds_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_nikkei_path) %>">
-          <%= link_to "日経平均", static_pages_nikkei_path %>
-        </li>
-        <li class="<%= active_class(static_pages_fx_path) %>">
-          <%= link_to "為替", static_pages_fx_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_dow_path) %>">
-          <%= link_to "ダウ平均", static_pages_dow_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_shanghai_path) %>">
-          <%= link_to "上海総合", static_pages_shanghai_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_europe_path) %>">
-          <%= link_to "欧州株価", static_pages_europe_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_bitcoin_path) %>">
-          <%= link_to "Bitcoin", static_pages_bitcoin_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_commodity_path) %>">
-          <%= link_to "商品価格", static_pages_commodity_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_adr_path) %>">
-          <%= link_to "日本株ADR", static_pages_adr_path %>
-        </li>
-
-        <li class="<%= active_class(static_pages_kessan_path) %>">
-          <%= link_to "決算", static_pages_kessan_path %>
-        </li>
-        <li><%= link_to "Wiki", '#' %></li>
-        <!-- ログイン -->
-        <% if logged_in? %>
-          <li><%= link_to "Users", users_path %></li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Account <b class="caret"></b>
-            </a>
-            <ul class="dropdown-menu">
-              <li><%= link_to "Profile", current_user %></li>
-              <li><%= link_to "Portfolio", '#' %></li>
-              <li><%= link_to "Settings", edit_user_path(current_user) %></li>
-              <li class="divider"></li>
-              <li>
-                <%= link_to "Log out", logout_path, method: "delete" %>
-              </li>
-            </ul>
-          </li>
-        <% else %>
-          <li><%= link_to "Log in", login_path %></li>
-        <% end %>
-
-      </ul>
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">世界の株価指数</a>
     </div>
-  </nav>
+    <ul class="nav navbar-nav">
+
+      <li class="<%= active_class(root_path) %>">
+        <%= link_to "総合", root_path %>
+      </li>
+
+      <li class="<%= active_class(feeds_path) %>">
+        <%= link_to "ニュース", feeds_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_nikkei_path) %>">
+        <%= link_to "日経平均", static_pages_nikkei_path %>
+      </li>
+      <li class="<%= active_class(static_pages_fx_path) %>">
+        <%= link_to "為替", static_pages_fx_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_dow_path) %>">
+        <%= link_to "ダウ平均", static_pages_dow_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_shanghai_path) %>">
+        <%= link_to "上海総合", static_pages_shanghai_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_europe_path) %>">
+        <%= link_to "欧州株価", static_pages_europe_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_bitcoin_path) %>">
+        <%= link_to "Bitcoin", static_pages_bitcoin_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_commodity_path) %>">
+        <%= link_to "商品価格", static_pages_commodity_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_adr_path) %>">
+        <%= link_to "日本株ADR", static_pages_adr_path %>
+      </li>
+
+      <li class="<%= active_class(static_pages_kessan_path) %>">
+        <%= link_to "決算", static_pages_kessan_path %>
+      </li>
+      <li><%= link_to "株講座", '/study_pages/top' %></li>
+      <!-- ログイン -->
+      <% if logged_in? %>
+        <li><%= link_to "Users", users_path %></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            Account <b class="caret"></b>
+          </a>
+          <ul class="dropdown-menu">
+            <li><%= link_to "Profile", current_user %></li>
+            <li><%= link_to "Portfolio", '#' %></li>
+            <li><%= link_to "Settings", edit_user_path(current_user) %></li>
+            <li class="divider"></li>
+            <li>
+              <%= link_to "Log out", logout_path, method: "delete" %>
+            </li>
+          </ul>
+        </li>
+      <% else %>
+        <li><%= link_to "Log in", login_path %></li>
+      <% end %>
+
+    </ul>
+  </div>
+</nav>

@@ -1,2 +1,22 @@
 <%= @path if Rails.env.development? %>
-<%= render 'layouts/studyIndex' %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+    <%= render 'layouts/studyIndex' %>
+    <div id="studytitle">
+      <h3>
+        株以外の投資先
+      </h3>
+    </div>
+    <div id="studycontents">
+      上場株と未上場株の違い→一般的な株式運用は上場株がメイン<br>
+      債券運用<br>
+      コモディティ運用<br>
+      為替運用<br>
+      不動産運用<br>
+      その他の運用(bitcoin)<br>
+      怪しい投資先にご注意！<br>
+    </div>
+  </div>
+</div>

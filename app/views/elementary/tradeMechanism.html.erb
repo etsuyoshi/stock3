@@ -1,736 +1,744 @@
 <%= @path if Rails.env.development? %>
-<%= render 'layouts/studyIndex' %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+    <%= render 'layouts/studyIndex' %>
+    <div id="studytitle">
+      <h3>
+        取引の仕組み
+      </h3>
+    </div>
+    <div id="studycontents">
+      ここでは株を取引する注文の種類と、それを決定する仕組みについて説明します。
+      株式市場には、「板」と呼ばれる価格を決定するメカニズムが存在します。
+
+      <br>
+      板とは、特定の銘柄を買いたい人と売りたい人の思惑を表で示したものです。
+      売りたい金額ごとに売り手の集団と買いたい金額ごとに買い手の集団をまとめ、
+      それらを別々の行として表現します。
+      例えば、以下のような形式です。
+      <!-- http://stocks.finance.yahoo.co.jp/stocks/detail/?code=2304.T -->
+      <br>
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">150</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%"><strong>300</strong></td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">15</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">20</td>
+            <td width="32%">298</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <br>
+      この板の状態から様々な情報を読み取ることができます。
+      板の見方として、左に売り手を、右に買い手の情報を表示します。
+      例えばこの例では、左の列を見ると301円で100株、300円で50株をこの銘柄を売却したいと申し出ていて、
+      右の列を見ると299円で15株を、298円で20株を購入したいと申し出ていることがわかります。
+
+      このいくらで売りたいと言う情報を指値と呼びます。
+
+      さらに300円の行に株価が表示されているのは、
+      <strong>直前の取引が成立した値段が300円だったということを示しています。</strong>
+      <br>
+      売りの指値の量(合計250株)が買いの指値の量(35株)を大幅に上回っているので、この株は将来下落するという見方も出来るのです。
+
+      株式を売買する際にはこのように、売り手と買い手のどちらが優勢なのかを見極めることが必要になってくるので、板の見方はとても重要なのです。
+      板は売買の成立とともに時々刻々と変化します。
+      先に説明した通り、株価は投資家の需給によって変化するので、この需給を見極めるためにも板がどのように動くのか予測することは投資家の腕の見せ所になります。
+
+      では、板がどのように動くのか、どのように価格が決定していくのか具体的な注文情報と合わせて説明します。
 
 
----
-＜取引の仕組＞
-ここでは株を取引する注文の種類と、それを決定する仕組みについて説明します。
-株式市場には、「板」と呼ばれる価格を決定するメカニズムが存在します。
-
-<br>
-板とは、特定の銘柄を買いたい人と売りたい人の思惑を表で示したものです。
-売りたい金額ごとに売り手の集団と買いたい金額ごとに買い手の集団をまとめ、
-それらを別々の行として表現します。
-例えば、以下のような形式です。
-<!-- http://stocks.finance.yahoo.co.jp/stocks/detail/?code=2304.T -->
-<br>
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">150</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%"><strong>300</strong></td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">15</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">20</td>
-      <td width="32%">298</td>
-    </tr>
-  </tbody>
-</table>
-
-<br>
-この板の状態から様々な情報を読み取ることができます。
-板の見方として、左に売り手を、右に買い手の情報を表示します。
-例えばこの例では、左の列を見ると301円で100株、300円で50株をこの銘柄を売却したいと申し出ていて、
-右の列を見ると299円で15株を、298円で20株を購入したいと申し出ていることがわかります。
-
-このいくらで売りたいと言う情報を指値と呼びます。
-
-さらに300円の行に株価が表示されているのは、
-<strong>直前の取引が成立した値段が300円だったということを示しています。</strong>
-<br>
-売りの指値の量(合計250株)が買いの指値の量(35株)を大幅に上回っているので、この株は将来下落するという見方も出来るのです。
-
-株式を売買する際にはこのように、売り手と買い手のどちらが優勢なのかを見極めることが必要になってくるので、板の見方はとても重要なのです。
-板は売買の成立とともに時々刻々と変化します。
-先に説明した通り、株価は投資家の需給によって変化するので、この需給を見極めるためにも板がどのように動くのか予測することは投資家の腕の見せ所になります。
-
-では、板がどのように動くのか、どのように価格が決定していくのか具体的な注文情報と合わせて説明します。
 
 
+      ＜価格決定の仕組＞
+      株価の決定方法には二つの方式が存在します。
+      板寄せ方式とザラ場方式と呼ばれるものです。
+
+      ＜板寄せ方式＞
+      株式市場で売買が開始する際や終了する際に全注文をマッチングさせる方式です。
+      例えば、東京証券取引所では9時に売買が始まる(場が開く)のですが、8時20分ごろから売買注文を受け付けます。
+      8時20分から9時までの間に受け付けた注文を9時に全部一気にマッチングさせます。
+      具体的には9時時点で以下のような板の状況だったとします。
 
 
-＜価格決定の仕組＞
-株価の決定方法には二つの方式が存在します。
-板寄せ方式とザラ場方式と呼ばれるものです。
+      <br>
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">成行</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">200</td>
+            <td width="32%">301</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">300</td>
+          </tr>
+          <tr>
+            <td width="32%">299</td>
+            <td width="10%">900</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">500</td>
+            <td width="32%">成行</td>
+          </tr>
+        </tbody>
+      </table>
 
-＜板寄せ方式＞
-株式市場で売買が開始する際や終了する際に全注文をマッチングさせる方式です。
-例えば、東京証券取引所では9時に売買が始まる(場が開く)のですが、8時20分ごろから売買注文を受け付けます。
-8時20分から9時までの間に受け付けた注文を9時に全部一気にマッチングさせます。
-具体的には9時時点で以下のような板の状況だったとします。
+      <br>
+      上の板で成行という行が存在します。
+      これはいくらでもいいから売買を成立させたいという注文です。
+      例えば、左上の売り注文には1200株をいくらでもいいから売りたいという注文が入っていることを示しています。
 
+      <br>
+      注文をマッチングさせるには一定のルールが存在します。
+      まず、最初に売り手と買い手の値段がマッチングしている場所の注文が先に約定します。
+      <tips>
+        約定とは、注文が成立することを言います。
+      </tips>
+      これを価格優先の原則と呼びます。
+      価格優先原則に従うと、最初に成行注文、次に指値注文という順番に注文が成立します。
+      例えば、買いの指値注文であれば、その指値以下の売り注文の中の最高値の売りの指値注文と、
+      また売りの指値注文であればそれ以上の買い注文の中の最安値の買い注文とマッチングします。
+      同じ価格での注文であれば、先に発生した注文が優先されます。
+      これを時間優先の原則と呼びます。
 
-<br>
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">成行</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">200</td>
-      <td width="32%">301</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">300</td>
-    </tr>
-    <tr>
-      <td width="32%">299</td>
-      <td width="10%">900</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">500</td>
-      <td width="32%">成行</td>
-    </tr>
-  </tbody>
-</table>
+      しかし、注文が成立したと言っても、それぞれの指値で約定されるわけではありません。
+      いくらで注文が成立したかは最後に決まります。
 
-<br>
-上の板で成行という行が存在します。
-これはいくらでもいいから売買を成立させたいという注文です。
-例えば、左上の売り注文には1200株をいくらでもいいから売りたいという注文が入っていることを示しています。
+      <br>
+      上記の結果、まず1200株の成行買い注文と500株の売り成行注文がマッチングして700株の買い成行注文が残ります。<br>
+      その結果、以下のような板になります。
+      <br>
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">成行</td>
+            <td width="10%">700</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">200</td>
+            <td width="32%">301</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">300</td>
+          </tr>
+          <tr>
+            <td width="32%">299</td>
+            <td width="10%">900</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+        </tbody>
+      </table>
 
-<br>
-注文をマッチングさせるには一定のルールが存在します。
-まず、最初に売り手と買い手の値段がマッチングしている場所の注文が先に約定します。
-<tips>
-  約定とは、注文が成立することを言います。
-</tips>
-これを価格優先の原則と呼びます。
-価格優先原則に従うと、最初に成行注文、次に指値注文という順番に注文が成立します。
-例えば、買いの指値注文であれば、その指値以下の売り注文の中の最高値の売りの指値注文と、
-また売りの指値注文であればそれ以上の買い注文の中の最安値の買い注文とマッチングします。
-同じ価格での注文であれば、先に発生した注文が優先されます。
-これを時間優先の原則と呼びます。
+      <br>
 
-しかし、注文が成立したと言っても、それぞれの指値で約定されるわけではありません。
-いくらで注文が成立したかは最後に決まります。
+      次にこの成行注文と301円で200株の売り指値注文がマッチングしますが、まだ500株の買い成行注文が残ります。<br>
 
-<br>
-上記の結果、まず1200株の成行買い注文と500株の売り成行注文がマッチングして700株の買い成行注文が残ります。<br>
-その結果、以下のような板になります。
-<br>
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">成行</td>
-      <td width="10%">700</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">200</td>
-      <td width="32%">301</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">300</td>
-    </tr>
-    <tr>
-      <td width="32%">299</td>
-      <td width="10%">900</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-  </tbody>
-</table>
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">成行</td>
+            <td width="10%">500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">300</td>
+          </tr>
+          <tr>
+            <td width="32%">299</td>
+            <td width="10%">900</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+        </tbody>
+      </table>
 
-<br>
+      <br>
+      ----
+      次にこの成行の売り500株が300円の買い注文とマッチングするので、500株の買い指値注文が残ります。
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">500</td>
+            <td width="32%">300</td>
+          </tr>
+          <tr>
+            <td width="32%">299</td>
+            <td width="10%">900</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+        </tbody>
+      </table>
 
-次にこの成行注文と301円で200株の売り指値注文がマッチングしますが、まだ500株の買い成行注文が残ります。<br>
+      <br>
 
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">成行</td>
-      <td width="10%">500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">300</td>
-    </tr>
-    <tr>
-      <td width="32%">299</td>
-      <td width="10%">900</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-  </tbody>
-</table>
+      これで成行注文がなくなりましたので、次は売り注文の中で最も安い299円の売り指値注文と
+      買い注文の中で最も高い300円の買い指値注文がマッチングして、400株の買い指値注文が残ります。
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">299</td>
+            <td width="10%">400</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+        </tbody>
+      </table>
 
-<br>
-----
-次にこの成行の売り500株が300円の買い注文とマッチングするので、500株の買い指値注文が残ります。
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">500</td>
-      <td width="32%">300</td>
-    </tr>
-    <tr>
-      <td width="32%">299</td>
-      <td width="10%">900</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-  </tbody>
-</table>
+      <br>
+      最後に残った299円での指値注文同士がマッチングして1100株の買い注文が残ります。
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%"><strong>299</strong></td>
+            <td width="10%">1600</td>
+            <td width="32%">299</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+        </tbody>
+      </table>
 
-<br>
+      こうして板寄せ方式で最後に決定した価格を始め値（はじめね）と呼び、
+      上記で成立した成行注文、301,300円、299円の指値売買などの全ての注文は
+      この299円の価格で約定したものとされます。
 
-これで成行注文がなくなりましたので、次は売り注文の中で最も安い299円の売り指値注文と
-買い注文の中で最も高い300円の買い指値注文がマッチングして、400株の買い指値注文が残ります。
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">299</td>
-      <td width="10%">400</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-  </tbody>
-</table>
+      <tips>
+        売り注文の中で最も安い指値注文を売りの気配値、買い注文の中で最も高い指値注文のことを買いの気配値と呼びます。
+        上記の板の場合、売りの気配は300円、買いの気配は299円となります。
+        また、売り注文だけで買い注文がない板の事を売り気配、買い注文だけで売り注文がない板の事を買い気配と呼びます。
+        上記の板では売りも買いも両方指値注文がある状態なので、売り気配、買い気配のどちらでもありません。
+      </tips>
 
-<br>
-最後に残った299円での指値注文同士がマッチングして1100株の買い注文が残ります。
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%"><strong>299</strong></td>
-      <td width="10%">1600</td>
-      <td width="32%">299</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-  </tbody>
-</table>
+      <br>
+      ＜ザラ場方式＞
+      ザラ場方式は取引所が実際に開いている時間でリアルタイムに注文が発生して株価を決めます。
+      具体的には9時から11時半までの前場と12時半から15時までの後場に分かれます。
+      ザラ場中でも時間優先の原則、価格優先の原則は適用されます。
 
-こうして板寄せ方式で最後に決定した価格を始め値（はじめね）と呼び、
-上記で成立した成行注文、301,300円、299円の指値売買などの全ての注文は
-この299円の価格で約定したものとされます。
-
-<tips>
-  売り注文の中で最も安い指値注文を売りの気配値、買い注文の中で最も高い指値注文のことを買いの気配値と呼びます。
-  上記の板の場合、売りの気配は300円、買いの気配は299円となります。
-  また、売り注文だけで買い注文がない板の事を売り気配、買い注文だけで売り注文がない板の事を買い気配と呼びます。
-  上記の板では売りも買いも両方指値注文がある状態なので、売り気配、買い気配のどちらでもありません。
-</tips>
-
-<br>
-＜ザラ場方式＞
-ザラ場方式は取引所が実際に開いている時間でリアルタイムに注文が発生して株価を決めます。
-具体的には9時から11時半までの前場と12時半から15時までの後場に分かれます。
-ザラ場中でも時間優先の原則、価格優先の原則は適用されます。
-
-例えば、上記で説明した板寄せ方式で始め値が決定した後、
-(ザラ場中に)299円で2000株の注文が入ったとすると、400株の買い注文が残って以下のような板になります。
-<table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
-  <tbody>
-    <tr>
-      <th colspan="2" width="42%">売気配</th>
-      <th width="16%" nowrap="">株価</th>
-      <th colspan="2" width="42%">買気配</th>
-    </tr>
-    <tr>
-      <td width="32%">305</td>
-      <td width="10%">1000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">304</td>
-      <td width="10%">1100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">303</td>
-      <td width="10%">1200</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">302</td>
-      <td width="10%">1500</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">301</td>
-      <td width="10%">2000</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">300</td>
-      <td width="10%">100</td>
-      <td width="16%">---</td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">299</td>
-      <td width="10%">400</td>
-      <td width="16%"><strong>299</strong></td>
-      <td width="10%">&nbsp;</td>
-      <td width="32%">&nbsp;</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">1000</td>
-      <td width="32%">298</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">2000</td>
-      <td width="32%">297</td>
-    </tr>
-    <tr>
-      <td width="32%">&nbsp;</td>
-      <td width="10%">&nbsp;</td>
-      <td width="16%">---</td>
-      <td width="10%">3000</td>
-      <td width="32%">296</td>
-    </tr>
-  </tbody>
-</table>
-<br>
-最後に成立した注文が299円なので価格は変わりません。
-<br>
-以上が株の注文種類と株価の決定メカニズムです。
+      例えば、上記で説明した板寄せ方式で始め値が決定した後、
+      (ザラ場中に)299円で2000株の注文が入ったとすると、400株の買い注文が残って以下のような板になります。
+      <table width="312" border="0" cellspacing="0" cellpadding="0" class="boardFin yjMS mar0">
+        <tbody>
+          <tr>
+            <th colspan="2" width="42%">売気配</th>
+            <th width="16%" nowrap="">株価</th>
+            <th colspan="2" width="42%">買気配</th>
+          </tr>
+          <tr>
+            <td width="32%">305</td>
+            <td width="10%">1000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">304</td>
+            <td width="10%">1100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">303</td>
+            <td width="10%">1200</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">302</td>
+            <td width="10%">1500</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">301</td>
+            <td width="10%">2000</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">300</td>
+            <td width="10%">100</td>
+            <td width="16%">---</td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">299</td>
+            <td width="10%">400</td>
+            <td width="16%"><strong>299</strong></td>
+            <td width="10%">&nbsp;</td>
+            <td width="32%">&nbsp;</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">1000</td>
+            <td width="32%">298</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">2000</td>
+            <td width="32%">297</td>
+          </tr>
+          <tr>
+            <td width="32%">&nbsp;</td>
+            <td width="10%">&nbsp;</td>
+            <td width="16%">---</td>
+            <td width="10%">3000</td>
+            <td width="32%">296</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      最後に成立した注文が299円なので価格は変わりません。
+      <br>
+      以上が株の注文種類と株価の決定メカニズムです。
+    </div>
+  </div>
+</div>

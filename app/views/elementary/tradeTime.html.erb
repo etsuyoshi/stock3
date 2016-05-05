@@ -1,2 +1,21 @@
 <%= @path if Rails.env.development? %>
-<%= render 'layouts/studyIndex' %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+    <%= render 'layouts/studyIndex' %>
+    <div id="studytitle">
+      <h3>
+        取引場所と時間について
+      </h3>
+    </div>
+    <div id="studycontents">
+      東証の取引時間<br>
+      日中→前場、後場、ザラ場、板寄せ<br>
+      夜間取引<br>
+      PTSとは<br>
+      ニューヨークとロンドンの取引時間<br>
+      adr<br>
+    </div>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 gem 'gon'
+gem 'meta-tags'
+
 # 画像アップロード
 gem 'carrierwave',             '0.10.0'
 gem 'mini_magick',             '3.8.0'

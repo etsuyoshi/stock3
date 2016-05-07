@@ -426,11 +426,15 @@ span.picture {
 
 // 講座の目次
 #studyindex {
+  margin-top: 30px;
+  padding-top: -10px;
+  border-top: 1px solid #eee;
+
   margin-bottom: 50px;
   padding-bottom: 30px;
   // border-top:1px solid $grayMediumLight;
   // border-right:1px solid $grayMediumLight;
-  border-bottom:1px solid #000;
+  border-bottom:1px solid #eee;
   // border-left:1px solid $grayMediumLight;
   //border-right:1px double $grayMediumLight;
   //border-left:1px dotted $grayMediumLight;
@@ -442,7 +446,7 @@ span.picture {
 }
 
 #studytitle {
-
+  padding-top: 20px;
 }
 
 //講座本文

@@ -199,6 +199,8 @@ GEM
       multi_json
       request_store (>= 1.0)
     google-analytics-rails (0.0.6)
+    gretel (3.0.8)
+      rails (>= 3.2.0)
     guard (2.13.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, <= 4.0)
@@ -360,6 +362,7 @@ DEPENDENCIES
   fog (= 1.36.0)
   gon
   google-analytics-rails
+  gretel
   guard-minitest (= 2.3.1)
   highcharts-rails
   jbuilder (= 2.2.3)

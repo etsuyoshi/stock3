@@ -8,6 +8,28 @@ crumb :study do
   parent :root
 end
 
+# 初級編
+crumb :study_aboutstock do
+  link "株とは"
+  parent :study
+end
+
+crumb :study_stockmechanism do
+  link "株の仕組み"
+  parent :study
+end
+
+# 中級編
+crumb :study_securities_fee do
+  link "手数料"
+  parent :study
+end
+
+crumb :study_securities_matsui do
+  link "松井証券で口座を開く"
+  parent :study
+end
+
 crumb :news do
   link "ニュース"
   parent :root

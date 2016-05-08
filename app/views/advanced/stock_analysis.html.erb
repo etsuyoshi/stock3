@@ -1,0 +1,54 @@
+<!-- seo -->
+<%= set_meta_tags title: '株式分析' %>
+<%= breadcrumb :analytics %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         株価の分析
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      株価を分析する方法をご紹介します。<br>
+      <br><br>
+      <h4>1.現値の割安/割高判定指標</h4><br><br>
+      <strong>PBR</strong><br>
+      株式時価総額/簿価<br><br>
+      <strong>PER</strong><br>
+      株式時価総額/当期純利益<br><br>
+      <strong>ROA</strong><br>
+      当期純利益/総資産<br><br>
+      <strong>ROE</strong><br>
+      当期純利益/純資産<br><br>
+      <strong>EV/EBITDA</strong><br>
+      企業価値EV/利払い前税引き前償却前利益EBITDA<br><br>
+      <strong>EV</strong><br>
+      株式時価総額 ＋ 純負債（有利子負債 ー 現預金）<br><br>
+      <strong>EBITDA</strong><br>
+      当期純利益 ＋ 少数株主持分損益 ＋ 支払い利息 ＋ 法人税 ＋ 減価償却費<br>
+      Earnings Before Interest,Taxes, Depreciation and Amortization<br><br>
+      <strong>配当性向</strong><br>
+      1株当たりの配当額 / 1株当たりの当期純利益<br><br>
+      <strong>BPS</strong><br>
+      純資産÷発行済株式総数<br><br>
+      <strong>EPS</strong><br>
+      当期純利益÷発行済株式総数<br><br>
+      http://www.kabutec.jp/company/fs_2461.html
+
+      <br><br><br>
+
+      <h4>2.理論株価の算出</h4><br><br>
+      株価には理論値という考え方があります。<br>
+      理論には、株価は企業の収益力を反映するものであるという前提があります。<br>
+
+      1.BPSとEPSから算出する方法<br>
+      BPS＋（今期予想EPS×10）<br>
+<br>
+      2.PERとPBRと売上高成長率を加味する方法<br>
+      BPS＋今期予想EPS＋来期予想EPS＋来期予想EPS×（売上成長率＋売上成長率の2乗＋売上成長率の3乗＋売上成長率の4乗）<br>
+<br>

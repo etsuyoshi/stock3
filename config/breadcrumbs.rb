@@ -49,6 +49,11 @@ crumb :sell_matsui do
   parent :study
 end
 
+crumb :analytics do
+  link "株式分析"
+  parent :study
+end
+
 crumb :news do
   link "ニュース"
   parent :root

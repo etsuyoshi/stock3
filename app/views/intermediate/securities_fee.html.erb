@@ -1,7 +1,6 @@
 <!-- seo -->
 <%= set_meta_tags title: '証券会社別の手数料比較' %>
-<%= breadcrumb :study %>
-
+<%= breadcrumb :study_securities_fee %>
 
 <%= @path if Rails.env.development? %>
 <div class="row">
@@ -9,13 +8,13 @@
        id="studyframe">
 
      <div id="studytitle">
-       <h2>
+       <h1>
          手数料で選ぶ
-       </h2>
+       </h1>
      </div>
     <%= render 'layouts/studyIndex' %>
     <div id="studycontents">
-      <h4>株の売買手数料</h4>
+      <h4>株を売買する時の手数料</h4>
       証券会社を選ぶときに売買手数料を調べておくことは非常に重要です。<br>
       保有していた銘柄が購入時より300円値上がりしたから利益確定しようとしても、
       売買手数料が500円の証券会社で売却してしまったら200円の損になってしまいます。<br>

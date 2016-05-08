@@ -1,0 +1,150 @@
+<!-- seo -->
+<%= set_meta_tags title: '松井証券で口座を開く' %>
+<%= breadcrumb :study_securities_matsui %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         松井証券の口座を開く
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+
+      まずは
+      <%= link_to 'こちら', 'http://www.matsui.co.jp/apply/index.html', :target=>["_blank"] %>
+      のページをご覧ください。　<br>
+
+      3ステップに分けて説明します。
+<br>
+      <junre_title id="sample03">ステップ１.申し込みフォームに入力する</junre_title>
+      <strong>①個人口座の解説を始めます。</strong><br><br>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          先ほど開いたページの上部にある赤いボタン「【無料】個人口座開設」を押します。<br>
+          法人の方は法人口座解説ボタンを押してください。<br>
+          未成年の方は未成年口座解説ボタンを押してください。<br>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <%= link_to "http://www.matsui.co.jp/apply/index.html", :target=>["_blank"] do %>
+            <!-- 90, 120 -->
+            <%= image_tag("http://www.matsui.co.jp/first/image/tour_img01.gif",
+            alt: "個人口座開設ボタンを押す", :width => '300', :height => '400') %>
+          <% end %>
+        </div>
+      </div>
+      <br><br>
+      <strong>②2種類の申し込み方法のいずれかを決めます。</strong><br>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          プリンターを持っていれば左の赤いボタン「自分で印刷して申込む」を押します。<br>
+          プリンターを持っていなければ右のオレンジ色のボタン「申込書を取り寄せる」を押します。
+          この場合は後日、松井証券から情報が入力された申込書が紙面で郵送されます。<br>
+          プリンターをお持ちでない方のために以下では後者の取り寄せるボタンを押した場合で説明します。<br>
+
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <%= link_to "https://account.deal.matsui.co.jp/ITS/account/AcOpenInfo.jsp?abid=orange", :target=>["_blank"] do %>
+            <!-- 90, 120 -->
+            <%= image_tag("http://www.matsui.co.jp/first/image/tour_step01_img01.gif",
+            alt: "申込方法を決める", :width => '300', :height => '330') %>
+          <% end %>
+        </div>
+      </div>
+      <br><br>
+      <strong>③申込内容を記入します。</strong><br>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          1.氏名（漢字、片仮名でフリガナ両方）や生年月日など、赤い入力していきます。<br>
+          2.最後に「反社会的勢力ではないことのチェックボタンを押します。<br>
+          3.全ての入力項目を埋めたら、次の画面へ進む(step 3)というボタンを押します。<br>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <%= link_to "https://account.deal.matsui.co.jp/servlet/ITS/account/AcOpenBasic", :target=>["_blank"] do %>
+            <!-- 90, 120 -->
+            <%= image_tag("http://www.matsui.co.jp/first/image/tour_step01_img02.gif",
+            alt: "申込内容を入力する", :width => '300', :height => '330') %>
+          <% end %>
+        </div>
+      </div>
+      <br><br>
+      <strong>④口座開設申込書が郵送で届くのを待ちます。</strong><br>
+      <br>
+      ③の申込の入力が完了すると郵送で申込書が届きますので、
+      それを待つ間、以下のステップ２に続きます。
+      <br><br>
+
+
+<br>
+      <junre_title id="sample03">ステップ２.口座解説申込書を郵送する</junre_title><br>
+      ステップ１の申込の入力が完了すると郵送で申込書が届きますので、
+      それまでに以下の①の書類を準備します。
+
+      <br>
+      <strong>①必要書類を準備します。</strong><br>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <br>
+          必要な書類は以下の２点です。<br>
+          <br>
+          ⒈<%= link_to 'マイナンバー確認書類', 'http://faq.matsui.co.jp/EokpControl?&tid=53470&event=FE0006', :target=>["_blank"] %><br>
+          ⒉<%= link_to '本人確認書類', 'http://www.matsui.co.jp/utility/win/person_pop1.html', :target=>["_blank"] %>
+          <br>マイナンバー確認書類はマイナンバーカード（個人カード）の申込をされていない方でも自治体から郵送されてきた「通知カード」でも可能です。
+          またはマイナンバーの記載がある住民票の写しなどでも可能です。
+          <br>詳細は各リンク先をご覧ください。<br>
+          <br>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          マイナンバー確認書類<br>
+          <%= image_tag("https://secure.okweb3.jp/matsui/files/image1/4798-1.jpg") %>
+          <%= image_tag("https://secure.okweb3.jp/matsui/files/image1/4798-2.jpg") %><br>
+          本人確認書類(免許証などでOK)<br>
+          <%= image_tag("http://www.matsui.co.jp/utility/win/image/person_pop6_06.gif") %>
+        </div>
+      </div>
+
+      <br><br>
+      <strong>②口座開設申込書に署名します。</strong><br>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          松井証券から口座開設申込書が届いたら
+          署名欄に自筆でご自身のお名前を署名します。<br><br>
+          <br>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <%= image_tag("http://www.matsui.co.jp/utility/win/image/person_pop6_04.gif") %>
+        </div>
+      </div>
+
+      <br><br>
+      <strong>③必要書類を同封して返送します。</strong><br>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          ②で署名した申込書と①で準備した必要書類２点を合わせて３点を
+          返信用封筒に同封して返送します。<br><br>
+
+          <br>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+          <%= link_to "http://www.matsui.co.jp/first/image/tour_step01_img05.gif", :target=>["_blank"] do %>
+            <!-- 90, 120 -->
+            <%= image_tag("http://www.matsui.co.jp/first/image/tour_step01_img05.gif",
+            alt: "申込内容を入力する", :width => '300', :height => '400') %>
+          <% end %>
+        </div>
+      </div>
+<br>
+      <junre_title id="sample03">ステップ３.口座解説完了のお知らせが届くのを待つ</junre_title><br>
+      あとは、松井証券から口座開設手続き完了のお知らせが届くのを待つだけです。<br>
+      場合によって、必要書類の不備などがあればお知らせされるので指示通りに修正して再度返送します。
+
+
+    </div>
+  </div>
+</div>

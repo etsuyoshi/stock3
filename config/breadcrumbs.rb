@@ -39,6 +39,15 @@ crumb :study_search_my_portfolio do
   link "自分に合う銘柄の探し方"
   parent :study
 end
+crumb :buy_matsui do
+  link "初めて買ってみる"
+  parent :study
+end
+
+crumb :sell_matsui do
+  link "初めて売ってみる"
+  parent :study
+end
 
 crumb :news do
   link "ニュース"

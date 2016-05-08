@@ -1,0 +1,20 @@
+<!-- seo -->
+<%= set_meta_tags title: '初めて株を売ってみる' %>
+<%= breadcrumb :sell_matsui %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         初めて株を売ってみる
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <h4>初めて売る</h4>
+    </div>
+  </div>
+</div>

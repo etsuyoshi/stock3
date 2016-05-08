@@ -1,6 +1,11 @@
 source 'https://rubygems.org'
 gem 'gon'
+# seo: meta-tag
 gem 'meta-tags'
+
+# seo: パンくず
+gem 'gretel'
+
 
 # 画像アップロード
 gem 'carrierwave',             '0.10.0'

@@ -1,28 +1,16 @@
 <%= include_gon %>
-・方針：
+このサイトは管理人が日本株の売買をしながら、欲しい情報がすぐに手に入らなかったり、重要な情報をスルーしてしまったという、
+株式売買において不便に感じたことがきっかけとなり、
+自分の経験が他の投資家の皆様にもお役に立てればと思い、サイトを立ち上げました。<br>
+このサイトは有料のホスティングサービスを使っており、一部広告も表示されておりますのでご了承ください。<br>
+<br>
 
-・悩み
-先物の売買していた時、長期トレンドと短期トレンドを確認して行きたかったがパッと見で確認出来る場所がなかった
-他国の騰落率の様子（特にいつなのか)
-値動きをもたらすニュースの即時確認
-値動きがあった時のボリューム（出来高を伴って上昇している→下落リスクは薄い、薄い出来で上昇している→下落リスク高い)
-なぜ今値動きが生じているのかのイベント解説
-
-→技術的に分足などのボリュームを取得できるapiはないかもしれない
-
-
-
-
-・参考：http://www.machinima.com(最初のLP面白い→使えないかな？)
-・def bitcoin関数内で実行しているビットコイン関連のニュースをfetch時に取得してニュースDBに格納する
-・ニュースにタグ付けする
-・個別ニュースに関連ニュースを表示する
-・トップページの地図に世界の株指数の騰落率バブルを描画する
-・特定銘柄に投資しているユーザーに別の銘柄の(分散)投資を進めるorビットコイン投資を進める
-・特定領域に興味があるユーザーに対して別の関連ニュースを知らせる
-<!-- http://www.bhyuu.com/drilldown-maps-and-funnell-charts-on-the-same-page-using-highcharts/ -->
-<!-- http://suzumenote.com/tech/46 -->
-<!-- http://jsfiddle.net/gh/get/jquery/1.9.1/highslide-software/highcharts.com/tree/master/samples/maps/demo/latlon-advanced/ -->
+【管理人が感じた悩み】<br>
+・個別銘柄や先物の売買していた時、長期トレンドと短期トレンドを確認したかったがすぐに自由にチャートの表示期間等を動かしながら確認出来るリソースがなかったこと。<br>
+・前日のダウや上海市場の引け値、その他海外の株式インデックス騰落率の状況<br>
+・値動きをもたらすニュースの即時確認<br>
+・値動きがあった時の出来高<br>
+・なぜ今値動きが生じているのかのイベント解説<br>
 
 <!-- google chart -->
 <script>
@@ -498,7 +486,6 @@ $(function () {
 <h1>Japan Chart</h1>
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-    http://www.investopedia.com/articles/investing/102314/understanding-benchmark-oils-brent-blend-wti-and-dubai.asp
   <div class = "row">
     <!-- candle stick nk225 -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">

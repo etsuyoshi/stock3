@@ -1,5 +1,6 @@
 module ApplicationHelper
   # seo-meta-tag
+  # http://qiita.com/hirooooooo/items/f1a75cf0f2c581f0b620
   def default_meta_tags
   {
     title:       "日本株チャートの初心者講座",
@@ -14,7 +15,7 @@ module ApplicationHelper
       type: "website",
       url: request.original_url,
       image: image_url("http://ichart.finance.yahoo.com/t?s=^N225"),
-      site_name: "site name",
+      site_name: "japanchart",
       description: "日本と世界の株式市場のリアルタイムチャートと初心者講座",
       locale: "ja_JP"
     }

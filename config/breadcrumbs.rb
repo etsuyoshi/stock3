@@ -30,6 +30,16 @@ crumb :study_securities_matsui do
   parent :study
 end
 
+crumb :study_first_buy do
+  link "最初に買う銘柄の選び方"
+  parent :study
+end
+
+crumb :study_search_my_portfolio do
+  link "自分に合う銘柄の探し方"
+  parent :study
+end
+
 crumb :news do
   link "ニュース"
   parent :root

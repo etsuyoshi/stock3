@@ -54,6 +54,11 @@ crumb :analytics do
   parent :study
 end
 
+crumb :apply_ipo do
+  link "IPOに応募する"
+  parent :study
+end
+
 crumb :news do
   link "ニュース"
   parent :root

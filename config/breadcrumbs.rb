@@ -59,6 +59,11 @@ crumb :apply_ipo do
   parent :study
 end
 
+crumb :determine_policy do
+  link "運用方針を決める"
+  parent :study
+end
+
 crumb :news do
   link "ニュース"
   parent :root

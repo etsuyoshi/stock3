@@ -69,6 +69,16 @@ crumb :mini_kabu do
   parent :study
 end
 
+crumb :analyst do
+  link "アナリスト"
+  parent :study
+end
+
+crumb :analyst_report do
+  link "アナリストレポート"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

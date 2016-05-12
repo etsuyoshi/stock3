@@ -64,6 +64,12 @@ crumb :determine_policy do
   parent :study
 end
 
+crumb :mini_kabu do
+  link "ミニ株"
+  parent :study
+end
+
+
 crumb :news do
   link "ニュース"
   parent :root

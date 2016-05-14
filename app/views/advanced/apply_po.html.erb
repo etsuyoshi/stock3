@@ -1,0 +1,43 @@
+<!-- seo -->
+<%= set_meta_tags title: '公募に応募する' %>
+<%= breadcrumb :apply_po %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         公募に応募する
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <h4>公募増資に応募する</h4>
+      前節で公募増資の事を新規に株式を発行し、株主を増やして資金調達することだと説明しました。<br>
+      これを海外ではpublic offeringと言います。<br>
+      一方で、新規上場することをinitial public offeringと言います。<br>
+      なので、新規上場することは海外では最初の公募増資という認識であることがわかります。<br>
+      新規上場とは、最初に新しく株式を取引所に公開して、広く投資家から株式を買ってもらうことを募集することであるから、
+      最初の公募増資と同じ意味ですよね。<br>
+      つまり、新規上場とは、公募の一番最初という意味になります。<br>
+<br>
+      なぜ最初にそんな話をしたかというと、応募方法が新規上場銘柄購入の応募と大きく変わらないからです。<br>
+      基本的に公募に応募する方法はIPOに応募する方法と大きく変わりません。<br>
+<br>
+      新規上場銘柄に応募したときの方法を思い出してもらえるとわかり易いのですが、
+      「新規上場株式ブックビルディング/購入意志表示」というボタンを選択して押したと思います。<br>
+
+      このブックビルディングとは、上場している/しようとしている新規に株式を発行して、
+      公募して増資を行う際に、発行しようとしている株式の単価を決める方法の一つです。
+
+      http://www3.stockweather.co.jp/t_konno/2010/01/post_13.html
+      http://manabow.com/qa/bookbuilding.html
+
+      <div class="studytips">
+        公募, 増資, 新規上場, public offering, ブックビルディング
+      </div>
+    </div>
+  </div>
+</div>

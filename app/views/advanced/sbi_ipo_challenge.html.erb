@@ -1,0 +1,67 @@
+<!-- seo -->
+<%= set_meta_tags title: 'IPOチャレンジ' %>
+<%= breadcrumb :ipo_challenge %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         SBI証券のIPOチャレンジ制度
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <h4>SBI証券のIPOチャレンジ制度とは</h4>
+      SBI証券にはIPOチャレンジ制度というものがあります。<br>
+      <br>
+      今回はこの制度について見てみましょう。<br>
+      このチャレンジ制度とは一言で言うと、IPOに応募するほど当選する確率が高くなるポイント制度です。<br>
+<br>
+      <div class='studytips'>
+        SBI証券のIPOチャレンジ制度とは、
+        新規上場株式に対するブックビルディングの抽選に対して応募した後、
+        残念ながら落選してしまった回数に応じて付与されるSBI証券独自のポイント制度です。
+        次回の別のIPOに対する応募時にこのポイントを使うことにより、
+        通常の抽選よりも当選しやすくなります。
+      </div>
+
+      上記の通り、応募して落選したら付与されるポイントで、
+      別の機会にポイントを使用して応募すれば消費してしまいますが、
+      応募すればするほど溜まっていくので（なおかつ応募は無料なので）
+      この証券会社でできるだけ応募すればするだけお得感があるように思います。<br>
+      (当然、資金に余裕がなければ応募しないでください。)<br>
+<br><br>
+
+      少し注意しなければならないのは
+      ポイントを使って応募した場合、その抽選結果がわかるまでは
+      例え、その抽選にはずれたとしても使用したポイントは一時的に消滅して
+      別のIPOに使用することはできません。<br>
+      また応募するためには、「最低申込数 x 申告した買付価格」の金額が必要になりますので、
+      この金額が買付余力として残っていなければ応募することができません。<br>
+      したがって、応募はなるべく多くしたほうがいいですが、
+      ポイントを使用するタイミングはよく考えたほうがいいでしょう。<br>
+      少なくとも、欲張ってIPO銘柄が公表されたらすぐに飛びつくことは控えたほうが良いでしょう。<br>
+      <%= link_to 'こちら', 'https://www.sbisec.co.jp/ETGate/WPLETmgR001Control?getFlg=on&burl=search_domestic&cat1=domestic&cat2=ipo&dir=ipo&file=stock_schedule_ipo.html' %>
+      からIPO銘柄のスケジュールが確認できるので、ポイントのご利用は計画的に。<br>
+      <br>
+      <%= link_to '今後の上場スケジュール', 'https://www.sbisec.co.jp/ETGate/WPLETmgR001Control?getFlg=on&burl=search_domestic&cat1=domestic&cat2=ipo&dir=ipo&file=stock_schedule_ipo.html' %><br><br><br>
+      また、補欠当選しても辞退した場合でもポイントは消滅しますのでご注意ください。<br>
+      <div class="studytips">
+        応募したけど落選した場合は、落選が決定したタイミングで回復しますので、
+        ご安心ください。
+        <br>
+        補欠当選して当選の意思があると表明した結果、残念ながら落選してしまった場合でも
+        ポイントは落選したことが決定したタイミングで戻ってきます。
+      </div>
+      <br>
+
+      <br>
+      <br>
+
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<!-- seo -->
+<%= set_meta_tags title: '応募するIPO銘柄を選ぶ' %>
+<%= breadcrumb :select_ipo %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         応募するIPO銘柄の選び方
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+<br><br>
+
+      http://happy.kabu-web.net/kabu_select4.html
+
+    </div>
+  </div>
+</div>

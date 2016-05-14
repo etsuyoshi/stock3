@@ -1,0 +1,27 @@
+<!-- seo -->
+<%= set_meta_tags title: 'ブックビルディング' %>
+<%= breadcrumb :bookbuilding %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>
+         ブックビルディングとは
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+<br><br>
+      <h4>ブックビルデイングとは</h4>
+      <br>
+      <%= link_to '公募のページ', '/study_pages/advanced/apply_po' %>
+      でも説明しましたが、ブックビルディングとは
+      新規上場銘柄や公募増資する銘柄の応募価格を決める方法の一つです。<br>
+      その意味が転じて、ビックビルティングに応募するとは公募や新規上場に応募するという意味で使われることもあります。<br>
+http://manabow.com/qa/bookbuilding.html
+    </div>
+  </div>
+</div>

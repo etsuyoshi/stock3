@@ -3,8 +3,9 @@ module ApplicationHelper
   # http://qiita.com/hirooooooo/items/f1a75cf0f2c581f0b620
   def default_meta_tags
   {
-    title:       "日本株チャートの初心者講座",
-    description: "日本株とアメリカ株式市場、上海の株式、商品価格を初心者講座で解説しながらリアルタイムチャートで分析",
+    title:       "日本株チャートと初心者講座",
+    description: "日経平均に代表される日本株インデックスとダウジョーンズ指数に代表されるアメリカ株式市場やロンドン市場、ヨーロッパ市場、上海市場、商品価格などの海外市場における代表的な指数
+    のリアルタイムチャートで分析する投資総合ポータルと株式投資初心者講座",
     keywords:    "株,証券会社,日本,アメリカ,上海,ロンドン",
     # icon: image_url("favicon.ico"), # favicon
     noindex: ! Rails.env.production?, # production環境以外はnoindex

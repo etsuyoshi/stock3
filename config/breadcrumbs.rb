@@ -108,6 +108,21 @@ crumb :success_ipo do
   parent :study
 end
 
+crumb :methodology_find do
+  link "銘柄を探す"
+  parent :study
+end
+
+crumb :survey_popular do
+  link "人気株を探す"
+  parent :study
+end
+
+crumb :technical_chart do
+  link "テクニカルチャート分析"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

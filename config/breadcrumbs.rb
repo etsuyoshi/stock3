@@ -133,6 +133,11 @@ crumb :gyakuhibu do
   parent :study
 end
 
+crumb :credit_deal do
+  link "信用取引"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

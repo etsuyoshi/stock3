@@ -6,10 +6,12 @@ module ApplicationHelper
     # title:       "日本株チャートと初心者講座",
     # description: "日経平均に代表される日本株インデックスとダウジョーンズ指数に代表されるアメリカ株式市場やロンドン市場、ヨーロッパ市場、上海市場、商品価格などの海外市場における代表的な指数
     # のリアルタイムチャートで分析する投資総合ポータルと株式投資初心者講座",
-    keywords:    "投資,株,初心者講座,チャート,証券会社,日本,アメリカ,上海,ロンドン",
+    # keywords:    "投資,株,初心者講座,チャート,証券会社,日本,アメリカ,上海,ロンドン",
     # icon: image_url("favicon.ico"), # favicon
     noindex: ! Rails.env.production?, # production環境以外はnoindex
     charset: "UTF-8",
+    name: 'viewport', content: 'width=device-width, initial-scale=1.0'
+    # 上記name設定：http://yutori-engineer.hatenablog.com/entry/2016/01/09/103329
     # OGPの設定
     og: {
       title: "日本株チャートの初心者講座",

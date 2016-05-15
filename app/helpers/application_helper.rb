@@ -10,7 +10,7 @@ module ApplicationHelper
     # icon: image_url("favicon.ico"), # favicon
     noindex: ! Rails.env.production?, # production環境以外はnoindex
     charset: "UTF-8",
-    name: 'viewport', content: 'width=device-width, initial-scale=1.0'
+    name: 'viewport', content: 'width=device-width, initial-scale=1.0',
     # 上記name設定：http://yutori-engineer.hatenablog.com/entry/2016/01/09/103329
     # OGPの設定
     og: {

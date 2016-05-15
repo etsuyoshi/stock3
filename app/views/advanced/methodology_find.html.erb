@@ -1,0 +1,79 @@
+<!-- seo -->
+<%= set_meta_tags title: '銘柄調査の方法' %>
+<%= set_meta_tags description:'自分に見合う銘柄を探す方法' %>
+<!-- keyword:株　自分　見合う　探す　方法　銘柄 -->
+<%= breadcrumb :methodology_find %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+     <div id="studytitle">
+       <h1>
+         銘柄調査の方法
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <br>
+      <h4>どうやって自分にあった銘柄を探すか</h4>
+      世の中には多様な専門誌や情報サイトがありますが、私が主に使っている情報源を公開します。<br>
+<br><br>
+
+      <strong>雑誌</strong><br>
+      ・バロンズ拾い読み<br>
+      世界的な金融情報サービス、ウォールストリートジャーナルが発行していて、日本のことも書かれており、拾い読みはそれを抜粋したものです。
+      <div class="studytips">
+        バロンズとはアメリカで最も有名な金融情報誌でアメリカを始め、世界各国の経済や株式マーケット、ビジネスに関する記事が書かれています。<br>
+        日本の機関投資家の相場に関わるファンドマネージャーやアナリストであれば、大体読んでいるので大きな流れを掴むことができます。
+      </div><br>
+      ・日経新聞の金融面<br>
+      良くも悪くも硬い記事が多く、他紙や他媒体に比べて情報の確度の高い情報が多いものの、
+      たまに明らかに誤っていたり裏取りの甘い情報も散見されるので注意が必要です。
+      実際に株式を運用していないものの、知識重視のアナリストの色合いが強く、
+      日経新聞社の知り合いに確認したところ、入社して間もない数年目の若手社員の分析能力や記事執筆能力向上のため
+      研修も兼ねた仕事になっているようです。<br>
+      <div class="studytips">
+        よく外人投資家や信託銀行、年金ファンドの買いで相場が上昇したという記事や先物主導で日経平均が上昇したという類いの情報には
+        あくまで取引所や証券会社などの相場関係者から聞いた二次情報であることを踏まえるべきです。<br>
+        特に他人のお金を運用している機関投資家による売買情報を流すことは自分たちの首を絞めることに加え、
+        常時投資計画の流出や類推にもつながってしまうので運用担当者が投資行動を取った直後に自ら情報を提供することは考えづらいです。<br>
+      </div>
+      <br><br>
+      ・zai<br>
+      大衆紙に近く、情報の粒度は粗いことに加えて確度が少し弱い部分があるものの、幅広い銘柄をカバーしていることに加え、初心者講座などもあるので
+      確実な情報というよりはインスピレーションを得るために流し読みする程度にちょうどいいかもしれません。<br>
+      ウェブ版もあるので、情報収集やニュースの確認にはちょうど良いかもしれません。
+      <br><br>
+      <br>
+      <strong>ウェブ</strong><br>
+      ・<%= link_to '日経', 'http://www.nikkei.com' %><br>
+      ・<%= link_to 'IPO', 'http://96ut.com/ipo/list.php' %><br>
+      ・<%= link_to '配当', '#' %><br>
+
+      日経のウェブは他メディアに比べると記事の裏取りもしっかりしているし、ここでしか読めない記事も多数あるため、
+      ただし、ログインしないと読めない記事もあるので無料ですし、特にデメリットもないので登録していない方は登録をオススメします。<br>
+      有料記事についてはそこまで必要ないという感じも見受けられます。<br>
+<br><br>
+
+<br>
+      <h4>気になる銘柄が見つかった時のチェックポイント</h4><br>
+      <strong>成長と割安指標</strong><br>
+      <%= link_to 'PBRやPERなどの財務指標', '/study_pages/advanced/stock_analysis' %>や
+      <%= link_to 'テクニカル指標や株価の動向などのチャート分析', '/study_pages/advanced/technical_chart' %>で確認します。
+<br><br>
+      参考：<br>
+      <%= link_to 'http://www.fxtsys.com/tech.html' %>
+
+      <br>
+      https://www.rakuten-sec.co.jp/web/special/ispeed_technical/
+
+
+<br><br><br>
+      <strong>・サービスを使う</strong><br>
+      <%= link_to 'twitter', 'http://twitter.com' %><br>
+      銘柄調査サービス(<%= link_to '株探', 'http://kabutan.jp/tansaku/' %>)<br>
+<br>
+    </div>
+  </div>
+</div>

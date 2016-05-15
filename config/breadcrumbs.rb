@@ -123,6 +123,16 @@ crumb :technical_chart do
   parent :study
 end
 
+crumb :shareholder_incentive do
+  link "お得な株主優待"
+  parent :study
+end
+
+crumb :gyakuhibu do
+  link "逆日歩"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

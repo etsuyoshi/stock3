@@ -1,12 +1,12 @@
 <!-- seo -->
-<%= set_meta_tags title: '逆日歩とは' %>
-<%= set_meta_tags description:
+<% set_meta_tags title: '逆日歩とは' %>
+<% set_meta_tags description:
 '信用取引において売り方が買い方を上回った時に発生する逆日歩は証券会社、機関投資家、証券金融会社、信用売りをしている投資家などの登場人物が複雑に関係しており、
 誰が誰に何をどのくらい払うのかという全体像と仕組みを具体的に説明するとともに初心者が投資する際に抑えておくべき預株と貸株について解説します。' %>
 <!-- keyword:投資　最初　お手軽 株　自分　見合う　探す　方法　銘柄 -->
 <!-- 目的：投資の初心者が最初に見て、何に投資すべきかを探すページ -->
 
-<%= breadcrumb :gyakuhibu %>
+<% breadcrumb :gyakuhibu %>
 
 <%= @path if Rails.env.development? %>
 <div class="row">
@@ -20,7 +20,7 @@
     <%= render 'layouts/studyIndex' %>
     <div id="studycontents">
       <br>
-      <h4>逆日歩とは</h4>
+      <h3>逆日歩とは</h3>
       逆日歩とは、信用取引において売り方が買い方を上回った時に発生します。<br>
 <br><br>
       <strong>仕組み</strong><br>

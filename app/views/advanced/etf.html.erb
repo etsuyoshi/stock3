@@ -1,0 +1,33 @@
+<!-- seo -->
+<% set_meta_tags title: 'ETFとは' %>
+<% set_meta_tags description:
+'　ETFに関する解説を行います。' %>
+<!-- keyword:投資　最初　お手軽 株　自分　見合う　探す　方法　銘柄 -->
+<!-- 目的：投資の初心者が最初に見て、何に投資すべきかを探すページ -->
+
+<% breadcrumb :etf %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+     <div id="studytitle">
+       <h1>
+         ETFとは
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <br>
+      <h3>ETFとは</h3>
+
+      上場投資信託(Exchange Traded Fund)と言って、投資信託が東証などに上場したものを言います。<br>
+      主にTOPIXや日経平均などの指数に連動するように運用されていて、
+      一般的な投信よりも少額で投資でき、更に手数料が安いです。<br>
+      <br>
+http://kabukiso.com/apply/kinyu/etf.html
+<br>
+
+    </div>
+  </div>
+</div>

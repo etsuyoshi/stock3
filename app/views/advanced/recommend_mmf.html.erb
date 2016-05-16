@@ -1,0 +1,33 @@
+<!-- seo -->
+<% set_meta_tags title: '投資信託とは' %>
+<% set_meta_tags description:
+'投資信託とは何かという概要の説明、メリット、デメリットからETFとの違い、証券会社で買える投資信託まで解説します。' %>
+<!-- keyword:投資　最初　お手軽 株　自分　見合う　探す　方法　銘柄 -->
+<!-- 目的：投資の初心者が最初に見て、何に投資すべきかを探すページ -->
+
+<% breadcrumb :mutual_fund %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+     <div id="studytitle">
+       <h1>
+         オススメ投資信託
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <br>
+      <h3>投資信託概要・仕組み</h3>
+
+
+      <br>
+      安定型：ローリスクローリターン
+      積極型：ハイリスクハイリターン
+      分配金型：ローリスクハイリターン
+      →資産を削って分配している場合があるので注意！
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<!-- seo -->
+<% set_meta_tags title: 'ノーロード投信のリスク' %>
+<% set_meta_tags description:
+'' %>
+<!-- keyword:投資　最初　お手軽 株　自分　見合う　探す　方法　銘柄 -->
+<!-- 目的：投資の初心者が最初に見て、何に投資すべきかを探すページ -->
+
+<% breadcrumb :mutual_fund %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+     <div id="studytitle">
+       <h1>
+         ノーロード投信のリスク
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <br>
+      <h3>ノーロードとは</h3>
+
+      <%= link_to '投信には様々な手数料', '/study_pages/advanced/mutual_fund' %>がかかります。<br>
+      具体的には販売手数料、信託報酬、売買委託手数料、保管コスト、信託財産保留額などがかかります。<br>
+      ノーロード投信とはこのうち、販売手数料が無料になる投資信託のことです。<br>
+
+
+
+      <h3>ノーロード投信のメリット</h3>
+      手数料がかからない
+      年間x％
+      保有し続ける分には問題ないが、x円の資金を投信を購入して数年に何回入れ替えるとするとy円の売買手数料がかかる。
+      これはファンド収益で換算するとz％のリターンがあるファンドを探さなくてはならない
+      これを探すのは至難の技。<br>
+
+
+      <h3>ノーロード投信のデメリット</h3>
+      なぜ投信の売買手数料は有料なのでしょうか。
+      それはプロが運用しているから。
+      売買手数料がかからないとはいえ、手数料を削減しなければ売れない投資信託というのはそれだけ収益率が低い可能性がある。
+      
+
+    </div>
+  </div>
+</div>

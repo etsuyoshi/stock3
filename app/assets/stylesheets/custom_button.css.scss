@@ -1,0 +1,41 @@
+@import "bootstrap";
+// 初心者講座への導線ボタンのカスタマイズ
+// http://www.webopixel.net/lab/sample/13/1028css3-onepoint/#
+
+
+.btn04 {
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    display: block;
+    width: 97%;
+    height: 50px;
+    line-height: 50px;
+}
+
+.btn04::before {
+    content: '';
+    background-color: #dda284;
+    display: block;
+    position: absolute;
+    width: 97%;
+    height: 50px;
+    z-index: -1;
+    border-radius: 0%;
+    box-shadow:
+        0 0 0 0 #fff,
+        0 0 0 0 #dda284;
+    transition: all .2s ease;
+    -webkit-transition: all .2s ease;
+}
+.btn04:hover::before {
+    transform: scale(0.8);
+    -webkit-transform: scale(0.8);
+    box-shadow:
+        0 0 0 15px #fff,
+        0 0 0 17px #dda284;
+        // 0 0 0 25px #fff,
+        // 0 0 0 27px #dda284;
+}

@@ -138,6 +138,21 @@ crumb :credit_deal do
   parent :study
 end
 
+crumb :mutual_fund do
+  link "投資信託"
+  parent :study
+end
+
+crumb :noload do
+  link "ノーロード投信"
+  parent :study
+end
+
+crumb :tax do
+  link "税金"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

@@ -153,6 +153,11 @@ crumb :tax do
   parent :study
 end
 
+crumb :devidend do
+  link "配当"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

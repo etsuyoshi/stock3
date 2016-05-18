@@ -1,0 +1,49 @@
+<!-- seo -->
+<% set_meta_tags title: '配当' %>
+<% set_meta_tags description:
+'配当の高い銘柄に投資する際' %>
+<%= breadcrumb :devidend %>
+
+<% @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+     <div id="studytitle">
+       <h1>
+         配当
+       </h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <h4>配当とは</h4>
+      配当とは企業の業績が良い時に利益の中から株主に還元する金銭の事を言います。<br>
+      日本株の平均的な配当の金額は株価の2%と言われています。<br>
+      一方で金額ではなく、モノやサービスを提供される場合は株主優待と呼びます。<br>
+
+<br><br>
+      <h4>配当と権利落ち</h4>
+      決算期末の月末数営業日前に配当がもらえる権利が確定することを権利落と呼び、その日を権利落日と呼びます。<br>
+      権利落日の３営業日前の取引終了(大引け)時点でその株を持っていれば権利落日に配当をもらえる権利が確定します。<br>
+      東証１部上場銘柄の6割以上は3月決算銘柄なので、3月29日が権利落日となる銘柄が非常に多いです。<br>
+      <br>
+      <%= link_to 'http://diamond.jp/category/z-kabunushiyutai?utm_source=z&utm_medium=rb&utm_content=zai&utm_campaign=shouken' %>
+      <br><br><br>
+      <strong>株価に対して配当が高い銘柄トップ10(2016年5月19日　現在)</strong><br>
+        <table class="securities_table"><tbody>
+        <tr><th>順位</th><th>コード</th><th>市場</th><th>名称</th><th>取引値</th><th>決算年月</th><th>1株配当</th><th>配当利回り</td></tr>
+        <tr><th>1</th><td>  8186</td><td>東証JQS</td><td>(株)大塚家具</td><td>1,167</td><td>2016/12</td><td>80.00</td><td>6.86%</td></tr>
+        <tr><th>2</th><td>	4980</td><td>	東証1部</td><td>デクセリアルズ(株)</td><td>867</td><td>2017/03</td><td>55.00</td><td>6.34%</td></tr>
+        <tr><th>3</th><td>	7523</td><td>	東証JQS</td><td>アールビバン(株)</td><td>493</td><td>2017/03</td><td>30.00</td><td>6.09%</td></tr>
+        <tr><th>4</th><td>	8709</td><td>	東証JQS</td><td>インヴァスト証券(株)</td><td>1,228</td><td>2017/03</td><td>72.00</td><td>5.86%</td></tr>
+        <tr><th>5</th><td>	3440</td><td>	福岡Q</td><td>日創プロニティ(株)</td><td>557</td><td>2016/08</td><td>30.00</td><td>5.39%</td></tr>
+        <tr><th>6</th><td>	7847</td><td>	東証JQS</td><td>(株)グラファイトデザイン</td><td>372</td><td>2017/02</td><td>20.00</td><td>5.38%</td></tr>
+        <tr><th>7</th><td>	2411</td><td>	東証JQS</td><td>ゲンダイエージェンシー(株)</td><td>468</td><td>2017/03</td><td>25.00</td><td>5.34%</td></tr>
+        <tr><th>8</th><td>	2362</td><td>	東証JQS</td><td>(株)夢真ホールディングス</td><td>660</td><td>2016/09</td><td>35.00</td><td>5.30%</td></tr>
+        <tr><th>9</th><td>	4341</td><td>	東証2部</td><td>西菱電機(株)</td><td>946</td><td>2017/03</td><td>50.00</td><td>5.29%</td></tr>
+        <tr><th>10</th><td>	4705</td><td>	東証JQS</td><td>(株)クリップコーポレーション</td><td>950</td><td>2017/03</td><td>50.00</td><td>5.26%</td></tr>
+      </tbody></table>
+
+
+    </div>
+  </div>
+</div>

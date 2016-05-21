@@ -30,6 +30,11 @@ crumb :study_securities_matsui do
   parent :study
 end
 
+crumb :study_securities_sbi do
+  link "SBI証券で口座を開く"
+  parent :study
+end
+
 crumb :study_first_buy do
   link "最初に買う銘柄の選び方"
   parent :study
@@ -165,6 +170,16 @@ end
 
 crumb :trade_techinique do
   link "売買テクニック"
+  parent :study
+end
+
+crumb :foreign_investment do
+  link "外国株投資"
+  parent :study
+end
+
+crumb :foreign_currency_deposits do
+  link "外貨普通預金口座"
   parent :study
 end
 

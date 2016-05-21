@@ -1,0 +1,172 @@
+<!-- seo -->
+<% set_meta_tags title: '楽天証券の口座開設方法' %>
+<% breadcrumb :foreign_investment %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>楽天証券の口座開設方法</h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <h3>1.資料請求</h3>
+      <!-- affiliateに審査通過したら以下のリンク先を変更する -->
+      <% rakuten_af_link = 'https://account.rakuten-sec.co.jp/ApplicationTop/applicationInit.do' %>
+      まず最初に下記画面で資料請求を行うためにご自身の情報を入力して口座申込を行います。<br>
+      ページ上で口座申込書という記載があるのは
+      申込申請をしただけでは実際には申込完了せず、申込の資料が請求されるだけだからです。<br>
+      資料請求を経ずに申込を行いたいという方も面倒ですが一度この資料請求を行う必要がありますので
+      以下の手順に従って資料請求をして頂ければと思います。<br>
+      逆に、資料請求を行わないと申込の申請も完了もできませんのでご注意ください。<br><br>
+
+      それでは以下のリンクをクリックして資料請求ページを開いてください。<br>
+      <%= link_to rakuten_af_link, :target=>["_blank"] do %>
+        資料請求画面<br>
+        <%= image_tag 'http://www.nefpi-ranking.com/wp-content/uploads/2013/10/rakuten01-1.jpg' %>
+      <% end %>
+<br><br>
+      上記、画面上で口座開設ボタンを押した後、楽天IDをお持ちの方とそうでない方で対応が少し異なります。<br>
+      <br>
+      ・既に楽天のIDを持っている方は
+      <%= link_to 'こちら', 'https://grp01.id.rakuten.co.jp/rms/nid/login', :target=>["_blank"] %>からログインすれば入力を省略できます。<br>
+      <strong><%= link_to '資料請求(ログイン)', 'https://grp01.id.rakuten.co.jp/rms/nid/login', :target=>["_blank"]%></strong><br>
+<br><br>
+      ・楽天IDをお持ちでない方は
+      <%= link_to 'こちら', 'https://account.rakuten-sec.co.jp/ApplicationTop/applicationInit.do' %>からご覧ください。<br>
+      <strong><%= link_to '資料請求(情報入力)', 'https://account.rakuten-sec.co.jp/ApplicationTop/applicationInit.do' %></strong>
+
+      <br><br><br><br>
+      楽天アカウントを保有している方は情報が省けるのでログインすることをお勧めしますが、
+      多くの方は楽天アカウントを持っていないと思いますので、ここではログインせずに資料請求をする方法について解説します。<br>
+      上記資料請求リンクからページ遷移すると、情報入力ページに遷移します。<br><br><br>
+      まず、遷移先のページで「個人情報保護方針に同意の上、口座開設申込書を請求します」というチェックボックにチェックを入れます。<br>
+      <%= link_to rakuten_af_link , :target=>["_blank"] do %>
+        <%= image_tag 'http://www.nefpi-ranking.com/wp-content/uploads/2013/10/WS000176.jpg' %><br><br>
+      <% end %>
+      <br><br><br>
+      入力し終わったら一番下の方にある「入力内容を確認する」ボタンを押してください。<br>
+      <%= link_to rakuten_af_link , :target=>["_blank"] do %>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ApplicationTop/image/btn_confirm_entries_hover.png' %>
+      <% end %><br><br><br><br>
+
+      次に資料請求画面が表示されますので、「同意して申込む」ボタンを押してください。<br>
+      <%= link_to rakuten_af_link , :target=>["_blank"] do %>
+        <%= image_tag 'http://www.nefpi-ranking.com/wp-content/uploads/2013/10/WS000177.jpg' %>
+      <% end %>
+      <br><br><br>
+      最後に確認画面で申込ボタンを押したら完了です。<br>
+      <%= link_to rakuten_af_link , :target=>["_blank"] do %>
+        <%= image_tag 'http://www.nefpi-ranking.com/wp-content/uploads/2013/10/WS000178.jpg' %>
+      <% end %>
+      <br><br><br><br>
+      <h3>2.口座開設する</h3>
+      資料請求をすると1週間以内に口座開設の書類と返信用封筒が届きます。<br>
+      書類に必要事項を記入して、本人確認書類を同封して返信用封筒でそのまま郵便ポストに送ります。<br>
+      必要事項と言っても資料請求する際にウェブ上で入力した内容は既に記入されているので<br>
+      書類上で必要なことは、<strong>印鑑を押して自分の名前を記入するだけ</strong>です。<br>
+      一つ一つ説明します。<br>
+
+      かなり丁寧に開設していますが、①30秒、②1分、③2分の合計数分程度で終わります。<br><br>
+
+      ①書類へのサインと押印<br>
+      <br>
+      以下の書類に名前を書いて印鑑を押します。<br>
+      <br>
+      <%= link_to rakuten_af_link, :target=>"_blank" do %>
+        <%= image_tag 'http://kabukiso.com/rakuten/mousikomi2.jpg' %><br>
+      <% end %>
+      <br><br>
+      ②本人確認書類の準備<br>
+      <br>
+      本人確認書類は<strong>運転免許証があれば運転免許証</strong>が好ましいです。<br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_01.gif' %><br>
+      <br>上記準備ができたらコンビニでコピーしてください（ご自宅にスキャナー付きのプリンターがあれば勿論それで結構です）。
+<br><br>
+      免許証がなければ以下のものでも構いません。<br>
+      <br><br>
+      <strong>住民基本台帳カード</strong><br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_02.gif' %><br><br>
+      <strong>健康保険証(裏面も)</strong><br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_03.gif' %><br><br>
+      <strong>住民票の写し</strong><br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_04.gif' %><br><br>
+      <strong>在留カード、特別永住者証明書など(外国人の方のみ)</strong><br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_07.gif' %><br><br>
+      <strong>パスポート</strong><br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_08.gif' %><br><br>
+      <strong>個人番号カード</strong><br>
+      <%= image_tag 'https://account.rakuten-sec.co.jp/ITS/images/acc_identification_img_09.gif' %><br><br>
+      他にも印鑑登録証明書でも可能です。<br>
+      <br><br>
+      ③返信用封筒に同封して郵便ポストに入れる<br>
+      <%= image_tag 'http://pictkan.com/uploads/cache/710423336/mailbox-22161_1920-400x270-MM-100.jpg' %>
+      <br><br>
+      上記①サイン＆押印した書類と②本人確認書類を返信用封筒に同封して送り返すだけです。<br>
+      書類返送後、1週間ほどで口座開設完了の通知がご自宅に届きます。<br>
+      <strong>これで楽天証券の口座開設のために必要な全ての作業が完了したことになります。</strong><br>
+      口座開設通知書類に楽天証券にログインするためのアカウント情報(IDやパスワード)が記載されておりますので、
+      これで<%= link_to 'そのIDとパスワードを使ってログイン', 'https://www.rakuten-sec.co.jp/ITS/V_ACT_Login.html' %>できるようになります。
+      <br><br><br><br>
+      <h3>3.証券口座への入金</h3>
+      次に楽天証券で入金する方法について説明します。<br>
+      楽天証券には<strong>リアルタイム入金</strong>という制度があります。<br>
+      リアルタイム入金とは振込手数料が無料で、振込後すぐに株式などの投資に使うための証券口座に入金がされます。<br>
+      <br>
+      楽天のすごいところは<strong>証券口座に入金後、株式などに投資せずに放置しておいても利息がつく</strong>という点です。<br>
+      楽天という会社には証券会社以外にも銀行もあるので、インターネット上での入金以外にも、<strong>ATMや銀行窓口を使った入金も可能で
+        非常に便利です。</strong>
+      ただし、インターネットでの入金は無料ですが、ATMでは他銀行同様振込手数料がかかるので注意が必要です。<br>
+
+      <h4>楽天証券に入金可能な金融機関</h4>
+      <table class="securities_table">
+        <tbody>
+          <tr><td>金融機関</th><th>利用可能時間</th><th>メンテナンス時間</th><th>振込限度額</th></tr>
+          <tr><td>楽天銀行</td><td>0:05-23:55</td><td>ー</td><td>1000万円/日</td></tr>
+          <tr><td>三井住友銀行</td><td>24時間</td><td>毎日17:00-17:30、毎週日曜21:00-翌7:00</td><td>1,000万円/日</td></tr>
+          <tr><td>三菱東京UFJ銀行</td><td>24時間</td><td>毎月第2土曜21:00～翌7:00</td><td>1,000万円/日</td></tr>
+          <tr><td>みずほ銀行</td><td>24時間</td><td>毎週土曜22:00～翌8:00、毎月第1・4土曜3:00～5:00</td><td>2,000万円/日</td></tr>
+          <tr><td>ゆうちょ銀行</td><td>0:05-23:55</td><td>毎月第1・3月曜0:00～6:30、毎日23:55～翌0:05</td><td>1,000万円/日</td></tr>
+          <tr><td>ジャパンネット銀行</td><td>24時間</td><td>毎月第3日曜0:00～6:00</td><td>9,999万円/日</td></tr>
+          <tr><td>セブン銀行</td><td>24時間</td><td>毎月第3日曜23:30-翌5:30</td><td>1,000万円/日</td></tr>
+          <tr><td>りそな銀行</td><td>24時間</td><td>毎月第1・第3月曜2:00～翌6:00、毎週土曜21：00～翌8：00、毎週日曜23:00～翌7：00</td><td>1,000万円/日</td></tr>
+          <tr><td>埼玉りそな銀行</td><td>24時間</td><td>毎月第1・第3月曜2:00～翌6:00、毎週土曜21：00～翌8：00、毎週日曜23:00～翌7：00</td><td>1,000万円/日</td></tr>
+          <tr><td>近畿大阪銀行</td><td>24時間</td><td>毎月第1・第3月曜2:00～翌6:00、毎週土曜21：00～翌8：00、毎週日曜23:00～翌7：00</td><td>1,000万円/日</td></tr>
+          <tr><td>住信SBIネット銀行</td><td>24時間</td><td>不定期</td><td>9,999万円/日</td></tr>
+          <tr><td>イオン銀行</td><td>24時間</td><td>毎月第2月曜2:00～7:00</td><td>1,000万円/日</td></tr>
+        </tbody>
+      </table>
+      1.楽天銀行で<br>
+      <br>
+
+      <h3>4.株の購入</h3>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <h3>5.株の売却</h3>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <h3>6.証券口座から出勤する</h3>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+      <br>
+
+      <h3></h3>
+      <strong>画像は一部楽天証券HPおよびkabukiso様から抜粋したものを使用しております。</strong><br>
+      http://kabukiso.com/rakuten/r-nyuukin.html

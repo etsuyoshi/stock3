@@ -1,0 +1,90 @@
+<!-- seo -->
+<%= set_meta_tags title: '初めての外国株投資' %>
+<%= breadcrumb :foreign_investment %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>初めての外国株投資</h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+      <h3>外国株に投資する3ステップ</h3>
+      日本人は日本の企業情報やニュースに接しやすく、トレンドや国内政治に対する理解も深い
+      海外の投資家はまず日本ニュースを知ってから翻訳したり、ニュアンスを評価しなくてはならないと言う障壁がある
+      日本株は海外から割安と思われていて、積極的な投資を行うアメリカや中国の富裕層や外人投資家と比べると日本語が読めるのはメリット
+      →日本人である以上、日本株に投資することはそれだけで優位性がある。
+      一方で、日本株だけに投資していてはリスクもある
+      世界はITや物流の発達で情報や景気が伝播しやすいので密接に関連している。
+      景気には波があって、当然、日本が弱い時にお金が日本からアメリカに流れる時がある。
+      そうした時にアメリカ株に投資できれば日本株だけのリスクを負うことを回避できる
+
+
+      <h4>1.証券会社を選ぶ</h4>
+      外国株に投資できるのは楽天証券、マネックス証券、SBI証券の３社です。
+      <table class="securities_table">
+        <tbody>
+          <tr><th>証券会社</th><th>外国株取引方法</th><th>個別銘柄</th><th>ADR</th><th>ETF</th><th>売買手数料</th><th>外国株特定口座</th><th>為替手数料</th></tr>
+          <tr><td>楽天証券</td><td>こちら</td><td>949銘柄</td><td>132銘柄</td><td>229銘柄</td><td>25ドル/取引</td><td>有</td><td>0.25円/ドル</td></tr>
+          <tr><td>マネックス証券</td><td>こちら</td><td>3162銘柄</td><td>58銘柄</td><td>229銘柄</td><td>0.45%/取引(5〜20ドル)</td><td>有</td><td>0.25円/ドル</td></tr>
+          <tr><td>SBI証券</td><td>こちら</td><td>1073銘柄</td><td>117銘柄</td><td>204銘柄</td><td>25ドル/取引</td><td>有</td><td>0.25円/ドル※</td></tr>
+        </table>
+      </table>
+      ただし、SBIの外国株取引における為替手数料は他の証券会社が1ドルあたり25銭なのに対して、
+      <br><%= link_to '住信SBIネット銀行の外貨普通預金口座を持っているユーザーは実質15銭になります。',
+      '/study_pages/advanced/sumishin_net_bank' %>
+      <br><br><br>
+
+      <strong>注文詳細</strong>
+      <table class="securities_table">
+        <tbody>
+          <tr><th>証券会社</th><th>注文方法</th><th>売買単位</th><th>リアルタイム情報</th><th>ツール</th><th>配当金</th><th>その他特典</th></tr>
+          <tr>
+            <td>楽天証券</td><td>成行・指値</td><td>1株単位</td><td>米国リアルタイム株価(1000円/月)<br>無料は15分遅れ</td><td>無</td><td>米ドル</td><td>バロンズ拾い読み</td>
+          </tr>
+          <tr>
+            <td>マネックス証券</td><td>成行・指値・逆指値<br>OCO注文・連続注文</td><td>1株単位</td><td>電子取引所配信情報</td><td>トレードステーション</td><td>米ドル</td><td>バロンズ拾い読み</td>
+          </tr>
+          <tr>
+            <td>SBI証券</td><td>指値</td><td>1株単位</td><td>米国リアルタイム株価(500円/月)<br>無料は15分遅れ</td><td>無</td><td>米ドル</td><td>バロンズ拾い読み</td>
+          </tr>
+        </tbody>
+      </table>
+      <br><br>
+      詳細はこちら(作成中)
+      <br><br><br>
+
+      幅広い銘柄に投資したいのであればマネックス証券が最も銘柄カバレッジが広く、
+      さらに株価100ドルのアップル株(AAPL)を一株購入した場合であればマネックス証券が最も安くなります。<br>
+
+
+      <h4>2.ネット証券で日本株の証券口座の開設</h4>
+      各証券会社の口座開設方法は以下のリンク先をご覧ください。<br>
+      <br>
+      <%= link_to 'SBI証券', '/study_pages/intermediate/apply_sbi' %><br>
+      <%= link_to '楽天証券', 'https://www.rakuten-sec.co.jp/ITS/rakuten_g/flow/' %><br>
+      <%= link_to 'マネックス証券', 'https://www.monex.co.jp/Etc/00000000/guest/G100/srv/tokutei_mosikomi.htm' %><br>
+
+
+      <h4>3.ネット証券で「外国株取引口座」を申し込む</h4>
+      証券会社の日本株口座の開設が完了したら次に外国株取引口座を申し込みます。<br>
+      外国株取引口座の開設は日本株取引口座の開設同様、無料です。<br>
+      ここではSBI証券のケースで外国株取引までの流れを説明します。<br>
+      別ページでマネックス証券、楽天証券についても説明します。<br>
+
+      ①今すぐ外国株口座開設ボタンを押す<br>
+      <%= image_tag 'https://a248.e.akamai.net/f/248/29350/7d/pict.sbisec.co.jp/sbisec/images/base/b_foreign_flow_open_131130_on.gif' %><br>
+<br>
+      ②必要な書面の確認の承認ボタンを押す<br>
+<br>
+      ③申込完了と同時に取引が可能になります<br>
+      ※ただし、マネックス証券の場合は申込完了から取引可能な状態になるまで最短３営業日かかります。<br>
+
+
+
+    </div>
+  </div>
+</div>

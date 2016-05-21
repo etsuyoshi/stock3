@@ -1,0 +1,33 @@
+<!-- seo -->
+<%= set_meta_tags title: '元トレーダーが教える株式売買テクニック' %>
+<%= breadcrumb :trade_techinique %>
+
+<%= @path if Rails.env.development? %>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
+       id="studyframe">
+
+     <div id="studytitle">
+       <h1>売買テクニック</h1>
+     </div>
+    <%= render 'layouts/studyIndex' %>
+    <div id="studycontents">
+
+      こう言うときは、こうだから、こう言う売買をしないでこう売買しろ→するとこうなるだろ。ここで売れるから利益が出る！
+      今だけ公開中！
+      特に流動性の高い先物相場
+      →先物が流動性が高い理由
+      ・機関投資家による資金ニーズ（規模の大きいパッシブ運用のキャッシュヘッジ用）
+      
+
+      こんなときは売買するな
+      もみ合い＆ボックス圏（誘惑があるものの。。）
+      一方向に動くとき（出来高を伴っていることがシグナル）
+      収束した後の爆上げ
+      雲を抜けるとき
+      注文数が一時的に少なくなると片方に行きなる進む
+      上値抵抗線のめちゃくちゃでかい注文：見せ玉？
+
+    </div>
+  </div>
+</div>

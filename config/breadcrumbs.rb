@@ -158,6 +158,16 @@ crumb :devidend do
   parent :study
 end
 
+crumb :nikkei225sakimono do
+  link "日経225先物"
+  parent :study
+end
+
+crumb :trade_techinique do
+  link "売買テクニック"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

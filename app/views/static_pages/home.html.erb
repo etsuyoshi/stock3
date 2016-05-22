@@ -1,22 +1,23 @@
-<%= set_meta_tags title: '日本株チャートと初心者講座' %>
-<%= set_meta_tags description:
-'日経平均に代表される日本株インデックスとダウジョーンズ指数に代表されるアメリカ株式市場やロンドン市場、ヨーロッパ市場、上海市場、商品価格などの海外市場における代表的な指数のリアルタイムチャートで分析する投資総合ポータルと株式投資初心者講座' %>
+<% set_meta_tags title: '日本株チャートと初心者講座' %>
+<% set_meta_tags description:
+'日経平均に代表される日本株インデックスとダウジョーンズ指数に代表されるアメリカ株式市場や
+ ロンドン市場、ヨーロッパ市場、上海市場、商品価格などの海外市場における代表的な指数のリアルタイムチャートで分析する投資総合ポータルと株式投資初心者講座' %>
 
 
 <%= include_gon %>
-このサイトは管理人が日本株の売買をしながら、欲しい情報がすぐに手に入らなかったり、重要な情報をスルーしてしまったという、
-株式売買において不便に感じたことがきっかけとなり、
-自分の経験が他の投資家の皆様にもお役に立てればと思い、サイトを立ち上げました。<br>
-このサイトは有料のホスティングサービスを使っており、一部広告も表示されておりますのでご了承ください。<br>
-<br>
-
-【このサイトで解消したいこと】<br>
-・個別銘柄や先物の売買していた時、長期トレンドと短期トレンドを確認したかったがすぐに自由にチャートの表示期間等を動かしながら確認出来るリソースがなかったこと。<br>
-・前日のダウや上海市場の引け値、その他海外の株式インデックス騰落率の状況<br>
-・値動きをもたらすニュースの即時確認<br>
-・値動きがあった時の出来高<br>
-・なぜ今値動きが生じているのかのイベント解説<br>
-
+<div class="graybackground_withline">
+  このサイトは管理人自身が日本株の売買をしていて必要な情報が手に入らなかったり、重要なニュースをスルーしてしまったという、
+  株式売買における情報取得に対して不便に感じたことがきっかけとなり、
+  それなら自分で作ろうと思って作成したサイトです。<br>
+  このサイトは有料のホスティングサービスを使っており、一部広告も表示されておりますのでご了承ください。<br>
+  <br>
+  【このサイトで解消したいこと】<br>
+  ・個別銘柄や先物の売買していた時、長期トレンドと短期トレンドを確認したかったがすぐに自由にチャートの表示期間等を動かしながら確認出来るリソースがなかったこと。<br>
+  ・前日のダウや上海市場の引け値、その他海外の株式インデックス騰落率の状況<br>
+  ・値動きをもたらすニュースの即時確認<br>
+  ・値動きがあった時の出来高<br>
+  ・なぜ今値動きが生じているのかというチャートとイベントの関連性の解説<br>
+</div>
 <!-- google chart -->
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -488,21 +489,38 @@ $(function () {
 });
 </script>
 
-<h1>日本株チャート</h1>
+<h1>世界経済と日本株チャート</h1>
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
   <div class = "row">
     <!-- candle stick nk225 -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
-      <h2>日経平均のチャート</h2>
-      <div id="nikkei_chart" style="width:100%; height:400px;"></div>
+      <h2>世界経済の主要指標騰落率</h2>
+      <br>
+      <br>
+      <div class="studytips">
+        <h4>日経平均株価</h4><br><br>
+        日経平均は日本国内の流動性の高い225銘柄の株価を単純平均した値。<br>
+        日本の株式市場全体の動き、特に時価総額が大きな銘柄の値動きを見る時に用いられます。<br>
+        一方で東証一部上場企業全体の株価を時価総額の変化として見るTOPIXなどの指標も合わせて見られます。<br>
+        詳しくは<%= link_to 'こちら', '/study_pages/advanced/nikkei225sakimono' %>
+        <br>
+        <div id="nikkei_chart" style="width:100%; height:400px;"></div>
+      </div>
     </div>
   </div>
 
   <div class = "row">
     <!-- global map -->
     <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
-      <div id="container_map" style="width:100%; height:400px;"></div>
+      <div class="studytips">
+        <h4>世界経済の騰落率状況</h4><br><br>
+        各国の主要指標の最新騰落状況をバブルチャートで表現しています。<br>
+        <br>
+        詳しくは<%= link_to 'こちら', '/study_pages/advanced/nikkei225sakimono' %>
+        <br>
+        <div id="container_map" style="width:100%; height:400px;"></div>
+      </div>
     </div>
   </div>
 
@@ -589,10 +607,11 @@ $(function () {
 
 <!-- highstock チャート表示 -->
 
-    <br>地図描画
-    <div id="global_map"></div>
+
     <!-- candle chart -->
-    <br>ヒストリカルチャート
+    <br><br><br>
+    <h2>世界各国の最新株価指標の推移</h2>
+    <br>
     <!-- <div id="historical_chart"></div> -->
     <!-- <div id="container1" style="height: 400px; min-width: 310px"></div> -->
     <!-- bar graph -->
@@ -801,100 +820,6 @@ $(function () {
         <% end %>
       </div>
     </div>
-
-    <!-- 7行目 -->
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-        <%= link_to "http://google.com" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("",
-          alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("",
-           alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <%= image_tag("",
-          alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-    </div>
-
-    <!-- 8行目 -->
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-        <%= link_to "http://google.com" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("",
-          alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("",
-           alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <%= image_tag("",
-          alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-    </div>
-
-    <!-- ９行目 -->
-    <div class="row">
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-        <%= link_to "http://google.com" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("",
-          alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <!-- 90, 120 -->
-          <%= image_tag("",
-           alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-      <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-        <%= link_to "" do %>
-          <%= image_tag("",
-          alt: "", :width => '192', :height => '96') %>
-          <br>
-
-        <% end %>
-      </div>
-    </div>
-
-    <!-- １０行目 -->
-
-    <!-- 世界チャート -->
   </div>
 
 

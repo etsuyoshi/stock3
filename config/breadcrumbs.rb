@@ -183,6 +183,16 @@ crumb :foreign_currency_deposits do
   parent :study
 end
 
+crumb :try_mini_kabu do
+  link "ミニ株を始めてみよう"
+  parent :study
+end
+
+crumb :why_you_invest do
+  link "なぜ投資をすべきか"
+  parent :study
+end
+
 
 crumb :news do
   link "ニュース"

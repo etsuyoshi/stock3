@@ -487,6 +487,28 @@ span.picture {
   border-top: 1px solid $grayMediumLight;
 }
 
+.graybackground_withline{
+  font-size: 0.85em;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  margin-right: 5px;
+  margin-left: 5px;
+
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  border-radius: 5px;
+  border-style: solid;
+  border-color: #000;
+  border-width: 1px;
+
+
+  background-color:#eee;
+  opacity: 0.78;//透明性
+}
+
 
 // 証券会社比較
 table.securities_table{

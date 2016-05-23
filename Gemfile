@@ -3,6 +3,9 @@ gem 'gon'
 # seo: meta-tag
 gem 'meta-tags'
 
+# site map generator
+gem 'sitemap_generator'
+
 # seo: パンくず
 gem 'gretel'
 

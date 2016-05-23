@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   get 'password_resets/edit'
 
   root to: 'static_pages#home'
+  # root to: '/study_pages/elementary/why_you_invest'
   # ニュースフィード(feed)取得用のコントローラ
   get 'fetch/index'
   match '/fetch',   to: 'fetch#index', via: 'get'

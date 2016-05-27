@@ -1,0 +1,1 @@
+‘export PATH=/Users/endotsuyoshi/.rbenv/shims:/Users/endotsuyoshi/.rvm/gems/ruby-2.3.0/bin:/Users/endotsuyoshi/.rvm/gems/ruby-2.3.0@global/bin:/Users/endotsuyoshi/.rvm/rubies/ruby-2.3.0/bin:/Users/endotsuyoshi/google-cloud-sdk/bin:/Users/endotsuyoshi/bin:/usr/local/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/texbin:/Users/endotsuyoshi/.rvm/bin’ source .bash_profile

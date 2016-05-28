@@ -1,5 +1,7 @@
 # Set the host name for URL creation
 SitemapGenerator::Sitemap.default_host = "http://www.japanchart.com"
+SitemapGenerator::Sitemap.sitemaps_path = 'sitemaps/' # 保存先（この場合 /public/sitemaps/以下になる）
+
 
 # http://shirusu-ni-tarazu.hatenablog.jp/entry/2012/10/09/013117
 SitemapGenerator::Sitemap.create do

@@ -9,7 +9,12 @@ class FetchController < ApplicationController
 
   def index
 
-    get_bitcoin_news
+
+    remove_price_series#時系列データの削除
+    return
+
+    remove_price_newest#最新データの削除
+    get_bitcoin_news #bitcoin関連ニュースのノコギリ
 
 
 
@@ -45,6 +50,34 @@ class FetchController < ApplicationController
   end
 
   private
+  def remove_price_series
+    p "時系列データ数= #{Priceseries.count}"
+    if Priceseries.count > 7000
+      p "データ数が7000件を超えたので各インデックスで最初の何件か(現状10件にしているが実質どのくらいにすべきかわからない)を削除する"
+
+      # まずはPriceseriesのインデックスをユニークに取得する
+      array_indices = Priceseries.uniq.pluck(:ticker)
+      array_indices.each do |ticker_index|
+        p ticker_index
+
+        # 当該インデックスが過去500日以上あれば削除
+        count_data = Priceseries.where(ticker: ticker_index).count
+        p "データ数=#{count_data}"
+        if count_data > 500
+          # ちょっと謙虚すぎるかもしれないが古いデータ10件だけ削除する
+          p "データが多すぎるので削除します"
+          Priceseries.where(ticker: ticker_index).order(ymd: :asc).limit(10).destroy_all
+          p "削除後データ数=#{Priceseries.where(ticker: ticker_index).count}"
+        end
+      end
+    end
+  end
+  # 最新データが10000行以下になるように制御するため
+  def remove_price_newest
+
+    PriceNewest.delete_all
+
+  end
   # feedsテーブルに1件INSERT
   def insert_feed(feed_id, title, description, link)
     feed = Feed.new(

@@ -1,12 +1,25 @@
-<%= @path if Rails.env.development? %>
+<!-- seo -->
+<% title = '株取引の仕組み' %>
+<% set_meta_tags title: title %>
+<% breadcrumb :study_trademechanism %>
+
+<%= "開発版：#{@path}" if Rails.env.development? %>
 <div class="row">
   <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
        id="studyframe">
-    <%= render 'layouts/studyIndex' %>
-    <div id="studytitle">
-      <h3>
-        取引の仕組み
-      </h3>
+
+     <div id="studytitle">
+       <h1>
+         <%= title %>
+       </h1>
+     </div>
+     <div id="studyindex">
+      <%= render 'layouts/study_elementary_stock_trade_index' %>
+    </div>
+    <div id="studycontents">
+      <h2>
+        株式の取引注文と板方式による価格の決定方法
+      </h2>
     </div>
     <div id="studycontents">
       ここでは株を取引する注文の種類と、それを決定する仕組みについて説明します。<br>

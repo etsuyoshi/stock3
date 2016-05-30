@@ -2,56 +2,67 @@ crumb :root do
   link "Home", root_path
 end
 
-# Issue list
+# 全講座の紐付け
 crumb :study do
-  link "株式講座"
+  link "株式講座", '/study_pages/top'
   parent :root
 end
 
-# 初級編
+
+# 初級編インデックス
+crumb :study_elementary do
+  link "初心者の為の株式取引の方法と仕組み", '/study_pages/elementary/top'
+  parent :study
+end
+
 crumb :study_aboutstock do
   link "株とは"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :study_stockmechanism do
   link "株の仕組み"
-  parent :study
+  parent :study_elementary
+end
+
+crumb :study_trademechanism do
+  link "株取引の仕組み"
+  parent :study_elementary
 end
 
 # 中級編
 crumb :study_securities_fee do
   link "手数料"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :study_securities_matsui do
   link "松井証券で口座を開く"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :study_securities_sbi do
   link "SBI証券で口座を開く"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :study_first_buy do
   link "最初に買う銘柄の選び方"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :study_search_my_portfolio do
   link "自分に合う銘柄の探し方"
-  parent :study
+  parent :study_elementary
 end
 crumb :buy_matsui do
   link "初めて買ってみる"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :sell_matsui do
   link "初めて売ってみる"
-  parent :study
+  parent :study_elementary
 end
 
 crumb :analytics do

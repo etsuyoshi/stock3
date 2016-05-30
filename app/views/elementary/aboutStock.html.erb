@@ -1,15 +1,23 @@
-<%= @path if Rails.env.development? %>
-<%= breadcrumb :study_aboutstock %>
+<% title = '株とは' %>
+<% set_meta_tags title: title %>
+<% breadcrumb :study_aboutstock %>
+
+<%= "開発版：#{@path}" if Rails.env.development? %>
 <div class="row">
   <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
        id="studyframe">
-    <%= render 'layouts/studyIndex' %>
-    <div id="studytitle">
-      <h3>
-        株とは
-      </h3>
+
+     <div id="studytitle">
+       <h1>
+         <%= title %>
+       </h1>
+     </div>
+     <div id="studyindex">
+      <%= render 'layouts/study_elementary_stock_trade_index' %>
     </div>
     <div id="studycontents">
+
+      <h3>株とは何か</h3>
       株(株券)とは会社がビジネスをする上で必要なお金を集めるために発行するものです。<br>
       また、売買できる価値があるチケットという意味の有価証券の一つと言えます。<br>
       株を売買する時の値段のことを株価と呼びます。<br>

@@ -5,23 +5,10 @@
  <div id="studyindex">
   <h2>株式講座</h2>
   <br>
+  <%= render 'layouts/study_elementary_stock_trade_index' %>
+  <!-- 以下、同じように重複削除すれば良い？ -->
   <ul class="defaultlist diamond">
-    <li><%= link_to "初級者編", '/study_pages/elementary/top' %></li>
-  </ul>
-  <ul class="defaultlist smalllist">
-    <li><%= link_to 'なぜ今投資か', '/study_pages/elementary/why_you_invest' %></li>
-    <li><%= link_to '株とは', '/study_pages/elementary/aboutStock' %></li>
-    <li><%= link_to '株の仕組み', '/study_pages/elementary/stockMechanism' %></li>
-    <li><%= link_to '取引の仕組み', '/study_pages/elementary/tradeMechanism' %></li>
-    <li><%= link_to '市場の詳細', '/study_pages/elementary/marketDetail' %></li>
-    <li><%= link_to '上場とは', '/study_pages/elementary/ipo' %></li>
-    <li><%= link_to 'その他の運用の方法（債券、コモディティ、ADR、為替etc)', '/study_pages/elementary/otherManagement' %></li>
-    <li><%= link_to '株式トレードのメリット', '/study_pages/elementary/merit' %></li>
-    <li><%= link_to '株式トレードのデメリット', '/study_pages/elementary/demerit' %></li>
-    <li><%= link_to 'マイナス金利時代の投資術', '/study_pages/elementary/low_interest_rate_investment' %></li>
-  </ul>
-  <ul class="defaultlist diamond">
-    <li><%= link_to "中級者編", '/study_pages/intermediate/top' %></li>
+    <li><%= link_to "証券会社と手数料", '/study_pages/intermediate/top' %></li>
   </ul>
   <ul class="defaultlist smalllist">
     <li><%= link_to 'ネット証券の選び方', '/study_pages/intermediate/securities' %></li>
@@ -39,7 +26,7 @@
     <li><%= link_to '実際に売ってみよう(松井証券の場合)', '/study_pages/intermediate/sell_matsui' %></li>
   </ul>
   <ul class="defaultlist diamond">
-    <li><%= link_to "上級者編", '/study_pages/advanced/top' %></li>
+    <li><%= link_to "株価分析と売買手法", '/study_pages/advanced/top' %></li>
   </ul>
   <ul class="defaultlist smalllist">
     <li><%= link_to '株式分析', '/study_pages/advanced/stock_analysis' %></li>
@@ -69,6 +56,7 @@
     <li><%= link_to '日経225先物とは', '/study_pages/advanced/nikkei225sakimono' %></li>
     <li><%= link_to '先物の価格の決定方法', '/study_pages/advanced/pricing_sakimono' %></li>
     <li><%= link_to '海外株式に投資する', '/study_pages/advanced/foreign_investment' %></li>
+    <li><%= link_to '日経平均株価とTOPIXの違い', '/study_pages/advanced/difference_topix_nikkei' %></li>
     http://pooripo.com/sougolink/<br>
     <li>売買テクニック</li>
 

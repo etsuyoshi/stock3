@@ -1,13 +1,19 @@
-<%= @path if Rails.env.development? %>
+<% title = '株式以外の投資' %>
+<% set_meta_tags title: title %>
+<% breadcrumb :study_other_management %>
+
+<%= "開発版：#{@path}" if Rails.env.development? %>
 <div class="row">
   <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
        id="studyframe">
 
-    <%= render 'layouts/studyIndex' %>
-    <div id="studytitle">
-      <h3>
-        株以外の投資先
-      </h3>
+     <div id="studytitle">
+       <h1>
+         <%= title %>
+       </h1>
+     </div>
+     <div id="studyindex">
+      <%= render 'layouts/study_elementary_stock_trade_index' %>
     </div>
     <div id="studycontents">
       上場株と未上場株の違い→一般的な株式運用は上場株がメイン<br>

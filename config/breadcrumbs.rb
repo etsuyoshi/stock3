@@ -46,6 +46,35 @@ crumb :study_securities_sbi do
   parent :study_elementary
 end
 
+crumb :study_stock_merit do
+  link "株式投資のメリット"
+  parent :study_elementary
+end
+crumb :study_stock_demerit do
+  link "株式投資のデメリット"
+  parent :study_elementary
+end
+
+crumb :study_low_interest_rate_investment do
+  link "マイナス金利時代の投資術"
+  parent :study_elementary
+end
+
+crumb :study_market_detail do
+  link "市場の詳細"
+  parent :study_elementary
+end
+
+crumb :study_ipo do
+  link "上場とは"
+  parent :study_elementary
+end
+
+crumb :study_other_management do
+  link "株以外の投資"
+  parent :study_elementary
+end
+
 crumb :study_first_buy do
   link "最初に買う銘柄の選び方"
   parent :study_elementary

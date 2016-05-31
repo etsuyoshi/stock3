@@ -1,6 +1,8 @@
-<!-- seo -->
-<% set_meta_tags title: 'マイナス金利時代の投資術' %>
-<% breadcrumb :foreign_investment %>
+<% title = 'マイナス金利時代の投資術' %>
+<% set_meta_tags title: title %>
+<% breadcrumb :study_low_interest_rate_investment %>
+
+<%= "開発版：#{@path}" if Rails.env.development? %>
 
 <%= @path if Rails.env.development? %>
 <div class="row">

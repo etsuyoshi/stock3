@@ -3,6 +3,8 @@ gem 'gon'
 # seo: meta-tag
 gem 'meta-tags'
 
+gem 'twitter'
+
 # site map generator
 gem 'sitemap_generator'
 

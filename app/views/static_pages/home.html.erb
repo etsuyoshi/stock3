@@ -31,7 +31,7 @@
 
 <script>
 $(function () {//３番目に表示される(TOYOTA)
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
+    // $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
       //  console.log("data=" + data);
 
         // create data
@@ -194,7 +194,7 @@ $(function () {//３番目に表示される(TOYOTA)
               }
             ]
         });
-    });
+    // });
 });
 
 // parameterを渡す設計にすれば一つのjqueryで複数のデータに対して実行できるが、、
@@ -495,10 +495,27 @@ $(function () {
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
   <div class = "row">
     <!-- candle stick nk225 -->
-    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <h2>世界経済の主要指標騰落率</h2>
       <div class="graybackground_withline">
+        <strong><h5>本当の意味の分散投資を実現するために必要な視点</h5></strong>
+        株式に投資するからには損はしたくありません。<br>
+        機関投資家のような潤沢な資金がない個人投資家にとって、
+        アナリストを使った銘柄調査や有料情報にアクセスすることは容易ではありません。<br>
+        どのようにすれば損をしないか、その唯一の答えは分散投資です。<br>
+        分散投資についてはこちらをご覧ください。<br>
+        分散投資には様々なレベルがあります。<br>
+        例えば、同業他社を複数保有して銘柄特有な要因を排除する方法(業種内分散投資)、
+        異なる売上サイクルを持つ異業種銘柄を保有することによって業種季節性を排除する方法(業種内分散投資)、
+        国によって異なる地政学的な成長リスクを排除する方法(国際分散投資)
+        があります。<br>
+        国ごとに成長率が異なるため、日本株だけに投資することは
+        日本の問題である少子高齢化という人口動態的な成長リスク(ソブリンリスク)を間接的に負ってしまうことになるため、
 
+        国際分散投資をするための最初の一歩として
+        アジア、ヨーロッパ、南米、北米などの地域ごとに主要銘柄を保有し、
+        最小限のポートフォリオを構築することが重要となります。<br>
+        ここでは各国の株式マーケットのインデックスを示しますので参考にしてみてください。<br>
       </div>
       <br>
       <br>
@@ -516,7 +533,7 @@ $(function () {
 
   <div class = "row">
     <!-- global map -->
-    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
       <div class="studytips">
         <h4>世界経済の騰落率状況</h4><br><br>
         各国の主要指標の最新騰落状況をバブルチャートで表現しています。<br>
@@ -533,14 +550,11 @@ $(function () {
 
   <div class = "row">
     <!-- candle stick @apple -->
-    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
       <div id="container_toyota" style="width:100%; height:400px;"></div>
     </div>
-  </div>
-
-  <div class = "row">
     <!-- line chart -->
-    <div class="col-xl-12 col-sm-12 col-md-12 col-lg-12">
+    <div class="col-xs-6 col-sm-12 col-md-12 col-lg-6">
       <div id="container_apple" style="width:100%; height:400px;"></div>
     </div>
   </div>

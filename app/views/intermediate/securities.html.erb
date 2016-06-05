@@ -1,15 +1,21 @@
+<!-- seo -->
+<% title = '証券会社の選び方' %>
+<%= set_meta_tags title: title %>
+<% breadcrumb :study_securities %>
+
 <%= @path if Rails.env.development? %>
 <div class="row">
   <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
        id="studyframe">
 
-    <%= render 'layouts/studyIndex' %>
-    <div id="studytitle">
-      <h3>
-        証券会社の選び方
-      </h3>
-    </div>
+     <div id="studytitle">
+       <h1>
+         <%= title %>
+       </h1>
+     </div>
+    <%= render 'layouts/study_intermediate_securities_fee' %>
     <div id="studycontents">
+      <h2><%= title %></h2>
       株を購入するためには、証券会社の口座(証券口座)を開設して、その口座に投資額を入金することが必要になります。<br>
       投資家は入金して初めて、その金額の範囲内で売買することができるようになるのです。<br>
       この証券口座はさまざまな違いがあるので、ご自身の投資に見合った証券会社を選ぶ必要があります。<br>
@@ -69,8 +75,9 @@
       口座間の資金を移動しながら用途やタイミングにおうじて適切な取引を行えるようにすべきです。<br>
 <br>
 <br>
-      <right>実際の比較は次のページ</right><br>
-
+      <div align="right">
+        <%= link_to '手数料比較は次のページ', '/study_pages/intermediate/securities_fee' %>
+      </div><br>
     </div>
   </div>
 </div>

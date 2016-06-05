@@ -35,22 +35,6 @@ crumb :study_trademechanism do
   parent :study_elementary
 end
 
-# 中級編
-crumb :study_securities_fee do
-  link "手数料"
-  parent :study_elementary
-end
-
-crumb :study_securities_matsui do
-  link "松井証券で口座を開く"
-  parent :study_elementary
-end
-
-crumb :study_securities_sbi do
-  link "SBI証券で口座を開く"
-  parent :study_elementary
-end
-
 crumb :study_stock_merit do
   link "株式投資のメリット"
   parent :study_elementary
@@ -80,25 +64,55 @@ crumb :study_other_management do
   parent :study_elementary
 end
 
+
+######################################################
+# 中級編
+crumb :study_intermediate do
+  link "証券会社と手数料"
+  parent :study
+end
+crumb :study_securities do
+  link "証券会社選定"
+  parent :study_intermediate
+end
+crumb :study_securities_fee do
+  link "手数料"
+  parent :study_intermediate
+end
+
+crumb :study_securities_matsui do
+  link "松井証券で口座を開く"
+  parent :study_intermediate
+end
+
+crumb :study_securities_sbi do
+  link "SBI証券で口座を開く"
+  parent :study_intermediate
+end
+
+
 crumb :study_first_buy do
   link "最初に買う銘柄の選び方"
-  parent :study_elementary
+  parent :study_intermediate
 end
 
 crumb :study_search_my_portfolio do
   link "自分に合う銘柄の探し方"
-  parent :study_elementary
+  parent :study_intermediate
 end
 crumb :buy_matsui do
-  link "初めて買ってみる"
-  parent :study_elementary
+  link "初めて松井証券で株を買う"
+  parent :study_intermediate
 end
 
 crumb :sell_matsui do
-  link "初めて売ってみる"
-  parent :study_elementary
+  link "初めて松井証券で株を売る"
+  parent :study_intermediate
 end
 
+
+
+######################################################
 # 上級編
 crumb :study_advanced do
   link "株価分析と売買手法"

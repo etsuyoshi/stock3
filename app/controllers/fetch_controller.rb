@@ -11,7 +11,7 @@ class FetchController < ApplicationController
 
 
     remove_price_series#時系列データの削除
-    
+
 
     remove_price_newest#最新データの削除
     get_bitcoin_news #bitcoin関連ニュースのノコギリ

@@ -1,21 +1,21 @@
 <!-- seo -->
-<%= set_meta_tags title: '初めて株を売ってみる' %>
-<%= breadcrumb :sell_matsui %>
+<% title = '松井証券で株を売却する' %>
+<%= set_meta_tags title: title %>
+<% breadcrumb :sell_matsui %>
 
 <%= @path if Rails.env.development? %>
 <div class="row">
   <div class="col-xs-11 col-sm-11 col-md-10 col-lg-10 col-xs-offset-1 col-sm-offset-1 col-md-offset-1 col-lg-offset-1"
        id="studyframe">
-
      <div id="studytitle">
-       <h1>
-         初めて株を売ってみる（松井証券）
-       </h1>
+       <h1><%= title %></h1>
      </div>
-    <%= render 'layouts/studyIndex' %>
+    <%= render 'layouts/study_intermediate_securities_fee' %>
     <div id="studycontents">
-      <h4>初めて売る</h4><br>
-      それでは<%= link_to '買った株', '/study_pages/intermediate/buy_matsui' %>を売ってみましょう。<br>
+      <h2><%= title %></h2>
+      <%= link_to '購入方法についてはこちら', '/study_pages/intermediate/buy_matsui' %>をご覧ください。<br>
+      それでは<%= link_to 'この買った株', '/study_pages/intermediate/buy_matsui' %>を売ってみましょう。<br>
+
 <br>
       <strong>1.売る前の確認</strong><br>
       まず当然ですが、利益が出ているかどうか確認しましょう。<br>

@@ -33,7 +33,7 @@ namespace :twitter do
     tweet = "今日も株価を確認して１日楽しいひと時を！ http://www.japanchart.com"
     d = Time.now + 60 * 60 * 24 * 1
     #str = d.strftime("%Y年%m月%d日 %H:%M")
-    str = d.strftime("%Y年%m月%d日%T")
+    str = d.strftime("%Y年%m月%d日")
     tweet = tweet + str
     puts tweet
     update(client, tweet)

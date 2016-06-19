@@ -64,6 +64,11 @@ crumb :study_other_management do
   parent :study_elementary
 end
 
+crumb :familiar_with_investment do
+  link "投資を身近に"
+  parent :study_elementary
+end
+
 
 ######################################################
 # 中級編

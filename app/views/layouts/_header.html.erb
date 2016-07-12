@@ -1,8 +1,10 @@
 <% todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
+   #herokuの場合は米国時間のため日本時間に戻すためには９時間をたす
+   todayObj = todayObj + 9 * 3600#時差
    month = todayObj.month
    day   = todayObj.day
-   hour  = todayObj.hour+9#時差
-   hour  = hour % 24
+   hour  = todayObj.hour
+   hour  = hour % 24#念のため
    minute= todayObj.min
 
    if hour.to_s.length == 1

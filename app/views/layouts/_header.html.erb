@@ -1,7 +1,8 @@
 <% todayObj = Time::now #ex. 2016-02-21 12:22:21 +0900
    month = todayObj.month
    day   = todayObj.day
-   hour  = todayObj.hour
+   hour  = todayObj.hour+9#時差
+   hour  = hour % 24
    minute= todayObj.min
 
    if hour.to_s.length == 1

@@ -7,7 +7,16 @@ namespace :db do
 		# make_microposts
 		# make_relationships
 	end
+
+	task :call_fetch_controller => :environment do
+		# puts "aaaaaaaaaaaaaa"
+		_controller = FetchController.new
+		_controller.index
+
+
+	end
 end
+
 
 
 def make_nk225

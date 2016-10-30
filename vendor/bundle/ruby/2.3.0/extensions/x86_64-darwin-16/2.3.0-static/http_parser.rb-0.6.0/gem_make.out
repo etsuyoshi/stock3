@@ -1,0 +1,16 @@
+current directory: /Users/endotsuyoshi/Documents/rails/s3/vendor/bundle/ruby/2.3.0/gems/http_parser.rb-0.6.0/ext/ruby_http_parser
+/Users/endotsuyoshi/.rbenv/versions/2.3.0/bin/ruby -r ./siteconf20160927-66030-q7362h.rb extconf.rb
+creating Makefile
+
+current directory: /Users/endotsuyoshi/Documents/rails/s3/vendor/bundle/ruby/2.3.0/gems/http_parser.rb-0.6.0/ext/ruby_http_parser
+make "DESTDIR=" clean
+
+current directory: /Users/endotsuyoshi/Documents/rails/s3/vendor/bundle/ruby/2.3.0/gems/http_parser.rb-0.6.0/ext/ruby_http_parser
+make "DESTDIR="
+compiling ruby_http_parser.c
+compiling ryah_http_parser.c
+linking shared-object ruby_http_parser.bundle
+
+current directory: /Users/endotsuyoshi/Documents/rails/s3/vendor/bundle/ruby/2.3.0/gems/http_parser.rb-0.6.0/ext/ruby_http_parser
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 ruby_http_parser.bundle ./.gem.20160927-66030-1ujbk0c

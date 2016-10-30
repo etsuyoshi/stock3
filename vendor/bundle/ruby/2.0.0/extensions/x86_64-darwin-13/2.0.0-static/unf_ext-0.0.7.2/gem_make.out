@@ -1,0 +1,13 @@
+/Users/endotsuyoshi/.rbenv/versions/2.0.0-p353/bin/ruby extconf.rb 
+checking for main() in -lstdc++... yes
+creating Makefile
+
+make "DESTDIR=" clean
+
+make "DESTDIR="
+compiling unf.cc
+linking shared-object unf_ext.bundle
+
+make "DESTDIR=" install
+/usr/bin/install -c -m 0755 unf_ext.bundle ./.gem.20161024-18763-2jj0af
+installing default unf_ext libraries

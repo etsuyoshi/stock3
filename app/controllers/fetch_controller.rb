@@ -10,6 +10,9 @@ class FetchController < ApplicationController
   def index
 
 
+# Issue
+# https://github.com/herval/yahoo-finance/issues/28
+
     remove_price_series#時系列データの削除
 
 

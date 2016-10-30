@@ -1,0 +1,30 @@
+sudo: false
+cache: bundler
+
+rvm:
+  - 2.0.0
+  - 2.1.10
+  - 2.2.5
+  - 2.3.1
+
+env:
+  - "RAILS_VERSION=3.2.0"
+  - "RAILS_VERSION=4.0.0"
+  - "RAILS_VERSION=4.1.0"
+  - "RAILS_VERSION=4.2.0"
+  - "RAILS_VERSION=5.0.0"
+
+matrix:
+  exclude:
+    - rvm: 2.0.0
+      env: "RAILS_VERSION=5.0.0"
+    - rvm: 2.1.10
+      env: "RAILS_VERSION=5.0.0"
+
+notifications:
+  recipients:
+    - kpumuk@kpumuk.info
+
+addons:
+  code_climate:
+    repo_token: "8792cbc0d1780830ddd3dd7eb1c25f09f386ba8f04449ad830039469406a6ab3"

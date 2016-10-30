@@ -1,4 +1,7 @@
 source 'https://rubygems.org'
+#gemspecs
+
+
 gem 'gon'
 # seo: meta-tag
 gem 'meta-tags'
@@ -19,9 +22,13 @@ gem 'fog',                     '1.36.0'
 
 gem 'google-analytics-rails'
 gem 'acts-as-taggable-on', '~> 3.4'
-gem 'yahoo-finance'
-# gem 'sorry_yahoo_finance'
-gem 'jpstock'
+
+
+#株価取得
+gem 'mechanize'
+#gem 'yahoo-finance'#removed
+
+#gem 'jpstock'
 gem 'autoprefixer-rails'
 gem 'bootstrap-sass'#, '2.3.2.0'
 gem 'sprockets', '3.5.2'

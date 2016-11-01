@@ -50,9 +50,22 @@
   #  bid_usdjpy = yahoodata[0].bid
   #  usdjpy = (ask_usdjpy.to_i + bid_usdjpy.to_i)/2
 
-   usdjpy = PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc)[0].pricetrade
-   eurjpy = PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc)[0].pricetrade
+  usdjpy_ojb = PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc)
+  eurjpy_obj = PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc)
+  if usdjpy_obj
+   usdjpy_ = usdjpy_obj[0]
+   if usdjpy_
+     usdjpy = usdjpy_.pricetrade
+   end
+ end
 
+ if eurjpy_obj
+   eurjpy_ = eurjpy_obj[0]
+
+   if eurjpy_
+     eurjpy = eurjpy_.pricetrade
+   end
+ end
 
   #  ask_eurjpy = yahoodata[1].ask
   #  bid_eurjpy = yahoodata[1].bid

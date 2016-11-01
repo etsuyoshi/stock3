@@ -77,8 +77,8 @@
     #"  ダウ: " + newestDow.round(2).to_s +
     "  ダウ: " + ((newestDow!=nil) ? (newestDow.round(2).to_s) : "--") +
     "  上海総合: " + ((newestShanghai!=nil) ? (newestShanghai.round(2).to_s) : "--") +
-    "　ドル/円: " + usdjpy.to_i.round(2).to_s +
-    "  ユーロ/円: " + eurjpy.to_i.round(2).to_s %>
+    "　ドル/円: " + ((usdjpy!=nil) ? (usdjpy.to_i.round(2).to_s) : "--") +
+    "  ユーロ/円: " + ((eurjpy!=nil) ? (eurjpy.to_i.round(2).to_s) : "--") %>
 
 <nav class="navbar navbar-inverse">
   <div class="container-fluid">

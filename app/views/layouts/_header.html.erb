@@ -21,8 +21,10 @@
   if nikkei_newest_obj
     nikkei_newest_price = nikkei_newest_obj[0]
 
-    newestYMD = nikkei_newest_price.ymd
-    newestNikkei = nikkei_newest_price.close
+    if nikkei_newest_price
+      newestYMD = nikkei_newest_price.ymd
+      newestNikkei = nikkei_newest_price.close
+    end
   end
 
   # newestNikkei = Priceseries.where(ticker: "^N225", ymd: newestYMD).close

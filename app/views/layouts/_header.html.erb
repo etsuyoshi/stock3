@@ -17,10 +17,13 @@
   #  newestYMD = Priceseries.find_by_sql('select * from priceseries where ticker = "^N225" order by ymd desc limit 1')[0]["ymd"]
   # newestYMD = Priceseries.where(ticker: "^N225").order(ymd: :desc).limit(1)[0].ymd
   # newestNikkei = Priceseries.find_by(ticker: "^N225", ymd: newestYMD).close
-  nikkei_newest_price = Priceseries.where(ticker: "^N225").order(ymd: :desc).limit(1)[0]
-  newestYMD = nikkei_newest_price.ymd
-  newestNikkei = nikkei_newest_price.close
+  nikkei_newest_obj = Priceseries.where(ticker: "^N225").order(ymd: :desc).limit(1)
+  if nikkei_newest_obj
+    nikkei_newest_price = nikkei_newest_obj[0]
 
+    newestYMD = nikkei_newest_price.ymd
+    newestNikkei = nikkei_newest_price.close
+  end
 
   # newestNikkei = Priceseries.where(ticker: "^N225", ymd: newestYMD).close
   dowData = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD)

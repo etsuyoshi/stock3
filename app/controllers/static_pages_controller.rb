@@ -385,8 +385,8 @@ class StaticPagesController < ApplicationController
       # newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
       returnStock = 0
       if eachPriceNewest
-        if eachPriceNewest.pricetrade &
-          eachPriceNewest.previoustrade
+        if eachPriceNewest.pricetrade != nil &&
+          eachPriceNewest.previoustrade != nil 
           returnStock = eachPriceNewest.pricetrade/eachPriceNewest.previoustrade-1
         end
       end

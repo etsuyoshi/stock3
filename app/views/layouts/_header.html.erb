@@ -23,7 +23,10 @@
 
 
   # newestNikkei = Priceseries.where(ticker: "^N225", ymd: newestYMD).close
-  newestDow = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD).close
+  dowData = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD)
+  if dowData
+    newestDow = dowData.close
+  end
   # newestDow = Priceseries.where(ticker: "^DJI", ymd: newestYMD).close
   #  なぜか最新値が取得できない
   #  newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD).close
@@ -53,7 +56,8 @@
 <%= "現在: " + month.to_s + "月" + day.to_s + "日 " +
     hour.to_s + ":" + minute.to_s +
     "  日経平均: " + (newestNikkei.round(2)).to_s +
-    "  ダウ: " + newestDow.round(2).to_s +
+    #"  ダウ: " + newestDow.round(2).to_s +
+    "  ダウ: " + ((newestDow!=nil) ? (newestDow.round(2).to_s) : "--") +
     "  上海総合: " + ((newestShanghai!=nil) ? (newestShanghai.round(2).to_s) : "--") +
     "　ドル/円: " + usdjpy.to_i.round(2).to_s +
     "  ユーロ/円: " + eurjpy.to_i.round(2).to_s %>

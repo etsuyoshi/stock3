@@ -14,7 +14,7 @@
 # http://stackoverflow.com/questions/3139879/how-do-i-get-currency-exchange-rates-via-an-api-such-as-google-finance?rq=1
 # http://stackoverflow.com/questions/28918968/how-to-get-historical-data-for-currency-exchange-rates-via-yahoo-finance
 
-require 'yahoo-finance'
+#require 'yahoo-finance'
 
 # nikkeiから値上がり率ランキング取得
 require 'open-uri'# URLアクセス

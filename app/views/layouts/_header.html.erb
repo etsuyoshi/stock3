@@ -73,7 +73,7 @@
 %>
 <%= "現在: " + month.to_s + "月" + day.to_s + "日 " +
     hour.to_s + ":" + minute.to_s +
-    "  日経平均: " + (newestNikkei.round(2)).to_s +
+    "  日経平均: " + ((newestNikkei!=nil) ? (newestNikkei.round(2)).to_s : "--") +
     #"  ダウ: " + newestDow.round(2).to_s +
     "  ダウ: " + ((newestDow!=nil) ? (newestDow.round(2).to_s) : "--") +
     "  上海総合: " + ((newestShanghai!=nil) ? (newestShanghai.round(2).to_s) : "--") +

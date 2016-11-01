@@ -1,4 +1,4 @@
-require 'yahoo-finance'
+#require 'yahoo-finance'
 
 # nikkeiから値上がり率ランキング取得
 require 'open-uri'# URLアクセス

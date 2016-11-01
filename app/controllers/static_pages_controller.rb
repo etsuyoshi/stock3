@@ -383,7 +383,12 @@ class StaticPagesController < ApplicationController
       code=hash[:code]
       eachPriceNewest = PriceNewest.where(ticker:ticker).order(datetrade: :desc).limit(1)[0]
       # newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
-      returnStock = eachPriceNewest.pricetrade/eachPriceNewest.previoustrade-1
+      if eachPriceNewest.pricetrade &
+        eachPriceNewest.previoustrade
+        returnStock = eachPriceNewest.pricetrade/eachPriceNewest.previoustrade-1
+      else
+        returnStock = 0
+      end
 
       if returnStock >= 0
         # hashReturn = {code: code, z:(sprintf("%.2f",returnStock*100))}

@@ -220,6 +220,7 @@ GEM
       minitest (>= 3.0)
     highcharts-rails (4.2.5)
       railties (>= 3.1)
+    holiday_jp (0.5.0)
     http (1.0.4)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -416,6 +417,7 @@ DEPENDENCIES
   gretel
   guard-minitest (= 2.3.1)
   highcharts-rails
+  holiday_jp
   jbuilder (= 2.2.3)
   jquery-rails (= 4.0.3)
   mechanize

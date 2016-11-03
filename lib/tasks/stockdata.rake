@@ -18,7 +18,17 @@ namespace :db do
 		# end
 		#next
 
-		gets
+		#まとめて実行する場合
+		# gets(Date.new(2016,1,1),#start
+		# 		 Date.new(2016,11,2))#end
+
+		#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
+		if !(HolidayJp.holiday?(Date.today))
+			today_date = Date.today
+			gets(today_date, today_date)
+		else
+			p '休日のため取得できません'
+		end
 	end
 
 	task :call_fetch_controller => :environment do
@@ -30,11 +40,9 @@ end
 
 
 #-----
-def gets
-	# p "aaa"
-	# return
-  fromDate = Date.new(2016, 1, 22)
-  endDate = Date.new(2016, 1, 22)
+def gets(fromDate, endDate)
+  #fromDate = Date.new(2016, 11, 2)
+  #endDate = Date.new(2016, 11, 2)
   date = fromDate
 
   while true do
@@ -46,72 +54,95 @@ def gets
       date += 1
     end
   end
-
 end
 
+#指定された日付における全株価及び全指数のデータ（始値、引値など）を取得してPriceseriesに保存
 def get(date)
-  results = getCSV(date)
+	#url = "stocks"#http://k-db.com/stocks/2016-11-01?download=csv
+	#url = "indices"#http://k-db.com/indices/2016-11-01?download=csv
 
-	year=date.to_s[0, 4]
-	month=date.to_s[5,2]
-	day=date.to_s[8,2]
-	ymd="#{year}#{month}#{day}"
-	ymd=ymd.to_i
+	meta_datas = [["stocks","コード"], ["indices","指数"]]
+	#meta_datas[0]
+	#return
+	meta_datas.each do |meta_data|
+		content = meta_data[0]#stocks or indices
+		key = meta_data[1]#コード or 指数
 
-	p "ymd= " + ymd.to_s
-	#p results
-	#p "code"
-	#p results[1]["コード"]
-  results.each do |result|
-
-    # company = Company.where(code: result["コード"]).first_or_create
-		# #company = Company.where(code: result["1301-T"]).first_or_create
-    # company.name = result["銘柄名"]
-    # company.save
-    # company.prices.create(price: result["終値"], date: date)
-
-
-
-		ps = Priceseries.where(ticker: result["コード"]).first
-		if ps == nil
-			ps =
-			Priceseries.new(
-			ticker: result["コード"],
-			 name: result["銘柄名"],
-			 open: result["始値"],
-			 high: result["高値"],
-			 low: result["安値"],
-			 close: result["終値"],
-			 volume: result["出来高"],
-			 ymd: ymd
-			 )
-
-			 ps.save
+		results = getCSV(date, content)
+		if !results
+			p "指定したデータは存在しません"
+			return
 		end
 
-		# "id,INTEGER"
-		# "ticker,varchar"
-		# "name,varchar"
-		# "open,float"
-		# "high,float"
-		# "low,float"
-		# "close,float"
-		# "volume,float"
-		# "ymd,integer"
-		# "created_at,datetime"
-		# "updated_at,datetime"
+		year=date.to_s[0, 4]
+		month=date.to_s[5,2]
+		day=date.to_s[8,2]
+		ymd="#{year}#{month}#{day}"
+		ymd=ymd.to_i
+
+		p "ymd= " + ymd.to_s
+		#p results
+		#p "code"
+		#p results[1]["コード"]
+	  results.each do |result|
+
+	    # company = Company.where(code: result["コード"]).first_or_create
+			# #company = Company.where(code: result["1301-T"]).first_or_create
+	    # company.name = result["銘柄名"]
+	    # company.save
+	    # company.prices.create(price: result["終値"], date: date)
 
 
-  end
+
+			ps = Priceseries.where(ticker: result[key]).first
+			p ps.to_s
+			if ps == nil
+				ps =
+				Priceseries.new(
+				ticker: result[key],
+				 name: result[key],
+				 open: result["始値"],
+				 high: result["高値"],
+				 low: result["安値"],
+				 close: result["終値"],
+				 volume: result["出来高"],
+				 ymd: ymd
+				 )
+
+				 ps.save
+			end
+
+			# "id,INTEGER"
+			# "ticker,varchar"
+			# "name,varchar"
+			# "open,float"
+			# "high,float"
+			# "low,float"
+			# "close,float"
+			# "volume,float"
+			# "ymd,integer"
+			# "created_at,datetime"
+			# "updated_at,datetime"
+
+
+	  end
+	end
 end
 
-def getCSV(date) #date:2016-01-22
+
+
+def getCSV(date, content) #date:2016-01-22
 	#p "getCSV"
 	p "getCSV:date = " + date.to_s
+	p "getCSV:content = " + content.to_s
   agent = Mechanize.new
-  csv = agent.get_file("http://k-db.com/stocks/#{date}?download=csv")
+  #csv = agent.get_file("http://k-db.com/stocks/#{date}?download=csv")
+	csv = agent.get_file("http://k-db.com/#{content}/#{date}?download=csv")
   csv = NKF.nkf('-wxm0', csv) #utf8に変換
   csv = csv.split("\r\n")
+	if !csv
+		return nil
+	end
   keys = csv[0].split(",")
 	#p keys.to_s
 

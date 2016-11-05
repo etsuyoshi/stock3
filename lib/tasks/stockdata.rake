@@ -19,9 +19,11 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		gets(Date.new(2016,11,4),#start
-				 Date.new(2016,11,4))#end
-		next
+		# gets(Date.new(2016,11,4),#start
+		# 		 Date.new(2016,11,4))#end
+		# next
+
+
 		#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
 		if !(HolidayJp.holiday?(Date.today))
 			today_date = Date.today
@@ -94,7 +96,7 @@ def get(date)
 
 
 			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd).first
-			#該当tickerの該当ymdがDBに存在しなければ取得して保存する
+			#該当銘柄(ticker)の該当日付(ymd)がDBに存在しなければ取得して保存する
 			p ps.to_s
 			if ps == nil
 				ps =

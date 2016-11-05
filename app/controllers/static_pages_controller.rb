@@ -386,7 +386,7 @@ class StaticPagesController < ApplicationController
       returnStock = 0
       if eachPriceNewest
         if eachPriceNewest.pricetrade != nil &&
-          eachPriceNewest.previoustrade != nil 
+          eachPriceNewest.previoustrade != nil
           returnStock = eachPriceNewest.pricetrade/eachPriceNewest.previoustrade-1
         end
       end
@@ -478,7 +478,7 @@ class StaticPagesController < ApplicationController
     historical_nikkei=
     Priceseries.where(ticker: "^N225").order(ymd: :asc)
     historical_toyota =
-    Priceseries.where(ticker: "7203").order(ymd: :asc)
+    Priceseries.where(ticker: "7203-T").order(ymd: :asc)
     # これ以上取得項目を増やすと致命的に遅くなるので描画グラフは二つまでにする。
     # historical_docomo =
     # Priceseries.where(ticker: "9437").order(ymd: :asc)
@@ -488,7 +488,7 @@ class StaticPagesController < ApplicationController
 
     gon.historical = {};
     gon.historical["^N225"] = historical_nikkei
-    gon.historical["7203"] = historical_toyota
+    gon.historical["7203-T"] = historical_toyota
     # gon.historical["9437"] = historical_docomo
     # gon.historical["8306"] = historical_mufg
 

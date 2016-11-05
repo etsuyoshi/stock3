@@ -22,14 +22,20 @@ namespace :db do
 		# gets(Date.new(2016,11,4),#start
 		# 		 Date.new(2016,11,4))#end
 		# next
+		p !HolidayJp.holiday?(Date.today)
+		p Date.today.to_s
+		next
 
-
-		#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
-		if !(HolidayJp.holiday?(Date.today))
-			today_date = Date.today
-			gets(today_date, today_date)
+		if Time.now.wday != 0 && Time.now.wday != 6
+			#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
+			if !(HolidayJp.holiday?(Date.today))
+				today_date = Date.today
+				gets(today_date, today_date)
+			else
+				p '休日のため取得できません'
+			end
 		else
-			p '休日のため取得できません'
+			p "土日です"
 		end
 	end
 

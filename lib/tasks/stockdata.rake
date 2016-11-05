@@ -22,10 +22,11 @@ namespace :db do
 		# gets(Date.new(2016,11,4),#start
 		# 		 Date.new(2016,11,4))#end
 		# next
-		p !HolidayJp.holiday?(Date.today)
-		p Date.today.to_s
-		p Time.now
-		next
+		# p !HolidayJp.holiday?(Date.today)
+		# p Date.today.to_s
+		# p Time.now#heroku時間はNY-timeだが、以下コマンドで日本時間に設定可能(done)
+		#heroku config:add TZ=Asia/Tokyo
+		#next
 
 		if Time.now.wday != 0 && Time.now.wday != 6
 			#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する

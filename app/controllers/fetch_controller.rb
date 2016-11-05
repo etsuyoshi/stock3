@@ -31,9 +31,10 @@ class FetchController < ApplicationController
     get_price_series("^FTSE")
 
     # yahoo_client.historical_quotes("7203", { start_date: Time::now-3600*24*3, end_date: Time::now})
-    get_price_series("7203")#toyota
-    get_price_series("9437")#docomo
-    get_price_series("8306")#mufg
+    # 以下、yahooのデータ提供停止に伴いコメントアウト
+    # get_price_series("7203")#toyota
+    # get_price_series("9437")#docomo
+    # get_price_series("8306")#mufg
     # ここまではエラーなしで通過したことがある。
     # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
 
@@ -55,7 +56,7 @@ class FetchController < ApplicationController
   private
   def remove_price_series
     p "時系列データ数= #{Priceseries.count}"
-    if Priceseries.count > 7000
+    if Priceseries.count > 7000#上限は確か1万件
       p "データ数が7000件を超えたので各インデックスで最初の何件か(現状10件にしているが実質どのくらいにすべきかわからない)を削除する"
 
       # まずはPriceseriesのインデックスをユニークに取得する
@@ -73,6 +74,8 @@ class FetchController < ApplicationController
           p "削除後データ数=#{Priceseries.where(ticker: ticker_index).count}"
         end
       end
+    else
+      p "データ数は#{Priceseries.count}件なので削除しません"
     end
   end
   # 最新データが10000行以下になるように制御するため

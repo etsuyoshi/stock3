@@ -19,9 +19,9 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		# gets(Date.new(2016,1,1),#start
-		# 		 Date.new(2016,11,2))#end
-
+		gets(Date.new(2016,11,4),#start
+				 Date.new(2016,11,4))#end
+		next
 		#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
 		if !(HolidayJp.holiday?(Date.today))
 			today_date = Date.today
@@ -32,7 +32,6 @@ namespace :db do
 	end
 
 	task :call_fetch_controller => :environment do
-		# puts "aaaaaaaaaaaaaa"
 		_controller = FetchController.new
 		_controller.index
 	end
@@ -94,7 +93,8 @@ def get(date)
 
 
 
-			ps = Priceseries.where(ticker: result[key]).first
+			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd)
+			#該当tickerの該当ymdがDBに存在しなければ取得して保存する
 			p ps.to_s
 			if ps == nil
 				ps =

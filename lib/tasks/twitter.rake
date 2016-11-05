@@ -117,11 +117,11 @@ namespace :twitter do
   #自動tweet&scheduler(heroku)
   #http://qiita.com/kyohei8/items/5a7d7db3838728a04140
   task :tweetHello => :environment do
-    if HolidayJp.holiday?(Date.today)
-      next
-    end
     client = get_twitter_client
     tweet = "今日も株価を確認して１日楽しいひと時を！  http://www.japanchart.com"
+    if HolidayJp.holiday?(Date.today)
+      tweet = "今日は休日のため休場です！株価の振り返りをしましょう！  http://www.japanchart.com"
+    end
     d = Time.now + 60 * 60 * 24 * 1
     #str = d.strftime("%Y年%m月%d日 %H:%M")
     str = d.strftime("%Y年%m月%d日")

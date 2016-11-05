@@ -24,6 +24,7 @@ namespace :db do
 		# next
 		p !HolidayJp.holiday?(Date.today)
 		p Date.today.to_s
+		p Time.now
 		next
 
 		if Time.now.wday != 0 && Time.now.wday != 6

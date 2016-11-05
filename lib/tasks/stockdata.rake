@@ -93,7 +93,7 @@ def get(date)
 
 
 
-			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd)
+			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd).first
 			#該当tickerの該当ymdがDBに存在しなければ取得して保存する
 			p ps.to_s
 			if ps == nil

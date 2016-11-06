@@ -1,4 +1,4 @@
-#require 'yahoo-finance'
+require 'yahoo-finance'
 namespace :db do
 	desc "Fill database with sample data"
 	task nk225: :environment do
@@ -19,8 +19,8 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		gets(Date.new(2016,11,1),#start
-				 Date.new(2016,11,3))#end
+		# gets(Date.new(2016,11,1),#start
+		# 		 Date.new(2016,11,10))#end
 		# next
 		# p !HolidayJp.holiday?(Date.today)
 		# p Date.today.to_s
@@ -28,6 +28,7 @@ namespace :db do
 		#heroku config:add TZ=Asia/Tokyo
 		#next
 
+		#日付選択はgets関数内部で実施済み
 		#if Time.now.wday != 0 && Time.now.wday != 6
 			#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
 			#if !(HolidayJp.holiday?(Date.today))
@@ -111,7 +112,10 @@ def get(date)
 	    # company.save
 	    # company.prices.create(price: result["終値"], date: date)
 
-
+			#東証１部飲みに限定する
+			if result["市場"] != "東証1部"
+				next#1部外であれば次の行を見に行く
+			end
 
 			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd).first
 			#該当銘柄(ticker)の該当日付(ymd)がDBに存在しなければ取得して保存する

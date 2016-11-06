@@ -13,10 +13,16 @@ class FetchController < ApplicationController
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
+
+    #全体のデータ数が多い時に個別銘柄の中で多くの日数を抱えている銘柄を削除する
     remove_price_series#時系列データの削除
 
-
+    #最新データを全て削除する
     remove_price_newest#最新データの削除
+
+
+    #取得系
+
     get_bitcoin_news #bitcoin関連ニュースのノコギリ
 
 
@@ -26,9 +32,13 @@ class FetchController < ApplicationController
     # ここらへんは全てfetch_controllerに寄せるべき
     #各インデックスをPriceseriesモデルに格納
     get_price_series("^DJI")
+
+
     get_price_series("^N225")
     get_price_series("000001.SS")
     get_price_series("^FTSE")
+
+
 
     # yahoo_client.historical_quotes("7203", { start_date: Time::now-3600*24*3, end_date: Time::now})
     # 以下、yahooのデータ提供停止に伴いコメントアウト
@@ -56,6 +66,8 @@ class FetchController < ApplicationController
   private
   def remove_price_series
     p "時系列データ数= #{Priceseries.count}"
+    #全PriceseriesDB件数が7000件を超過していたら各tickerのうち、500日数以上保有している銘柄の先頭10件を削除する
+    #ただし、この方法だと499日ずつ保有している銘柄が14銘柄あってもどれも削除することができない
     if Priceseries.count > 7000#上限は確か1万件
       p "データ数が7000件を超えたので各インデックスで最初の何件か(現状10件にしているが実質どのくらいにすべきかわからない)を削除する"
 
@@ -704,8 +716,9 @@ class FetchController < ApplicationController
 
 
   def insert_PriceSeries(ticker, name, fromYmdObj)
-
+    p "insert_PriceSeries"
     yahoo_client = YahooFinance::Client.new
+    #p "yahoo:#{yahoo_client}"
     # data = yahoo_client.quotes(["BVSP", "NATU3.SA", "USDJPY=X"], [:ask, :bid, :last_trade_date])
     # data = yahoo_client.historical_quotes("^DJI", { raw: false, period: :monthly })
     # datas = yahoo_client.historical_quotes("^N225", { start_date: Time::now-(24*60*60*4), end_date: Time::now }) # 10 days worth of data
@@ -748,7 +761,7 @@ class FetchController < ApplicationController
       d = datasDate[8,2].to_s
 
       insertDate = y + m + d
-      p insertDate
+      p "Date:#{insertDate}, ticker:#{ticker}, close:#{data.close}"
 
 
 

@@ -27,7 +27,7 @@ gem 'acts-as-taggable-on', '~> 3.4'
 
 #株価取得
 gem 'mechanize'
-#gem 'yahoo-finance'#removed
+gem 'yahoo-finance'#removed
 
 #gem 'jpstock'
 gem 'autoprefixer-rails'

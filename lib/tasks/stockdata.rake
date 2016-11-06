@@ -19,8 +19,8 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		gets(Date.new(2016,1,1),#start
-				 Date.new(2016,11,4))#end
+		gets(Date.new(2016,1,4),#start
+				 Date.new(2016,11,10))#end
 		next
 		# p !HolidayJp.holiday?(Date.today)
 		# p Date.today.to_s
@@ -54,14 +54,23 @@ def gets(fromDate, endDate)
   #endDate = Date.new(2016, 11, 2)
   date = fromDate
 
+
+
+
   while true do
-    get(date)
+		#与えられたdateが土日か休日でないならcsv取得（このパターンで拾えないのが大晦日・元旦）
+		if !(date.wday == 0 || date.wday == 6 || (HolidayJp.holiday?(date)))
+			p "date:#{date}で取得"
+			get(date)
+		end
+
 		p "date = " + date.to_s
     if date == endDate
       break
     else
       date += 1
     end
+		sleep(7)
   end
 end
 
@@ -106,7 +115,7 @@ def get(date)
 
 			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd).first
 			#該当銘柄(ticker)の該当日付(ymd)がDBに存在しなければ取得して保存する
-			p ps.to_s
+			#p ps.to_s
 			if ps == nil
 				#日経平均の場合だけ元のデフォルト値の^N225に変換する
 				if result[key] == "日経平均株価"

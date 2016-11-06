@@ -19,7 +19,7 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		gets(Date.new(2016,1,4),#start
+		gets(Date.new(2016,11,1),#start
 				 Date.new(2016,11,10))#end
 		next
 		# p !HolidayJp.holiday?(Date.today)
@@ -28,17 +28,17 @@ namespace :db do
 		#heroku config:add TZ=Asia/Tokyo
 		#next
 
-		if Time.now.wday != 0 && Time.now.wday != 6
+		#if Time.now.wday != 0 && Time.now.wday != 6
 			#k-dbは15時40分に更新なので毎日16時に、当日が休日でなければという条件でcsvファイルを取得する
-			if !(HolidayJp.holiday?(Date.today))
-				today_date = Date.today
-				gets(today_date, today_date)
-			else
-				p '休日のため取得できません'
-			end
-		else
-			p "土日です"
-		end
+			#if !(HolidayJp.holiday?(Date.today))
+		today_date = Date.today
+		gets(today_date, today_date)
+		# 	else
+		# 		p '休日のため取得できません'
+		# 	end
+		# else
+		# 	p "土日です"
+		# end
 	end
 
 	task :call_fetch_controller => :environment do

@@ -19,9 +19,9 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		# gets(Date.new(2016,11,4),#start
-		# 		 Date.new(2016,11,4))#end
-		# next
+		gets(Date.new(2016,1,1),#start
+				 Date.new(2016,11,4))#end
+		next
 		# p !HolidayJp.holiday?(Date.today)
 		# p Date.today.to_s
 		# p Time.now#heroku時間はNY-timeだが、以下コマンドで日本時間に設定可能(done)
@@ -107,17 +107,25 @@ def get(date)
 			#該当銘柄(ticker)の該当日付(ymd)がDBに存在しなければ取得して保存する
 			p ps.to_s
 			if ps == nil
+				#日経平均の場合だけ元のデフォルト値の^N225に変換する
+				if result[key] == "日経平均株価"
+					name_mod = "nikkei225"
+					ticker_mod = "^N225"
+				else
+					name_mod = result[key]
+					ticker_mod = result[key]
+				end
+
 				ps =
 				Priceseries.new(
-				ticker: result[key],
-				 name: result[key],
+				ticker: ticker_mod,
+				 name: name_mod,
 				 open: result["始値"],
 				 high: result["高値"],
 				 low: result["安値"],
 				 close: result["終値"],
 				 volume: result["出来高"],
-				 ymd: ymd
-				 )
+				 ymd: ymd)
 
 				 ps.save
 			end

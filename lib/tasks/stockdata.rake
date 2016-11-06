@@ -20,8 +20,8 @@ namespace :db do
 
 		#まとめて実行する場合
 		gets(Date.new(2016,11,1),#start
-				 Date.new(2016,11,10))#end
-		next
+				 Date.new(2016,11,3))#end
+		# next
 		# p !HolidayJp.holiday?(Date.today)
 		# p Date.today.to_s
 		# p Time.now#heroku時間はNY-timeだが、以下コマンドで日本時間に設定可能(done)

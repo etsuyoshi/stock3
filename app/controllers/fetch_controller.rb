@@ -13,7 +13,7 @@ class FetchController < ApplicationController
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
-
+#以下デバッグ用に擬似コメントアウト
     #全体のデータ数が多い時に個別銘柄の中で多くの日数を抱えている銘柄を削除する
     remove_price_series#時系列データの削除
 
@@ -54,7 +54,10 @@ class FetchController < ApplicationController
     get_news
 
     # bitcoinの時系列データの取得
-    get_btc
+    #get_btc
+
+    #coindeskに保存されている対USDのビットコイン価格を全て取得して最新の10件だけを格納する
+    get_btc_csv
 
     get_event
 
@@ -451,6 +454,94 @@ class FetchController < ApplicationController
     end
   end
 
+  #get_btcが機能しなくなった(301エラー)の為、csvで取得する方法に切り替える
+  def get_btc_csv
+    p "get btc csv..."
+    csv_url = "https://api.bitcoinaverage.com/history/USD/per_day_all_time_history.csv"
+
+    agent = Mechanize.new
+    #csv = agent.get_file("http://k-db.com/stocks/#{date}?download=csv")
+  	csv = agent.get_file(csv_url)
+  	#p "getCSV:#{!csv}"
+  	if !csv || csv==""
+  		return nil
+  	end
+
+    csv = NKF.nkf('-wxm0', csv) #utf8に変換
+    csv = csv.split("\r\n")
+    keys = csv[0].split(",")
+  	p "keys = #{keys.to_s}"
+
+    rows = []
+    p "csv取得完了→変数変換開始"
+    csv.each_with_index do |v1,i1|#v1が一行の文字列、i1が行番号
+      next if i1 < 1
+      #break if i1 == 10
+      row = {}
+
+      v1.split(",").each_with_index do |v2,i2|#v2が各要素、i2が列番号
+        row[keys[i2]] = v2
+        #p "col=#{i2}, key=#{keys[i2]}, cell=#{v2}"
+      end
+      rows << row
+    end
+
+    if rows.length == 0
+      return
+    end
+
+    #p "a = " + rows[1]["High"]
+
+    p "変数変換完了→DB格納開始"
+    #上（最新値）の行から順番に実行するので欲しいデータ数(日数)だけ取得
+
+    rows.each_with_index do |each_row, row_num|
+      break if row_num == 10 #10行まで取得する
+      row_date = each_row["DateTime"]
+      row_high = each_row["High"]
+      row_low  = each_row["Low"]
+      row_close= each_row["Average"]
+      row_volume = each_row["Volume BTC"]
+
+      if row_high == ""
+        row_high = each_row["Average"]
+        row_low  = each_row["Average"]
+      end
+      #p "row:#{each_row}"
+      p "date:#{row_date}, high:#{row_high}, low:#{row_low}, volume=#{row_volume}"
+      ymd = Date.strptime(row_date,'%Y-%m-%d 00:00:00')#文字列を一度日付オブジェクトに変換
+      ymd = ymd.strftime("%Y%m%d")#日付オブジェクトからYYYYMMDDに変換
+      btc_index_ticker = "btci"#tickerに変換
+      btc_index_name="coindesk_btc_index"#nameオブジェクトに変換
+
+      ps = Priceseries.where(ticker: btc_index_ticker).where(ymd: ymd).first
+      p "ps = #{ps}"
+      if ps
+        p "既にDBに存在するので何もしません"
+      else
+        p "まだDBにないので格納します"
+        priceOneDay = Priceseries.new(
+          :ticker => btc_index_ticker, #string,
+          :name => btc_index_name,#string,
+          :open => row_close.to_f,#float,
+          :high => row_high.to_f,#float,
+          :low => row_low.to_f,#float,
+          :close => row_close.to_f,#float,
+          :volume => row_volume.to_f,#float,
+          :ymd => ymd#integer
+          )
+
+        if priceOneDay.save
+          p "#{ymd} #{row_close}　保存成功"
+        else
+          p "#{ymd} #{row_close}　保存失敗"
+        end
+      end
+    end
+
+
+  end
+  #coindeskからビットコイン価格の取得=>なぜか取得できない...
   def get_btc
     # 本当は取得時ではなく定期的に実行したい
     # http://www.coindesk.com/api/
@@ -464,10 +555,41 @@ class FetchController < ApplicationController
     endDate =  todayY_M_D.strftime('%Y-%m-%d')
     startDate =  fromY_M_D.strftime('%Y-%m-%d')
     strUrl = "https://api.coindesk.com/v1/bpi/historical/close.json?start=#{startDate}&end=#{endDate}"
-
+             #https://api.coindesk.com/v1/bpi/historical/close.json?start=2015-06-25&end=2016-11-06
+    p "strUrl:#{strUrl}"
     uri = URI.parse(strUrl)
+    p "uri:#{uri}"
+    p "host:#{uri.host}"
+    p "port:#{uri.port}"
+
+    # https = Net::HTTP.new(uri.host, uri.port)
+    # https.use_ssl = true
+    # res = https.start {
+    #   https.get(uri.request_uri)
+    # }
+    #
+    # if res.code == '200'
+    #   result = JSON.parse(res.body)
+    #   # Railsだったらこう書ける`require 'json'`なしで
+    #   # result = ActiveSupport::JSON.decode res.body
+    #
+    #   # resultを使ってなんやかんや処理をする
+    #   p result
+    # else
+    #   puts "OMG!! #{res.code} #{res.message}"
+    # end
+    # return
+
     json = Net::HTTP.get(uri)
+
+    p "json:#{json}"#ここでjsonが空文字になっているので以下エラーとなる
+    return
+    #以下、デバッグ
+    # https://bbvaopen4u.com/en/actualidad/coindesk-bitpay-and-coinbase-apis-developing-bitcoin-apps
+    # https://github.com/enriquez/coinpocketapp.com
+    # https://github.com/dan-silver/coinbase_exchange
     result = JSON.parse(json)
+    p "result:#{result}"
     ymd = 0
     puts "取得した日付=#{result['bpi'].keys}"
 

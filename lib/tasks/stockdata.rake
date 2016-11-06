@@ -78,6 +78,7 @@ def get(date)
 		key = meta_data[1]#コード or 指数
 
 		results = getCSV(date, content)
+		#p results
 		if !results
 			p "指定したデータは存在しません"
 			return
@@ -156,11 +157,13 @@ def getCSV(date, content) #date:2016-01-22
   agent = Mechanize.new
   #csv = agent.get_file("http://k-db.com/stocks/#{date}?download=csv")
 	csv = agent.get_file("http://k-db.com/#{content}/#{date}?download=csv")
-  csv = NKF.nkf('-wxm0', csv) #utf8に変換
-  csv = csv.split("\r\n")
-	if !csv
+	#p "getCSV:#{!csv}"
+	if !csv || csv==""
 		return nil
 	end
+
+  csv = NKF.nkf('-wxm0', csv) #utf8に変換
+  csv = csv.split("\r\n")
   keys = csv[0].split(",")
 	#p keys.to_s
 

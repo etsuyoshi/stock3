@@ -1,3 +1,4 @@
+<%= include_gon(:init => true) %>
 <% set_meta_tags title: '日本株チャートと初心者講座' %>
 <% set_meta_tags description:
 '日経平均に代表される日本株インデックスとダウジョーンズ指数に代表されるアメリカ株式市場や
@@ -29,6 +30,8 @@
 <script src="https://code.highcharts.com/maps/modules/data.js"></script>
 <script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
 
+
+
 <script>
 $(function () {//３番目に表示される(TOYOTA)
     // $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
@@ -36,10 +39,9 @@ $(function () {//３番目に表示される(TOYOTA)
 
         // create data
         // var historicals = gon.historical_toyota
-        var historicals = gon.historical["7203"]
-        var ohlc = [],
-            volume = [];
-            // console.log("length=", dataLength)
+        var historicals = gon.historical["7203-T"]
+        var ohlc = [],volume = [];
+        //console.log("length=", historicals.length)
             // dataLength = historicals.length;
         // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
         // var unixtime=data[0][0]/1000
@@ -521,6 +523,7 @@ $(function () {
       <div class="studytips">
         <h4>日経平均株価</h4><br><br>
         日経平均は日本国内の流動性の高い225銘柄の株価を単純平均した値。<br>
+
         日本の株式市場全体の動き、特に時価総額が大きな銘柄の値動きを見る時に用いられます。<br>
         一方で東証一部上場企業全体の株価を時価総額の変化として見るTOPIXなどの指標も合わせて見られます。<br>
         詳しくは<%= link_to 'こちら', '/study_pages/advanced/nikkei225sakimono' %>
@@ -576,7 +579,8 @@ $(function () {
       <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
         <!-- 90, 120 -->
         <%= image_tag("http://quote.jpx.co.jp/jpx/chart/chart23.exe?template=ini/realindex&basequote=151&15%3A00",
-         alt: "トピックスチャート", :width => '205', :height => '160') %>
+         alt: "トピックスチャート", :width => '245', :height => '160') %>
+         <!-- alt: "トピックスチャート", :width => '205', :height => '160') -->
         <br>
         <center>トピックスチャート</center>
       <% end %>

@@ -1,3 +1,20 @@
 // Place all the styles related to the StaticPages controller here.
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
+
+
+.dow_and_nikkei_chart{
+  position: absolute;
+  top: -31px;
+  // left: 30%;
+}
+
+.dol_yen_chart{
+  position: absolute;
+  top: -5px;
+}
+
+.mothers_chart{
+  position: absolute;
+  top: -10px;
+}

@@ -48,9 +48,8 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		gets(Date.new(2016,11,10),#start
-		 		 Date.new(2016,11,11))#end
-				 next
+		# gets(Date.new(2016,11,10),#start
+		#  		 Date.new(2016,11,11))#end
 		# next
 		# p !HolidayJp.holiday?(Date.today)
 		# p Date.today.to_s

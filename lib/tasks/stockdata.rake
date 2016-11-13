@@ -153,9 +153,11 @@ def get(date)
 
 			#個別銘柄(-T)では日経225銘柄に限定する:サブインデックスも追加する場合はここで別途指定する必要がある
 			csv_code = result["コード"]
-			if csv_code.last(2)=="-T"#最後の２文字が-Tならば個別銘柄なので225銘柄に含まれるかどうか判定し含まれるなら挿入対象としない
-				if !nikkei225codes.include?(csv_code)
-					next#日経225銘柄ではない場合次の行を見に行く
+			if csv_code
+				if csv_code.last(2)=="-T"#最後の２文字が-Tならば個別銘柄なので225銘柄に含まれるかどうか判定し含まれるなら挿入対象としない
+					if !nikkei225codes.include?(csv_code)
+						next#日経225銘柄ではない場合次の行を見に行く
+					end
 				end
 			end
 

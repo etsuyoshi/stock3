@@ -22,10 +22,13 @@ namespace :db do
 		#DBに保存されているtickerの中でnikkei225ではない銘柄を取得
 		othersNikkei=(nikkei225codes-tickers) | (tickers-nikkei225codes)#比共通要素の取得
 
-		#p othersNikkei.length
+		#これだけでは為替とかも消去されてしまうので削除対象を個別銘柄にのみ絞る
+		othersStockNikkei = othersNikkei.grep(/-T/)
 
-		Priceseries.where(ticker: othersNikkei).delete_all#複数指定の全消去
-		next
+
+
+		Priceseries.where(ticker: othersStockNikkei).delete_all#個別銘柄の複数指定の全消去
+
 	end
 	task nk225: :environment do
 
@@ -45,7 +48,7 @@ namespace :db do
 		#next
 
 		#まとめて実行する場合
-		gets(Date.new(2016,11,1),#start
+		gets(Date.new(2016,11,10),#start
 		 		 Date.new(2016,11,11))#end
 				 next
 		# next
@@ -149,9 +152,12 @@ def get(date)
 			# 	next#1部外であれば次の行を見に行く
 			# end
 
-			#日経225銘柄に限定する
-			if !nikkei225codes.include?(result["コード"])
-				next#日経225銘柄ではない場合次の行を見に行く
+			#個別銘柄(-T)では日経225銘柄に限定する:サブインデックスも追加する場合はここで別途指定する必要がある
+			csv_code = result["コード"]
+			if csv_code.last(2)=="-T"#最後の２文字が-Tならば個別銘柄なので225銘柄に含まれるかどうか判定し含まれるなら挿入対象としない
+				if !nikkei225codes.include?(csv_code)
+					next#日経225銘柄ではない場合次の行を見に行く
+				end
 			end
 
 			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd).first

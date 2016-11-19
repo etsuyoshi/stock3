@@ -7,8 +7,14 @@ class FetchController < ApplicationController
   require 'time'
   require 'date'
 
-  def index
+  def get_rank_from_nikkei
+    _rank_controller = RankController.new
+		_rank_controller.index
+  end
 
+  def index
+    get_rank_from_nikkei
+    return 
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
@@ -235,7 +241,7 @@ class FetchController < ApplicationController
 
     return Time.parse(stringYMDHMS).to_i
 
-    #以下、昔のフォーマット
+    #以下、昔のフォーマット:当日ニュースか前日以前のニュースかで条件分岐してリストのみから日付データを取得する方法
 
     p "#{content.xpath('div[@class="story-content"]').xpath('time[@class="article-time"]').xpath('span[@class="timestamp"]').inner_text}"
     # 当日記事はxx:yy JST形式、前日以前は年月日時分JSTのような形式

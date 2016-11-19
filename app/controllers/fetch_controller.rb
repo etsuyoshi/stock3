@@ -8,7 +8,8 @@ class FetchController < ApplicationController
   require 'date'
 
   def index
-
+    get_news
+    return
 
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
@@ -144,7 +145,7 @@ class FetchController < ApplicationController
 
 
   def get_feed_id(content)
-
+    p "get_feed_id"
     # feed_id => "/article/"を""に置換(スラッシュの前のバックスラッシュはエスケープシーケンス)
     # feed_id = url.sub(/\/article\//, "").to_s
     # p "feed_id = " + feed_id
@@ -153,17 +154,107 @@ class FetchController < ApplicationController
     isToday = false;
 
 
+    # <article class=\"story \">
+    #   <div class=\"story-photo lazy-photo \">
+    #     <a href=\"/article/usa-trump-putin-idJPKBN1392NA\">
+    ########これでhttp://jp.reuters.com/article/usa-trump-putin-idJPKBN1392NA
+    #       <img src=\"http://s2.reutersmedia.net/resources_v2/images/logo-placeholder-med.png\"
+    #            org-src=\"http://s4.reutersmedia.net/resources/r/?m=02&amp;d=20161114&amp;t=2&amp;i=1161686232&amp;w=200&amp;fh=&amp;fw=&amp;ll=&amp;pl=&amp;sq=&amp;r=LYNXMPECAD1GR\"
+    #            border=\"0\" alt=\"\">
+    #     </a>
+    #   </div>
+    #   <div class=\"story-content\">
+    #     <h3 class=\"story-title\">
+    #       <a href=\"/article/usa-trump-putin-idJPKBN1392NA\">
+    #         トランプ氏とプーチン大統領が電話会談、「協力関係」で一致
+    #       </a>
+    #     </h3>
+    #     <div class=\"contributor\">
+    #     </div>
+    #     <p>［モスクワ　１４日　ロイター］ - ロシア政府は、プーチン大統領とトランプ次期米大統領が１４日に電話で会談し、「国際テロリズムや過激派との戦いなどにおいて建設的な協力関係」の構築を目指すことで合意したと明らかにした。
+    #     </p>
+    #     <time class=\"article-time\">
+    #       <span class=\"timestamp\">8:11am JST</span>
+    #     </time>
+    #   </div>
+    # </article>
+
+    #doc.xpath('//article[@class="story "]').each do |content|
+
+
+    #p "aaa = #{content.xpath('h3[@class="story-title"]').css('a').attribute('href').value}"
+    article_id = content.css('a').attribute('href').value#/article/usa-fed-george-rates-idJPKBN13D215
+    # article_id = "http://jp.reuters.com/#{content.xpath('a[@href]').value}"
+    # p "article_id = #{article_id}"
+
+    #記事リンク例
+    #http://jp.reuters.com/article/usa-fed-bullard-idJPKBN13D1CF
+    article_url = "http://jp.reuters.com#{article_id}"
+    html = open(article_url) do |f|
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
+    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+
+    # <div class="group wrap" id="articleContent">
+		#   <div class="article-header">
+    #     <span class="article-section">Business</span>
+    #     <span class="divider"> | </span>
+    #     <span class="timestamp">2016年 11月 18日 23:29 JST</span>
+
+    article_timestamp = doc.xpath('//span[@class="timestamp"]').inner_text
+    p "article_t = #{article_timestamp}"
+
+    #あらかじめ定められたフォーマットであれば
+    if article_timestamp.match(/.*年.*月.*日.*:.*ST/)!=nil
+      timestamp = article_timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
+
+      #timestamp = timestamp.match(/.*年.*月.*日/)[0]
+      p timestamp
+      yyyy_article = timestamp[0,4].to_i
+      p yyyy_article
+      month_article = timestamp.match(/ .*月/)[0].sub(/ /, "").sub(/月/, "").to_i
+      if month_article > 12
+        month_article = month_article - 12
+      end
+      p month_article
+      dd_article = timestamp.match(/月 .*日/)[0].sub(/ /, "").sub(/日/, "").sub(/月/, "").to_i
+      if dd_article > 31
+        dd_article = dd_article - 31
+      end
+      p dd_article
+
+
+      hh_article=timestamp.match(/日.*:/)[0].sub(/日./,"").sub(/:/, "").to_i
+      #mm_article=timestamp.match(/:.*m/)[0].sub(/.m/, "").sub(/:/,"").to_i
+      mm_article=timestamp.match(/:.*/)[0].sub(/:/,"").sub(/.JST/, "").to_i
+      #p "mm=#{timestamp.match(/:.*/)[0].sub(/.*ST/,"")}"
+
+      stringYMDHMS=yyyy_article.to_s + "-" + month_article.to_s + "-" + dd_article.to_s + " " + hh_article.to_s + ":" + mm_article.to_s + ":00"
+      p "stringYMDHMS=#{stringYMDHMS}"
+
+    end
+
+    return Time.parse(stringYMDHMS).to_i
+
+    #以下、昔のフォーマット
+
+    p "#{content.xpath('div[@class="story-content"]').xpath('time[@class="article-time"]').xpath('span[@class="timestamp"]').inner_text}"
     # 当日記事はxx:yy JST形式、前日以前は年月日時分JSTのような形式
     #まずはtimestampだけで記事発行時刻の取得を試る
-    timestamp=content.xpath('div[@class="relatedInfo"]').xpath('span[@class="timestamp"]').inner_text
+    timestamp=content.xpath('div[@class="story-content"]').xpath('time[@class="article-time"]').xpath('span[@class="timestamp"]').inner_text
     #2016年 02月 13日 08:28 JSTのような形式であればこれを分解して時刻に変換する
     #↑のような日時形式でなければ(単なる時刻xx:yy JSTのような場合)は日にちは画像URLの中から取得する
-
-    if timestamp.match(/.*年.*月.*日.*:.*ST/) != nil#前日以前であれば
-      p timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
+    p "timestamp=#{timestamp.to_s}"
+    #p "match = #{timestamp.match(/.*年.*月.*日.*:.*ST/)}"
+    p "match = #{timestamp.match(/.*年.*月.*日/)}"
+    #if timestamp.match(/.*年.*月.*日.*:.*ST/) != nil#前日以前であれば
+    if timestamp.match(/.*年.*月.*日/) != nil#前日以前
+      p timestamp.match(/.*年.*月.*日/)[0]#時間帯JSTなどの記載がなくなったので別途取得する必要
       isToday = false
     else#当日記事の場合
-      p timestamp.match(/.*ST/)[0]
+      p timestamp.match(/.*ST/)[0]#時間帯によってはJSTなどの記号がない場合がある？=>遷移先に存在する
+      #p timestamp.match(/.*年.*月.*日/)#年月日という表記
       isToday = true
     end
 
@@ -177,13 +268,11 @@ class FetchController < ApplicationController
       p content.xpath('div[@class="photo"]').length
       if content.xpath('div[@class="photo"]').length > 0
         image_url = content.xpath('div[@class="photo"]').css('a').css('img').attribute('src').value
-        p "画像あり"
+        p "画像あり:#{image_url}"
       else
         # 画像がない場合
         p "当日の記事で画像がない場合は仕方ないのでreturn値(unixtime=-1)として返して受け取る側で追加処理をしないこととする"
-        return -1
-
-
+        #return -1
       end
 
       p "image_url=" + image_url
@@ -218,7 +307,8 @@ class FetchController < ApplicationController
     else
       p timestamp
       # 前日以前の場合はtimestampに年月日時分が記載されているのでそこから抽出する
-      timestamp = timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
+      #timestamp = timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
+      timestamp = timestamp.match(/.*年.*月.*日/)[0]
       p timestamp
       yyyy_article = timestamp[0,4].to_i
       p yyyy_article
@@ -232,15 +322,19 @@ class FetchController < ApplicationController
         dd_article = dd_article - 31
       end
       p dd_article
-      hh_article = timestamp.match(/日 .*:/)[0].sub(/ /, "").sub(/:/, "").sub(/日/, "").to_i
-      if hh_article > 24
-        hh_article = hh_article - 24
-      end
-      p hh_article
-      mm_article = timestamp.match(/:.* /)[0].sub(/ /, "").sub(/:/, "").to_i
-      if mm_article > 60
-        mm_article = mm_article - 60
-      end
+
+      return
+
+      # 以下は取得できない
+      # hh_article = timestamp.match(/日 .*:/)[0].sub(/ /, "").sub(/:/, "").sub(/日/, "").to_i
+      # if hh_article > 24
+      #   hh_article = hh_article - 24
+      # end
+      # p hh_article
+      # mm_article = timestamp.match(/:.* /)[0].sub(/ /, "").sub(/:/, "").to_i
+      # if mm_article > 60
+      #   mm_article = mm_article - 60
+      # end
 
       p "y:" + yyyy_article.to_s
       p "month:" + month_article.to_s
@@ -392,10 +486,14 @@ class FetchController < ApplicationController
 
 
   def get_news
-    noPage = 5
+    noPage = 20
 
-    while noPage > 0 do
-      url = "http://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=100"
+    while noPage >= 0 do
+      # if TRUE#テスト用
+      #   noPage = 0
+      # end
+      p "search(page=#{noPage}....)"
+      url = "http://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=10"
 
       html = open(url) do |f|
         f.read # htmlを読み込んで変数htmlに渡す
@@ -408,14 +506,33 @@ class FetchController < ApplicationController
 
       p "latest = " + latest_id.to_s
 
-      doc.xpath('//div[@class="feature"]').each do |content|
-
-        if !(content.nil?)
+      #doc.xpath('//div[@class="story-content"]').each do |content|
+      doc.xpath('//article[@class="story "]').each do |content|
+        #content:
+        # <div class=\"feature\">
+        #   <div class=\"photo\">
+        #     <a href=\"/video/2016/11/11/%E3%83%88%E3%83%A9%E3%83%B3%E3%83%97%E5%8B%9D%E5%88%A9%E3%81%A7%E3%83%9D%E3%83%94%E3%83%A5%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%AE%E6%B4%A5%E6%B3%A2%E3%81%8C%E6%AC%A7%E5%B7%9E%E5%88%B0%E6%9D%A5%E3%81%8B%E5%AD%97%E5%B9%95%E3%83%BB9%E6%97%A5?videoId=370431312&amp;videoChannel=201\">
+        #       <div class=\"videoOverlay\">
+        #       </div>
+        #       <img src=\"http://s1.reutersmedia.net/resources/r/?d=20161111&amp;i=123948261&amp;w=140&amp;r=123948261-15_0&amp;t=2\" border=\"0\" alt=\"トランプ勝利でポピュリズムの津波が欧州到来か（字幕・9日）\">
+        #     </a>
+        #   </div>
+        #   <h2>
+        #     <a href=\"/video/2016/11/11/%E3%83%88%E3%83%A9%E3%83%B3%E3%83%97%E5%8B%9D%E5%88%A9%E3%81%A7%E3%83%9D%E3%83%94%E3%83%A5%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%AE%E6%B4%A5%E6%B3%A2%E3%81%8C%E6%AC%A7%E5%B7%9E%E5%88%B0%E6%9D%A5%E3%81%8B%E5%AD%97%E5%B9%95%E3%83%BB9%E6%97%A5?videoId=370431312&amp;videoChannel=201\">
+        #       トランプ勝利でポピュリズムの津波が欧州到来か（字幕・9日）
+        #     </a>
+        #   </h2>
+        # </div>
+        p "content=#{content}"
+        if !(content.nil?)#contentに内容があれば
           # title
           title = content.css('h3').css('a').inner_text
+          p "title=#{title}"
 
           if !(title.nil? || title == "")
             feed_id = get_feed_id(content)
+
+            p "feed_id = #{feed_id}"
             if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
               p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
               if latest_id < feed_id
@@ -435,10 +552,10 @@ class FetchController < ApplicationController
                 # desc
                 description = content.css('p').inner_text
 
-                # p feed_id
-                # p title
-                # p description
-                # p url
+                p feed_id
+                p title
+                p description
+                p url
 
                 insert_feed(feed_id, title, description, url)
                 p "db挿入完了"

@@ -8,9 +8,7 @@ class FetchController < ApplicationController
   require 'date'
 
   def index
-    get_news
-    return
-
+    
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 

@@ -10,19 +10,20 @@ class ApplicationController < ActionController::Base
 
   def get_feed
      @feed_news = Feed.order("feed_id desc").limit(20)
-   end
+  end
 
-   def get_event
-     today = Time.now
-     startDay = today - 3600*24*5
-     startYmd = startDay.strftime('%Y%m%d').to_i
-     endDay = today + 3600*24*5
-     endYmd = endDay.strftime('%Y%m%d').to_i
-     @events = Event.where(ymd: (startYmd)..(endYmd)).order("ymd").limit(200)
-   end
+ def get_event
+   #  ５日分のデータを取得する
+   today = Time.now
+   startDay = today - 3600*24*5
+   startYmd = startDay.strftime('%Y%m%d').to_i
+   endDay = today + 3600*24*5
+   endYmd = endDay.strftime('%Y%m%d').to_i
+   @events = Event.where(ymd: (startYmd)..(endYmd)).order("ymd").limit(200)
+ end
 
 
-   private
+  private
   #  ユーザーのログインを確認する
   def logged_in_user
 

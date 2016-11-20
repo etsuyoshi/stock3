@@ -172,9 +172,7 @@ $(function() {
         <br>
 
 
-        騰落率ランキング->daily騰落率ランキングと３日間、一週間、１ヶ月騰落率を取得する->スイングトレーダー向け情報
-
-        <%= @up_ranks.length %>
+        騰落率ランキング
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <% if @up_ranks.length > 0 %>
@@ -197,9 +195,20 @@ $(function() {
                         <td><%= stock_info["rank"] %></td>
                         <td><%= stock_info["stock_code"] %></td>
                         <td><%= stock_info["name"] %></td>
-                        <td><%= stock_info["return"] %></td>
-                        <td><%= stock_info["price"] %></td>
-                        <td><%= stock_info["vsYesterday"] %></td>
+                        <%
+                          return_value = stock_info["return"]
+                          if return_value.length >= 5 #"100.0を最大"
+                            return_value = return_value.to_f.round(1)#小数点以下1桁のみ抽出
+                          end
+
+                          #floatもしくはintegerの場合のみ％を付与する
+                          if ((return_value.to_f).is_a?Float) || ((return_value.to_i).is_a?Integer)
+                            return_value = return_value.to_s + "%"
+                          end
+                        %>
+                        <td><%= return_value %></td>
+                        <td><%= stock_info["price"].to_i %></td>
+                        <td><%= stock_info["vsYesterday"].to_i %></td>
                       </tr>
                     <% end %>
                   <% end %>
@@ -224,9 +233,20 @@ $(function() {
                         <td><%= stock_info["rank"] %></td>
                         <td><%= stock_info["stock_code"] %></td>
                         <td><%= stock_info["name"] %></td>
-                        <td><%= stock_info["return"] %></td>
-                        <td><%= stock_info["price"] %></td>
-                        <td><%= stock_info["vsYesterday"] %></td>
+                        <%
+                          return_value = stock_info["return"]
+                          if return_value.length >= 5 #"100.0を最大"
+                            return_value = return_value.to_f.round(1)#小数点以下1桁のみ抽出
+                          end
+
+                          #floatもしくはintegerの場合のみ％を付与する
+                          if ((return_value.to_f).is_a?Float) || ((return_value.to_i).is_a?Integer)
+                            return_value = return_value.to_s + "%"
+                          end
+                        %>
+                        <td><%= return_value %></td>
+                        <td><%= stock_info["price"].to_i %></td>
+                        <td><%= stock_info["vsYesterday"].to_i %></td>
                       </tr>
                     <% end %>
                   <% end %>
@@ -234,6 +254,104 @@ $(function() {
               </table>
             <% end %><!-- if @up_ranks.length > 0 -->
           </div>
+        </div>
+
+        <br>
+        <br>
+
+        <div class="row">
+
+          <br>
+          日経225銘柄における騰落率ランキング
+          <br>
+          <% markets = @rank_others.pluck(:market).uniq %>
+
+          <% markets.each do |market| %>
+          <br>
+            <% if market == "^N225-3days-return" %>
+              <br>
+              <h4>3日騰落率ランキング</h4>
+              <% days = 3 %>
+            <% elsif market == "^N225-5days-return" %>
+              <br>
+              <h4>5日騰落率ランキング</h4>
+              <% days = 5 %>
+            <% elsif market == "^N225-7days-return" %>
+              <br>
+              <h4>7日騰落率ランキング</h4>
+              <% days = 7 %>
+            <% elsif market == "^N225-10days-return" %>
+              <br>
+              <h4>10日騰落率ランキング</h4>
+              <% days = 10 %>
+            <% elsif market == "^N225-30days-return" %>
+              <br>
+              <h4>30日騰落率ランキング</h4>
+              <% days = 30 %>
+            <% elsif market == "^N225-3days-change" %>
+              <br>
+              <h4>3日値動きランキング</h4>
+              <% days = 3 %>
+            <% elsif market == "^N225-5days-change" %>
+              <br>
+              <h4>5日値動きランキング</h4>
+              <% days = 5 %>
+            <% elsif market == "^N225-7days-change" %>
+              <br>
+              <h4>7日値動きランキング</h4>
+              <% days = 7 %>
+            <% elsif market == "^N225-10days-change" %>
+              <br>
+              <h4>10日値動きランキング</h4>
+              <% days = 10 %>
+            <% elsif market == "^N225-30days-change" %>
+              <br>
+              <h4>30日値動きランキング</h4>
+              <% days = 30 %>
+            <% end %>
+            <br>
+            <% upOrDowns = ["up", "down"] %>
+            <% upOrDowns.each do |upordown| %>
+              <!-- <% rank_to_display = @rank_others.where(market: market).where(sort: upordown) %> -->
+              <% rank_to_display = @rank_others.where(market: market).where(sort: upordown) %>
+              <% if upordown == "up" %>
+                <%= "上昇率トップ#{rank_to_display.count}" %>
+              <% else %>
+                <br>
+                <%= "下落率トップ#{rank_to_display.count}" %>
+              <% end %>
+              <div class="row">
+                <!-- <%= "ranking = #{@rank_others.where(market: '^N225-10days-change').where(sort: 'down').first.return[0..5]}%" %> -->
+                <% rank_to_display.all.each do |rank_Xdays| %>
+
+                  <% reuter_code = rank_Xdays.stock_code.to_s[0..3]+".T" %>
+
+                  <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+                    <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s %>
+                    <%= link_to "http://www.reuters.com/finance/stocks/chart?symbol=#{reuter_code}" do %>
+                      <%= image_tag("http://charts.reuters.com/reuters/enhancements/chartapi/chart_api.asp?width=458&height=292&symbol=#{reuter_code}&duration=#{days}&lowers=volume&headertype=none",
+                      alt: rank_Xdays.stock_code.to_s, :width => '192', :height => '96') %>
+                      <br>
+                      <%= rank_Xdays.name.to_s + "(" + rank_Xdays.return[0..5] + "%)" %>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+            <% end %>
+          <% end %>
+
+
+
+
+
+
+          <br>
+          日経225銘柄における騰落率ランキング（一週間）
+
+          <br>
+          日経225銘柄における騰落率ランキング（１ヶ月）
+
+          <br>
         </div>
 
       </div>

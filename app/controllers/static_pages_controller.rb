@@ -38,6 +38,7 @@ class StaticPagesController < ApplicationController
     # p "count = " + @events.count
     # @up_ranks = get_rank_hash("priceup")
     # @down_ranks = get_rank_hash("pricedown")
+    #一日騰落率ランキング
     @up_ranks = get_rank_from_db("priceup")
     @down_ranks = get_rank_from_db("pricedown")
 
@@ -61,6 +62,11 @@ class StaticPagesController < ApplicationController
       @diffNikkei225 = sprintf("%.2f", (todayVal - yesterdayVal))
       @valueNikkei225 = todayVal
     end
+
+
+    #日経225銘柄の中で騰落率ランキングを作成(１日、３日、７日、１０日、３０日)
+    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")
+
   end
 
   def dow

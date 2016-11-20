@@ -7,6 +7,34 @@ class ApplicationController < ActionController::Base
   before_action :get_feed, :get_event
   # before_action :get_event
 
+  #全コントローラー及びビュー内で使用可能なメソッドの定義
+  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime
+
+
+  def getTimeFromYMDHMS(yyyymmddhhmmss)
+    #14桁の文字列でなければゼロを返す
+    unless yyyymmddhhmmss.is_a? String
+      return 0
+    end
+    unless yyyymmddhhmmss.length == 14
+      return 0
+    end
+    _YY = yyyymmddhhmmss[0..3]
+    _MM = yyyymmddhhmmss[4..5]
+    _DD = yyyymmddhhmmss[6..7]
+    _hh = yyyymmddhhmmss[8..9]
+    _mm = yyyymmddhhmmss[10..11]
+    _ss = yyyymmddhhmmss[12..13]
+    return Time.mktime(_YY, _MM, _DD, _hh, _mm, _ss, 0)#最後のゼロは秒数の小数点以下
+  end
+  #時間オブジェクトからyyyymmddhhmmssを返す
+  def getYMDHMSFromTime(_time)
+    unless _time.is_a? Time
+      return "0"
+    end
+    return _time.strftime("%Y%m%d%H%M%S")
+  end
+
 
   def get_feed
      @feed_news = Feed.order("feed_id desc").limit(20)

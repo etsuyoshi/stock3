@@ -55,6 +55,7 @@ namespace :db do
 		#日付選択はgets関数内部で実施済み
 		today_date = Date.today
 		gets(today_date, today_date)
+		#gets(Date.new(2016,11,18), Date.new(2016,11,18))
 
 	end
 
@@ -152,14 +153,20 @@ def get(date)
 			ps = Priceseries.where(ticker: result[key]).where(ymd: ymd).first
 			#該当銘柄(ticker)の該当日付(ymd)がDBに存在しなければ取得して保存する
 			#p ps.to_s
-			if ps == nil
+			if ps == nil#存在しなければ保存する
 				#日経平均の場合だけ元のデフォルト値の^N225に変換する
 				if result[key] == "日経平均株価"
 					name_mod = "nikkei225"
 					ticker_mod = "^N225"
 				else
-					name_mod = result[key]
-					ticker_mod = result[key]
+
+					if content == "stocks"
+						name_mod = result["銘柄名"]
+						ticker_mod = result[key]
+					else#content=="index"
+						name_mod = result[key]
+						ticker_mod = result[key]
+					end
 				end
 
 				ps =
@@ -174,6 +181,7 @@ def get(date)
 				 ymd: ymd)
 
 				 ps.save
+				 p ps
 			end
 
 			# "id,INTEGER"

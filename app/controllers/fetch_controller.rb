@@ -13,8 +13,8 @@ class FetchController < ApplicationController
   end
 
   def index
-    get_rank_from_nikkei
-    return 
+
+
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
@@ -53,6 +53,7 @@ class FetchController < ApplicationController
     # ここまではエラーなしで通過したことがある。
     # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
 
+    get_rank_from_nikkei
 
     get_price_newest#最新データの取得
 

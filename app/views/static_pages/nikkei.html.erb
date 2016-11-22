@@ -262,8 +262,9 @@ $(function() {
         <div class="row">
 
           <br>
-          日経225銘柄における騰落率ランキング
+          <h3><%= "日経225銘柄における騰落率ランキング(更新:#{@rank_others.first.created_at})" %></h3>
           <br>
+
           <% markets = @rank_others.pluck(:market).uniq %>
 
           <% markets.each do |market| %>
@@ -337,17 +338,6 @@ $(function() {
               </div>
             <% end %>
           <% end %>
-
-
-
-
-
-
-          <br>
-          日経225銘柄における騰落率ランキング（一週間）
-
-          <br>
-          日経225銘柄における騰落率ランキング（１ヶ月）
 
           <br>
         </div>

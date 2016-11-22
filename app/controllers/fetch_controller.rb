@@ -53,6 +53,7 @@ class FetchController < ApplicationController
     # ここまではエラーなしで通過したことがある。
     # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
 
+    #Priceseriesの7203の最新ymdから当日のランキングを作成するので個別銘柄Priceseries(db:nk225)を更新した後に実施する
     get_rank_from_nikkei
 
     get_price_newest#最新データの取得

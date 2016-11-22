@@ -327,10 +327,10 @@ $(function() {
                   <% reuter_code = rank_Xdays.stock_code.to_s[0..3]+".T" %>
 
                   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                    <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s %>
+                    <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s + "(" + reuter_code.to_s + ")"%>
                     <%= link_to "http://www.reuters.com/finance/stocks/chart?symbol=#{reuter_code}" do %>
                       <%= image_tag("http://charts.reuters.com/reuters/enhancements/chartapi/chart_api.asp?width=458&height=292&symbol=#{reuter_code}&duration=#{days}&lowers=volume&headertype=none",
-                      alt: rank_Xdays.stock_code.to_s, :width => '192', :height => '96') %>
+                      alt: reuter_code, :width => '192', :height => '96') %>
                       <br>
                       <%= rank_Xdays.name.to_s + "(" + rank_Xdays.return[0..5] + "%)" %>
                     <% end %>

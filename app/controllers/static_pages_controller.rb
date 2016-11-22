@@ -65,7 +65,10 @@ class StaticPagesController < ApplicationController
 
 
     #日経225銘柄の中で騰落率ランキングを作成(１日、３日、７日、１０日、３０日)
-    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")
+    # ^N225:一日騰落率ランキング
+    # ^N225-3days-return:3日騰落率ランキング
+    # ^N225-3days-change:3日変化幅ランキング
+    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")#^N225以外
 
   end
 

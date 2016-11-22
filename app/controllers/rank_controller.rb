@@ -79,7 +79,7 @@ class RankController < ApplicationController
       #http://kaorumori.hatenadiary.com/entry/20111015/1319278874
       return_all = return_all.sort_by{|ticker, value| value}#return_allをreturnでソートする（昇順）
       change_all = change_all.sort_by{|ticker, value| value}
-
+      #上記配列をベースに上からと下から必要数の銘柄を獲得していく
 
       num_rank = [10, (return_all.length.to_i/2).to_i].min#上下必要なランキング数@return_allの合計が20未満なら半分ずつしか獲得する
 

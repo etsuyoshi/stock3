@@ -312,7 +312,7 @@ $(function() {
             <br>
             <% upOrDowns = ["up", "down"] %>
             <% upOrDowns.each do |upordown| %>
-              <!-- <% rank_to_display = @rank_others.where(market: market).where(sort: upordown) %> -->
+              
               <% rank_to_display = @rank_others.where(market: market).where(sort: upordown) %>
               <% if upordown == "up" %>
                 <%= "上昇率トップ#{rank_to_display.count}" %>
@@ -321,13 +321,13 @@ $(function() {
                 <%= "下落率トップ#{rank_to_display.count}" %>
               <% end %>
               <div class="row">
-                <!-- <%= "ranking = #{@rank_others.where(market: '^N225-10days-change').where(sort: 'down').first.return[0..5]}%" %> -->
+
                 <% rank_to_display.all.each do |rank_Xdays| %>
 
                   <% reuter_code = rank_Xdays.stock_code.to_s[0..3]+".T" %>
 
                   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-                    <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s + "(" + reuter_code.to_s + ")"%>
+                    <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s + "(" + reuter_code.to_s + ")" %>
                     <%= link_to "http://www.reuters.com/finance/stocks/chart?symbol=#{reuter_code}" do %>
                       <%= image_tag("http://charts.reuters.com/reuters/enhancements/chartapi/chart_api.asp?width=458&height=292&symbol=#{reuter_code}&duration=#{days}&lowers=volume&headertype=none",
                       alt: reuter_code, :width => '192', :height => '96') %>

@@ -15,6 +15,16 @@ class FetchController < ApplicationController
   def index
 
 
+    mecab = Natto::MeCab.new
+    #=> #<Natto::MeCab:0x00556de5e021c8 @model=#<FFI::Pointer address=0x00556de6692f00>, @tagger=#<FFI::Pointer address=0x00556de605ceb0>, @lattice=#<FFI::Pointer address=0x00556de6bf0f50>, @libpath="/usr/lib/libmecab.so", @options={}, @dicts=[#<Natto::DictionaryInfo:0x00556de5e01160 @filepath="/usr/lib/mecab/dic/ipadic/sys.dic", charset=utf8, type=0>], @version=0.996>
+    puts mecab.parse(description)
+
+    sample_text = "［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。＊内容を追加して再送します"
+
+    mecab.parse(sample_text)
+    return
+
+
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
@@ -596,6 +606,18 @@ class FetchController < ApplicationController
                 description = feed_contents["article"]
 
                 description = description.sub(/。/,"。<br>")
+
+
+                #めかぶで形態素解析を実施
+                mecab = Natto::MeCab.new
+                #=> #<Natto::MeCab:0x00556de5e021c8 @model=#<FFI::Pointer address=0x00556de6692f00>, @tagger=#<FFI::Pointer address=0x00556de605ceb0>, @lattice=#<FFI::Pointer address=0x00556de6bf0f50>, @libpath="/usr/lib/libmecab.so", @options={}, @dicts=[#<Natto::DictionaryInfo:0x00556de5e01160 @filepath="/usr/lib/mecab/dic/ipadic/sys.dic", charset=utf8, type=0>], @version=0.996>
+                puts mecab.parse(description)
+
+
+                #名詞の中でも固有名詞、携帯
+
+
+
 
                 #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
                 #http://watarisein.hatenablog.com/entry/2016/01/31/163327

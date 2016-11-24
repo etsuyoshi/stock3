@@ -3,5 +3,6 @@
 <%= link_to @feed.title, @feed.link%>: <%=  feed_time.strftime('%Y-%m-%d %H:%M') %>
 <br>
 <br>
-<%= @feed.description %>
+<!-- brタグを有効にするためsimple_format -->
+<%= simple_format(@feed.description) %>
 <br>

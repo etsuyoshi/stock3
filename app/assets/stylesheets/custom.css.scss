@@ -15,6 +15,13 @@ $sidebarMarginRight: -20px;
 $sidebarPaddingLeft: 10px;
 $sidebarPaddingRight: -45px;
 
+$topSidebarMarginLeft: -35px;
+$topSidebarMarginRight: -5px;
+$topSidebarPaddingLeft: 10px;
+$topSidebarPaddingRight: -45px;
+
+
+
 @mixin box_sizing {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -50,6 +57,8 @@ $sidebarPaddingRight: -45px;
   // text-align:
 }
 
+
+
 //newsのタイトル
 #newssidebartitle{
   margin-right: $sidebarMarginRight;
@@ -69,6 +78,9 @@ $sidebarPaddingRight: -45px;
 
   // text-align:
 }
+
+
+
 //newsコンテンツ
 #newssidebarcontents {
   margin-right: $sidebarMarginRight;
@@ -112,21 +124,20 @@ $sidebarPaddingRight: -45px;
   padding-left: 100px;
 }
 #topsidebar {
-  margin-right: $sidebarMarginRight;
-  margin-left: $sidebarMarginLeft;
+  margin-right: $topSidebarMarginRight;
+  margin-left: $topSidebarMarginLeft;
 
-  padding-left: $sidebarPaddingLeft;
-  padding-right: $sidebarPaddingRight;
+  padding-left: $topSidebarPaddingLeft;
+  padding-right: $topSidebarPaddingRight;
 
-  border-radius: 10px;
-  border-style: solid;
-  border-color: $grayMediumLight;
-  border-width: 1px;
+  // border-radius: 10px;
+  //  border-style: solid;
+  //  border-color: $grayMediumLight;
+  //  border-width: 1px;
 
 
-  background-color:#ffe;
-
-  border-top: 1px solid $grayMediumLight;
+  //background-color:#ffe;
+  //border-top: 1px solid $grayMediumLight;
 }
 
 .first-col{

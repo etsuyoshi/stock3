@@ -58,7 +58,7 @@ class FetchController < ApplicationController
 
     get_price_newest#最新データの取得
 
-    get_news
+    get_news#feedの更新
 
     # bitcoinの時系列データの取得
     #get_btc
@@ -193,6 +193,8 @@ class FetchController < ApplicationController
     # article_id = "http://jp.reuters.com/#{content.xpath('a[@href]').value}"
     # p "article_id = #{article_id}"
 
+
+    #記事本文のページを開いて時間(feed_id)と本文を取得する
     #記事リンク例
     #http://jp.reuters.com/article/usa-fed-bullard-idJPKBN13D1CF
     article_url = "http://jp.reuters.com#{article_id}"
@@ -241,7 +243,40 @@ class FetchController < ApplicationController
 
     end
 
-    return Time.parse(stringYMDHMS).to_i
+    return_hash = Hash.new
+    return_hash["feed_id"] = Time.parse(stringYMDHMS).to_i
+    #return Time.parse(stringYMDHMS).to_i
+
+    # ex. http://jp.reuters.com/article/usa-fed-bullard-idJPKBN13D1CF
+    #article_urlに対して該当箇所のタグ情報から内容を取得してarticle_contentに格納してfeed_idが入っているハッシュとして返す
+    # <span id="articleText">
+    # <span id="midArticle_start"></span>
+    # <span class="focusParagraph"><p>［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。</p></span>
+    # <span id="midArticle_0"></span>
+    # <p>同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。</p>
+    # <span id="midArticle_1"></span>
+    # <p>ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。</p>
+    # <span id="midArticle_2"></span>
+    # <span class="first-article-divide"></span>
+    # <p>新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。</p>
+    # <span id="midArticle_3"></span>
+    # <p>またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。</p>
+    # <span id="midArticle_4"></span>
+    # <span class="second-article-divide"></span>
+    # <p>移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。</p>
+    # <span id="midArticle_5"></span>
+    # <span class="third-article-divide"></span>
+    # <p>規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。</p>
+    # <span id="midArticle_6"></span><p>＊内容を追加して再送します。</p>
+    # <span id="midArticle_7"></span></span>
+
+
+    article_content = doc.xpath('//span[@id="articleText"]').inner_text
+    return_hash["article"] = article_content
+
+    return return_hash
+
+
 
     #以下、昔のフォーマット:当日ニュースか前日以前のニュースかで条件分岐してリストのみから日付データを取得する方法
 
@@ -353,7 +388,7 @@ class FetchController < ApplicationController
     end
     p "param = #{stringYMDHMS}"
     p "params2 = #{Time.parse(stringYMDHMS)}"
-    p "get_feed_id = #{Time.parse(stringYMDHMS).to_i}"
+    p "feed_id = #{Time.parse(stringYMDHMS).to_i}"
 
     return Time.parse(stringYMDHMS).to_i
 
@@ -492,7 +527,7 @@ class FetchController < ApplicationController
 
 
   def get_news
-    noPage = 20
+    noPage = 5
 
     while noPage >= 0 do
       # if TRUE#テスト用
@@ -536,7 +571,8 @@ class FetchController < ApplicationController
           p "title=#{title}"
 
           if !(title.nil? || title == "")
-            feed_id = get_feed_id(content)
+            feed_contents = get_feed_id(content)
+            feed_id = feed_contents["feed_id"]
 
             p "feed_id = #{feed_id}"
             if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
@@ -556,7 +592,13 @@ class FetchController < ApplicationController
 
 
                 # desc
-                description = content.css('p').inner_text
+                #description = content.css('p').inner_text
+                description = feed_contents["article"]
+
+                description = description.sub(/。/,"。<br>")
+
+                #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
+                #http://watarisein.hatenablog.com/entry/2016/01/31/163327
 
                 p feed_id
                 p title
@@ -577,7 +619,7 @@ class FetchController < ApplicationController
     end
   end
 
-  #get_btcが機能しなくなった(301エラー)の為、csvで取得する方法に切り替える
+  #ビットコイン価格取得:get_btcが機能しなくなった(301エラー)の為、csvで取得する方法に切り替える
   def get_btc_csv
     p "get btc csv..."
     csv_url = "https://api.bitcoinaverage.com/history/USD/per_day_all_time_history.csv"

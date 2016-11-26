@@ -13,18 +13,7 @@ class FetchController < ApplicationController
   end
 
   def index
-
-
-    mecab = Natto::MeCab.new
-    #=> #<Natto::MeCab:0x00556de5e021c8 @model=#<FFI::Pointer address=0x00556de6692f00>, @tagger=#<FFI::Pointer address=0x00556de605ceb0>, @lattice=#<FFI::Pointer address=0x00556de6bf0f50>, @libpath="/usr/lib/libmecab.so", @options={}, @dicts=[#<Natto::DictionaryInfo:0x00556de5e01160 @filepath="/usr/lib/mecab/dic/ipadic/sys.dic", charset=utf8, type=0>], @version=0.996>
-    puts mecab.parse(description)
-
-    sample_text = "［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。＊内容を追加して再送します"
-
-    mecab.parse(sample_text)
-    return
-
-
+    
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
@@ -117,23 +106,25 @@ class FetchController < ApplicationController
 
   end
   # feedsテーブルに1件INSERT
-  def insert_feed(feed_id, title, description, link)
+  def insert_feed(feed_id, title, description, link, keyword)
     feed = Feed.new(
       :feed_id          => feed_id,
       :title            => title,
       :description      => description,
-      :link             => link
+      :link             => link,
+      :keyword          => keyword
     )
     feed.save
     p "#{feed_id}保存成功"
   end
 
-  def insert_feed_with_label(feed_id, title, description, link, feedlabel)
+  def insert_feed_with_label(feed_id, title, description, link, feedlabel, keyword)
     feed = Feed.new(
       :feed_id          => feed_id,
       :title            => title,
       :description      => description,
-      :link             => link
+      :link             => link,
+      :keyword          => keyword
     )
     feed.tag_list.add(feedlabel)
     feed.save
@@ -477,7 +468,7 @@ class FetchController < ApplicationController
         unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
           # titleがDBに保存されていなければ、という条件に設定する
           insert_feed_with_label(published_datetime.to_i,
-          title, nil, url, "bitcoin")
+          title, nil, url, "bitcoin", nil)
 
           p "published = #{published_datetime.to_i}"
           p "title = #{title}"
@@ -525,7 +516,7 @@ class FetchController < ApplicationController
         # insert_feed(published_datetime.to_i,
         # title, nil, url )
         insert_feed_with_label(published_datetime.to_i,
-        title, nil, url, "bitcoin")
+        title, nil, url, "bitcoin", nil)
 
         p "published = #{published_datetime.to_i}"
         p "title = #{title}"
@@ -605,16 +596,12 @@ class FetchController < ApplicationController
                 #description = content.css('p').inner_text
                 description = feed_contents["article"]
 
+
+                keyword = get_keywords_from_description(description)
+
                 description = description.sub(/。/,"。<br>")
 
 
-                #めかぶで形態素解析を実施
-                mecab = Natto::MeCab.new
-                #=> #<Natto::MeCab:0x00556de5e021c8 @model=#<FFI::Pointer address=0x00556de6692f00>, @tagger=#<FFI::Pointer address=0x00556de605ceb0>, @lattice=#<FFI::Pointer address=0x00556de6bf0f50>, @libpath="/usr/lib/libmecab.so", @options={}, @dicts=[#<Natto::DictionaryInfo:0x00556de5e01160 @filepath="/usr/lib/mecab/dic/ipadic/sys.dic", charset=utf8, type=0>], @version=0.996>
-                puts mecab.parse(description)
-
-
-                #名詞の中でも固有名詞、携帯
 
 
 
@@ -626,11 +613,13 @@ class FetchController < ApplicationController
                 p title
                 p description
                 p url
+                p keyword
 
-                insert_feed(feed_id, title, description, url)
+
+                insert_feed(feed_id, title, description, url, keyword)
                 p "db挿入完了"
               else
-                p "feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さいです。"
+                p "feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さいので格納しません。"
                 p Time.at(feed_id)
               end
             end
@@ -639,6 +628,40 @@ class FetchController < ApplicationController
       end
       noPage = noPage - 1
     end
+  end
+
+  #パラメータのデスクリプションから一般名詞及び固有名詞のみを抽出する（カンマ区切りで連結してreturn）
+  def get_keywords_from_description(description)
+
+    #めかぶ
+    mecab = Natto::MeCab.new
+    #サンプルテキスト
+    #sample_text = "［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。＊内容を追加して再送します"
+    sample_text = description
+    #予約語(これらのワードは抽出対象外とする)
+    super_words = ["ロイター", "reuter", "世界", "内容", "あれ", "これ", "どれ", "それ"]
+
+    keywords = ""
+    mecab.parse(sample_text) do |n|
+
+      word = n.surface.to_s
+      parts = n.feature
+      # firstpart = n.feature.split(',')[0].to_s#大分類
+      # subpart = n.feature.split(',')[1].to_s#中分類
+
+      if (parts.match(/(固有名詞|名詞,一般)/)) and (word.length>0)#1文字以上の固有名詞と一般名詞のみ抽出
+        #puts "#{n.surface}\t#{n.feature} "
+        if !super_words.include?(word)
+          if keywords == ""
+            keywords = word
+          else
+            keywords = keywords + "," + word
+          end
+        end
+      end
+    end
+    return keywords
+
   end
 
   #ビットコイン価格取得:get_btcが機能しなくなった(301エラー)の為、csvで取得する方法に切り替える

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160425182126) do
+ActiveRecord::Schema.define(version: 20161126053957) do
 
   create_table "adrs", force: :cascade do |t|
     t.string   "ticker"
@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 20160425182126) do
     t.string   "link"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+    t.string   "keyword"
   end
 
   create_table "posts", force: :cascade do |t|

@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 #gemspecs
 
-
+gem 'natto'
 gem 'holiday_jp'#日本の休日を取得
 gem 'gon'
 # seo: meta-tag

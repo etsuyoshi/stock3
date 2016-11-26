@@ -1,0 +1,166 @@
+## CHANGELOG
+- __2016/06/18__: 1.1.1 release
+    - Issue 68: Speed up for accessing field of Struct.
+    - Updating LICENSE and copyright for year 2016. 
+
+- __2015/12/24__: 1.1.0 release
+    - Issue 64: undefined method 'mecab_model_destory' for Natto::MeCab:Class 
+    - Updated Travis rubies
+
+- __2015/07/20__: 1.0.1 release.
+    - Issue 62: Ruby warning: shadowing outer local variable - opts
+
+- __2015/04/14__: 1.0.0 release.
+    - Issue 36: Fixed @param documentation
+    - Issue 37: README and bullet points under Automatic Configuration
+    - Issue 38: Updated URLs in documentation to point to Ruby 2.2.1
+    - Issue 39: Make refs to MeCab and Tagger consistent in docs
+    - Issue 40: Use new Model- and Lattice-based C APIs internally
+    - Issue 45: Add support for feature constraint parsing
+    - Issue 48: Put in a guard to prevent partial parsing of text that does not end with a new-line char
+    - Issue 50: Update all references to Natto::MeCab in documentation to reflect new internal structure
+    - Issue 52: Downloads and license badges for README.md & API docs
+    - Issue 55: Node parsing with --all-morphs option missing surface values
+
+- __2015/03/31__: 0.9.9 release.
+    - Issue 21/34: Implemented boundary constraint parsing.
+    - Issue 26: Removing deprecated methods parse_as_nodes, parse_as_strings, readnodes and readlines.
+    - Issue 32: Fixed partial parsing.
+    - Updated documentation for new MeCab home at http://taku910.github.io/mecab/.
+
+- __2015/02/10__: 0.9.8 release.
+    - Migrated natto code home from Bitbucket to GitHub.
+    - Improved documentation following said migration.
+    - Minor refactoring to Natto::MeCabNode#to_s.
+    - Updating LICENSE for year 2015. 
+
+- __2014/12/20__: 0.9.7 release.
+    - Issue 14: adding automatic discovery for mecab library; no need to explicitly set MECAB_PATH
+    - Issue 15: refactored node-parsing to use Enumerator instead of materializing every node and stuffing into array
+    - Issue 17: adding filepath to MeCab and DictionaryInfo
+    - Issue 18: bug-fix for node-formatting during default node parse
+    - Deprecating parse_as_nodes and parse_as_strings; please use parse instead!
+    - CAUTION: parse_as_nodes, parse_as_strings, readnodes and readlines will be removed in the following release!
+    - Enhancements to to_s methods for both MeCab and DictionaryInfo
+    - Enhancements to TestDictionaryInfo to allow for building user dic during setup on Windows as well
+    - Slight enhancement to benchmark task.
+    - Updating LICENSE (adding copyright year 2015), adding to all files 
+	
+- __2013/07/07__: 0.9.6 release.
+    - Upgrade to mecab 0.996
+    - Adding support for partial parsing mode (-p / --partial)
+    - Adding support for marginal probability output mode (-m / --marginal)
+    - Adding support for maximum grouping size for unknown words (-M / --max-grouping-size)
+    - Outputting warning message for deprecation of :lattice_level option
+    - Requiring ffi 1.9.0 or greater
+    - Dropping support for Ruby 1.8.7
+    - Migrating to minitest
+    - Removing automatic library load for Cygwin platform (does not compile) 
+
+- __2012/09/16__: 0.9.5 release.
+    - Fixed Issue 9: trimされていない文字列のparse
+    - Fixed Issue 10: BUG Segmentation Fault
+    - Adding parse_as_nodes to allow for method-chaining on list of parsed nodes
+    - Adding parse_as_strings to allow for method-chaining on list of string output
+    - Deprecating both readnodes and readlines (badly named methods, see parse_as_nodes and parse_as_strings, respectively)
+    - Refactored the option parsing logic into Natto::OptionParse
+    - Enhanced Natto::DictionaryInfo#type override for java or ruby < 1.9
+
+- __2012/02/26__: 0.9.4 release.
+    - Exposing the underlying FFI pointer as @tagger in Natto::MeCab
+    - Exposing the underlying FFI pointer as @pointer in Natto::MeCabNode
+    - Fixed node formatting behavior for both regular and N-Best node parsing
+    - Adding is_nor?, is_unk?, is_bos?, is_eos?, is_eon? to Natto::MeCabNode 
+    - Adding is_sysdic?, is_usrdic?, is_unkdic? to Natto::DictionaryInfo 
+    - Adding readnodes to allow for method-chaining on list of parsed nodes
+    - Adding readlines to allow for method-chaining on list of string output
+    - Updating README to include description of DevKit install for RubyInstaller
+    - Refactored the codebase, introducing more tests
+
+- __2012/02/14__: 0.9.3 release.
+    - Updating structures, tests following the latest release of MeCab 0.993
+    - Ending support for 0.98 MeCab.
+    - Support for MeCab 0.993 in Cygwin is still not confirmed.
+
+- __2011/11/14__: 0.9.2 release.
+    - Bumping up version to 0.9.2, following the migration of this project to bitbucket (hg)
+
+- __2011/10/23__: 0.9.1 release.
+    - MeCab configurations can now be a string as per MeCab command-line
+    - Adding more tests around the configuration processing
+    - Pulling support for mecab option 'output', since it is more of a command-line feature
+
+- __2011/09/11__: 0.9.0 release.
+    - Bumping up version to 0.9.0, as natto appears to be stable
+    - Also migrated project to github
+
+- __2011/03/23__: 0.5.1 release.
+    - Corrected mojibake issue for surface and feature values when node-parsing
+    - Corrected call to NBest initializer in lambdas for Natto::MeCab#initialize
+
+- __2011/02/26__: 0.5.0 release.
+    - Added support for node parsing using blocks
+    - Added support for mecab options nbest, all-morphs
+    - Pulling support for mecab option partial, since it is more of a command-line feature
+
+- __2011/01/27__: 0.4.1 release.
+    - Tweaking the description in natto.gemspec a bit 
+
+- __2011/01/26__: 0.4.0 release.
+    - Added support for mecab option input-buffer-size 
+    - Adding CHANGELOG file 
+    - Continuing update of documentation
+
+- __2011/01/22__: 0.3.0 release.
+    - Refactoring of Natto::Binding to make mecab methods available as class methods
+    - Refactoring of Natto::DictionaryInfo to override to_s method to return filename
+    - Refactoring of Natto::MeCab to use class methods in Natto::Binding
+    - Refactoring and logical separation of test cases
+    - Continuing update of documentation
+
+- __2011/01/19__: 0.2.0 release.
+    - Added support for mecab option allocate-sentence 
+    - Continuing update of documentation
+
+- __2011/01/15__: 0.1.1 release.
+    - Refactored Natto::DictionaryInfo#method_missing
+    - Continuing update of documentation
+
+- __2011/01/15__: 0.1.0 release.
+    - Added accessors to Natto::DictionaryInfo
+    - Added accessor for version in Natto::MeCab
+    - Continuing update of documentation
+
+- __2011/01/13__: 0.0.9 release.
+    - Further development and testing for mecab dictionary access/destruction
+    - Continuing update of documentation
+
+- __2011/01/07__: 0.0.8 release.
+    - Adding support for accessing dictionaries 
+    - Further tweaking of documentation with markdown
+
+- __2010/12/30__: 0.0.7 release.
+    - Adding support for all-morphs and partial options
+    - Further updating of documentation with markdown
+
+- __2010/12/28__: 0.0.6 release.
+    - Correction to natto.gemspec to include lib/natto/binding.rb
+
+- __2010/12/28__: 0.0.5 release. (yanked)
+    - On-going refactoring
+    - Project structure refactored for greater maintainability
+
+- __2010/12/26__: 0.0.4 release.
+    - On-going refactoring
+
+- __2010/12/23__: 0.0.3 release.
+    - On-going refactoring
+    - Adding documentation via yard
+
+- __2010/12/20__: 0.0.2 release.
+    - Continuing development on proper resource deallocation
+    - Adding options hash in object initializer 
+
+- __2010/12/13__: Released version 0.0.1. 
+    - Initial release 
+    - The objective is to provide an easy-to-use, production-level Ruby binding to MeCab

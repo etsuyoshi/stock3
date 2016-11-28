@@ -12,8 +12,49 @@ class FetchController < ApplicationController
 		_rank_controller.index
   end
 
+  #記事IDからkeywordを抽出し、同じキーワードが多く含まれている他の記事を作成する
+  def similar_article(article_id)
+    feed = Feed.find(article_id)
+    arr_keywords = feed.keyword.split(',')
+
+    #p Feed.where("keyword like '%" + arr_keywords[0] + "%'").last.description
+    #http://www.dna.affrc.go.jp/search/jp/
+    #http://qiita.com/yutori_enginner/items/f0af67f62f4692d68370
+
+    hist_article = Hash.new
+    #上記の方法か、各キーワードで検索してヒットした記事集合の中で頻出する記事上位xxだけ抽出する
+    arr_keywords.each_with_index do |keyword, i|
+      obj_feeds = Feed.where("keyword like '%" + keyword + "%'")
+
+      obj_feeds.each_with_index do |fd, j|
+        if hist_article.has_key?(fd.id)
+          hist_article[fd.id] += 1
+        else
+          hist_article[fd.id] = 1
+        end
+      end
+    end
+
+    #最新順
+    #hist_article = hist_article.sort{|(k1, v1), (k2, v2)| k2 <=> k1 }
+    #頻度順
+    hist_article = hist_article.sort{|(k1, v1), (k2, v2)| v2 <=> v1 }
+
+    return hist_article
+
+    # 俺より給料高いやつ集めてるんだからそこについては目線を高く判断する（リリースの判断、スピード感）
+    # それに基づいて数字は計画するし、それ通りになっていない
+    # 給料に関していうと、そうは言っても出社状況、
+    # 個別事例に基づくと、彼らより数時間早くきている。退社時間も最近は9時前に帰ることが多いが、早く帰るともう帰るの？という発言は遅く残ることをが期待されている
+    # 基本的にはこの会社は株式会社である以上、えふしんさんとytのものなのでえふのいう通りにする→嫌ならやめればいいだけのことなので。
+    # 私たちが目指しているのは日本企業のトップである売り上げ数十兆円、利益率20%以上の会社だと思っているので、そこに向かってないことであればそうなるように発言すべき→
+
+  end
+
   def index
-    
+
+    similar_article(902)
+    return
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 

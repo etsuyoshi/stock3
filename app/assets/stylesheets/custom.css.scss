@@ -2,6 +2,7 @@
 // topsidebarの仲でpaddingやmarginを調整しているのでモバイルビューではみ出してしまっている
 // cssで修正する場合は以下、もしくはstatic_pages/home.erb.htmlのビュー側で修正するか！
 // http://allabout.co.jp/gm/gc/396404/
+// dotはclass(何度も使用可能)でsharpはid(一度のみ使用)
 
 /* mixins, variables, etc. */
 
@@ -34,7 +35,8 @@ $topSidebarPaddingRight: -45px;
 
 // classは. idは#
 #nikkeiValue{
-  font-size: 18ex;
+  //font-size: 18ex;
+  font-size: 45pt;
 }
 #deepblueBack{
   color: #fff;
@@ -99,6 +101,10 @@ $topSidebarPaddingRight: -45px;
   // background-color:#ffe;
 
   //border-top: 1px solid $grayMediumLight;
+}
+
+.chart_rank_container{
+  margin-bottom: 3%;
 }
 
 .newssidebaritem{

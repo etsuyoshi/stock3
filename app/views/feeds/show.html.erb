@@ -6,3 +6,18 @@
 <!-- brタグを有効にするためsimple_format -->
 <%= simple_format(@feed.description) %>
 <br>
+
+<!-- 関連フィード -->
+<% related_article_ids = similar_article(@feed.id) %>
+<% related_articles = Feed.where(id: related_article_ids) %>
+
+<!-- 理想：tfidfでスコアリングした文章をベースに高いスコアのワードで共有 -->
+<% if related_articles %><!-- nilではないことを確認 -->
+  <% related_articles.each do |related_article| %>
+    <b><%= related_article.title %></b>
+    <%= simple_format(related_article.description) %>
+    <br>
+
+    <br>
+  <% end %>
+<% end %>

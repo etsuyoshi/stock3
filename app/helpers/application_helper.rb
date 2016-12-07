@@ -48,4 +48,50 @@ module ApplicationHelper
     hour_diff = 13
     return get_foreign_hour(japanese_hour.to_i, hour_diff)
   end
+
+  #Feedモデルの記事IDからkeywordを抽出し、同じキーワードが多く含まれている他の記事id配列を多い順番に作成する
+  def similar_article(article_id)
+    feed = Feed.find(article_id)
+
+    if feed.keyword
+      arr_keywords = feed.keyword.split(',')
+
+      #p Feed.where("keyword like '%" + arr_keywords[0] + "%'").last.description
+      #http://www.dna.affrc.go.jp/search/jp/
+      #http://qiita.com/yutori_enginner/items/f0af67f62f4692d68370
+
+      hist_article = Hash.new
+      #上記の方法か、各キーワードで検索してヒットした記事集合の中で頻出する記事上位xxだけ抽出する
+      arr_keywords.each_with_index do |keyword, i|
+        obj_feeds = Feed.where("keyword like '%" + keyword + "%'")
+
+        obj_feeds.each_with_index do |fd, j|
+          if hist_article.has_key?(fd.id)
+            hist_article[fd.id] += 1
+          else
+            hist_article[fd.id] = 1
+          end
+        end
+      end
+
+      #最新順:hash to array
+      #arr_hist_article = hist_article.sort{|(k1, v1), (k2, v2)| k2 <=> k1 }
+      #頻度順:hash to array
+      arr_hist_article = hist_article.sort{|(k1, v1), (k2, v2)| v2 <=> v1 }
+
+      return_array = []
+      arr_hist_article.each_with_index do |hist_art|
+        return_array.push(hist_art[0])
+      end
+
+      return return_array#記事ID配列（多い順）
+
+    else
+      return nil
+    end
+  end
+
+
+
+
 end

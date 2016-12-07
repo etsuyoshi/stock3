@@ -16,8 +16,7 @@ class FetchController < ApplicationController
 
   def index
 
-    similar_article(902)
-    return
+    
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 

@@ -1,4 +1,3 @@
-
 <% feed_time = Time.at(@feed.feed_id.to_i) %>
 <%= link_to @feed.title, @feed.link%>: <%=  feed_time.strftime('%Y-%m-%d %H:%M') %>
 <br>

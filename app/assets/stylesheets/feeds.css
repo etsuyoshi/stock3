@@ -2,3 +2,23 @@
   Place all the styles related to the matching controller here.
   They will automatically be included in application.css.
 */
+
+.feed_content{
+  /*padding, margin*/
+  /*padding-top: 10px;*/
+  margin-top: 10px;
+  margin-left: 10px;
+
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: 1px;
+}
+
+.related_feed_cell{
+  padding-top: 10px;
+  /* upper-line */
+  border-top-style: solid;
+  border-top-color: black;
+  border-top-width: 0.3px;
+  /*background-color: red;*/
+}

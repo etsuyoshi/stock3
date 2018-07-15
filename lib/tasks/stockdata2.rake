@@ -12,7 +12,7 @@ require 'open-uri'
 
 namespace :db do
 	desc "Fill database with sample data"
-	task test000: :environment do
+	task updatePrice: :environment do
 
 		arrCode = get225code()
     # 一気に250銘柄進めようとすると負荷をかけてしまうためまずい→updated_atを見ながら当日取得していない銘柄を5銘柄ずつくらい取得する

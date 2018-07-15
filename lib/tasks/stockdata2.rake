@@ -12,7 +12,7 @@ require 'open-uri'
 
 namespace :db do
 	desc "Fill database with sample data"
-	task test: :environment do
+	task test000: :environment do
 
 		arrCode = get225code()
 		p arrCode

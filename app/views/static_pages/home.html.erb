@@ -39,22 +39,45 @@ $(function () {//３番目に表示される(TOYOTA)
 
         // create data
         // var historicals = gon.historical_toyota
-        var historicals = gon.historical["7203-T"]
+        var historicals = gon.historical["7203"]
         var ohlc = [],volume = [];
-        //console.log("length=", historicals.length)
-            // dataLength = historicals.length;
+        // dataLength = historicals.length;
         // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
         // var unixtime=data[0][0]/1000
         // alert("original unix=" + unixtime)
 
+        // unixtime->Date : http://yut.hatenablog.com/entry/20111015/1318633937
+
         for (i = 0; i < historicals.length; i++) {
-            var ymd=String(historicals[i]["ymd"])
-            var year=ymd.substring(0, 4);
-            var month=ymd.substring(4, 6);
-            var day=ymd.substring(6, 8);
-            var ts = year+"-"+month+"-"+day+" 00:00:00";//"2011-10-14 00:00:00";
-            ts=String(ts)
-            var unixtime1=Date.parse( ts.replace( /-/g, '/') )
+            // var ymd=String(historicals[i]["ymd"])
+            // var year=ymd.substring(0, 4);
+            // var month=ymd.substring(4, 6);
+            // var day=ymd.substring(6, 8);
+
+            var unixtime1 = historicals[i]["ymd"] * 1000
+            // var ts_unixtime = historicals[i]["ymd"]
+            // var d = new Date( ts_unixtime * 1000 );
+            // var year  = d.getFullYear();
+            // var month = d.getMonth() + 1;
+            // var day  = d.getDate();
+            //
+            // var ts = year+"-"+month+"-"+day+" 00:00:00";//"2011-10-14 00:00:00";
+            // console.log(ts)
+            // ts=String(ts)
+            // var unixtime1=Date.parse( ts.replace( /-/g, '/') )
+            //
+            // console.log("unixtime1 = " + unixtime1)
+            //
+            // var ts = unixtime1;
+            // var d = new Date( ts * 1000 );
+            // var year  = d.getFullYear();
+            // var month = d.getMonth() + 1;
+            // var day  = d.getDate();
+            //
+            // console.log(year + "/" + month + "/" + day)
+
+
+
 
             // alert(ymd)
             // alert(year)
@@ -211,7 +234,7 @@ $(function() {
 
       // 日経チャートを表示する
       // var historicals=gon.historical_nikkei
-      var historicals = gon.historical["^N225"]
+      var historicals = gon.historical["0000"]
       // var historicals = gon.historical[ticker]
       // alert(historicals[0]["ymd"])
       // console.log('historicals=', historicals[0])
@@ -226,13 +249,14 @@ $(function() {
       // alert("original unix=" + unixtime)
 
       for (i = 0; i<historicals.length; i++) {
-          var ymd=String(historicals[i]["ymd"])
-          var year=ymd.substring(0, 4);
-          var month=ymd.substring(4, 6);
-          var day=ymd.substring(6, 8);
-          var ts = String(year+"-"+month+"-"+day+" 00:00:00");//"2011-10-14 00:00:00";
-          // console.log(ts);
-          var unixtime1=Date.parse( ts.replace( /-/g, '/') )
+          var unixtime1 = historicals[i]["ymd"] * 1000
+          // var ymd=String(historicals[i]["ymd"])
+          // var year=ymd.substring(0, 4);
+          // var month=ymd.substring(4, 6);
+          // var day=ymd.substring(6, 8);
+          // var ts = String(year+"-"+month+"-"+day+" 00:00:00");//"2011-10-14 00:00:00";
+          // // console.log(ts);
+          // var unixtime1=Date.parse( ts.replace( /-/g, '/') )
           // console.log("ymd:"+ymd+",unix="+unixtime1);
           // 1367247600000
 
@@ -685,113 +709,136 @@ $(function () {
         <!-- 一行目 -->
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-            <%= link_to "http://google.com" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/ftse.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^NZ50",
-              alt: "ニュージーランド", :width => '192', :height => '96') %>
+              <!-- http://ichart.finance.yahoo.com/t?s=^NZ50 -->
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.FTSE&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "イギリス", :width => '192', :height => '96') %>
               <br>
-              ニュージーランド
+              イギリス
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/fchi.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^AXJO",
-               alt: "オーストラリア", :width => '192', :height => '96') %>
+              <!-- http://ichart.finance.yahoo.com/t?s=^AXJO -->
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.FCHI&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+               alt: "フランス", :width => '192', :height => '96') %>
               <br>
-              オーストラリア
+              フランス<br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "http://www.google.com" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^JKSE",
-              alt: "インドネシア", :width => '192', :height => '96') %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/gdaxi.html" do %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.GDAXI&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "ドイツ", :width => '192', :height => '96') %>
               <br>
-              インドネシア
+              ドイツ
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "http://www.google.com" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^KS11",
-              alt: "韓国", :width => '192', :height => '96') %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/irts.html" do %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.IRTS&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "ロシア", :width => '192', :height => '96') %>
               <br>
-              韓国
+              ロシア
+              <br>
+              <br>
             <% end %>
           </div>
         </div>
         <!-- 2行目 -->
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "http://www.google.com" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=000001.SS",
-              alt: "中国", :width => '192', :height => '96') %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/bvsp.html" do %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.BVSP&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "ブラジル", :width => '192', :height => '96') %>
               <br>
-              中国
+              ブラジル
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-            <%= link_to "http://google.com" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^TWII",
-              alt: "台湾", :width => '192', :height => '96') %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/bsesn.html" do %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.BSESN&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "インド", :width => '192', :height => '96') %>
               <br>
-              台湾
+              インド
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/hsi.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^STI",
-               alt: "シンガポール", :width => '192', :height => '96') %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.HSI&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+               alt: "香港", :width => '192', :height => '96') %>
               <br>
-              シンガポール
+              香港
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "上海" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=000001.SS",
-              alt: "上海", :width => '192', :height => '96') %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/hsce.html" do %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.HSCE&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "ハンセンH株", :width => '192', :height => '96') %>
               <br>
-              上海総合指数
+              ハンセンH株
+              <br>
+              <br>
             <% end %>
           </div>
         </div>
-        http://stackoverflow.com/questions/20010080/how-to-change-the-colour-of-a-row-in-bootstrap-3
-        https://www.psd2html.com/blog/customize-bootstrap-grid-with-sass.html
         <!-- 3行目 -->
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-            <%= link_to "http://google.com" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/hscc.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^TWII",
-              alt: "ハンセン", :width => '192', :height => '96') %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.HSCC&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "レッドチップ=香港証券取引所に上場している会社の株式銘柄のうち、中国本土の中央政府出資の中央企業もしくは地方政府出資の国有企業が経営参加し、かつ出資金の30%以上を出資し、中国本土以外の地（香港・マカオ・台湾）もしくは外国を登記地としている銘柄", :width => '192', :height => '96') %>
               <br>
-              ニュージーランド
+              レッドチップ
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/jkse.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^JKSE",
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.JKSE&per=4&width=755&height=400&tp=0&sma=1&vol=1",
                alt: "ジャカルタ", :width => '192', :height => '96') %>
               <br>
               ジャカルタ
-            <% end %>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^BSESN",
-              alt: "インド SENSEX", :width => '192', :height => '96') %>
               <br>
-              インド SENSEX
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/ssce.html" do %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.SSEC&per=1&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "上海総合", :width => '192', :height => '96') %>
+              <br>
+              上海総合
+              <br>
+              <br>
+            <% end %>
+          </div>
+          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/ftsti.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=RTS.RS",
-               alt: "ロシア", :width => '192', :height => '96') %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.STI&per=4&width=755&height=400&tp=0&sma=1&vol=1",
+               alt: "シンガポール", :width => '192', :height => '96') %>
               <br>
-              ロシア
+              シンガポール
+              <br>
+              <br>
             <% end %>
           </div>
         </div>
@@ -800,85 +847,29 @@ $(function () {
 
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-            <%= link_to "http://google.com" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/seti.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^FCHI",
-              alt: "フランス", :width => '192', :height => '96') %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.SETI&per=1&width=755&height=400&tp=0&sma=1&vol=1",
+              alt: "タイ", :width => '192', :height => '96') %>
               <br>
-              フランス
+              タイ
+              <br>
+              <br>
             <% end %>
           </div>
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
+            <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/klse.html" do %>
               <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^GDAXI",
-               alt: "ドイツ", :width => '192', :height => '96') %>
+              <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.KLSE&per=1&width=755&height=400&tp=0&sma=1&vol=1",
+               alt: "マレーシア", :width => '192', :height => '96') %>
               <br>
-              ドイツ
-            <% end %>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^FTSE",
-              alt: "イギリス", :width => '192', :height => '96') %>
+              クアラルンプール(マレーシア)
               <br>
-              イギリス
-            <% end %>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-            <%= link_to "http://google.com" do %>
-              <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=FTSEMIB.MI",
-              alt: "イタリア", :width => '192', :height => '96') %>
               <br>
-              イタリア
             <% end %>
           </div>
         </div>
 
-        <!-- 5行目 -->
-        <div class="row">
-
-
-          <!-- <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
-              <%= image_tag("",
-              alt: "", :width => '192', :height => '96') %>
-              <br>
-
-            <% end %>
-          </div> -->
-        </div>
-
-        <!-- 6行目:中南米 -->
-        <div class="row">
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
-            <%= link_to "http://google.com" do %>
-              <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^BVSP",
-              alt: "ボベスパ（ブラジル）", :width => '192', :height => '96') %>
-              <br>
-              ボベスパ（ブラジル）
-            <% end %>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
-              <!-- 90, 120 -->
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^MERV",
-               alt: "メルバル", :width => '192', :height => '96') %>
-              <br>
-              メルバル（アルゼンチン）
-            <% end %>
-          </div>
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <%= link_to "" do %>
-              <%= image_tag("http://ichart.finance.yahoo.com/t?s=^MXX",
-              alt: "メキシコ", :width => '192', :height => '96') %>
-              <br>
-              IPC(メキシコ)
-            <% end %>
-          </div>
-        </div>
       </div>
 
 

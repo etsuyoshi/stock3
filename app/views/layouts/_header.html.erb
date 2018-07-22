@@ -12,9 +12,9 @@
    end
 
   # ^N225
-  nikkei_newest_obj = Priceseries.where(ticker: "0000").order(ymd: :desc).limit(1)
+  nikkei_newest_obj = Priceseries.where(ticker: "0000").order(ymd: :desc).first
   if nikkei_newest_obj
-    nikkei_newest_price = nikkei_newest_obj[0]
+    nikkei_newest_price = nikkei_newest_obj
 
     if nikkei_newest_price
       newestYMD = nikkei_newest_price.ymd
@@ -24,7 +24,7 @@
 
   # newestNikkei = Priceseries.where(ticker: "^N225", ymd: newestYMD).close
   # dowData = Priceseries.find_by(ticker: "^DJI", ymd: newestYMD)
-  dowData = Priceseries.where(ticker: "^DJI").order(ymd: :desc).last
+  dowData = Priceseries.where(ticker: "^DJI").order(ymd: :desc).first
   # dowData = Priceseries.where(ticker: "").order(ymd: :desc).first
   if dowData
     newestDow = dowData.close
@@ -33,7 +33,7 @@
   #  なぜか最新値が取得できない
   #  newestShanghai = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD).close
   # shanghaiData = Priceseries.find_by(ticker: "000001.SS", ymd: newestYMD.to_i)
-  shanghaiData = Priceseries.where(ticker: "0823").order(ymd: :desc).last
+  shanghaiData = Priceseries.where(ticker: "0823").order(ymd: :desc).first
   # shanghaiData = Priceseries.where(ticker: "000001.SS", ymd: newestYMD.to_i)
   newestShanghai = shanghaiData.nil? ? nil : shanghaiData.close
 
@@ -61,8 +61,8 @@
    #     eurjpy = eurjpy_.pricetrade
    #   end
    # end
-   usdjpy_obj = Priceseries.where(ticker: "0950").order(ymd: :desc).last
-   eurjpy_obj = Priceseries.where(ticker: "0951").order(ymd: :desc).last
+   usdjpy_obj = Priceseries.where(ticker: "0950").order(ymd: :desc).first
+   eurjpy_obj = Priceseries.where(ticker: "0951").order(ymd: :desc).first
    usdjpy = usdjpy_obj.nil? ? nil : usdjpy_obj.close
    eurjpy = eurjpy_obj.nil? ? nil : eurjpy_obj.close
 

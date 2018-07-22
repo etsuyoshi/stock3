@@ -8,7 +8,55 @@ class ApplicationController < ActionController::Base
   # before_action :get_event
 
   #全コントローラー及びビュー内で使用可能なメソッドの定義
-  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime
+  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime, :getDocFromHtml, :isValidate
+
+  # string型のurlからhtmlを取得する
+  def getDocFromHtml(url_string)
+
+    if !(url_string.include?("kabutan"))
+      url_encoded = URI.encode(url_string).gsub(/=/,"%3D").gsub(/\?/,"%3F")
+    else
+      # kabutanの場合には=や？はそのままにする
+      url_encoded = url_string
+    end
+
+    if !isValidate(url_encoded)
+      p "そのURLは無効です"
+      return nil;
+    end
+    p url_encoded
+
+
+    charset = nil
+    html = open(url_encoded) do |f|
+      charset = f.charset # 文字種別を取得
+      f.read # htmlを読み込んで変数htmlに渡す
+    end
+    doc = Nokogiri::HTML.parse(html, nil, charset)
+    return doc
+  end
+
+  def isValidate(url_string, limit = 10)
+		begin
+	    response = Net::HTTP.get_response(URI.parse(URI.encode(url_string)))
+	  rescue
+			# p "error"
+	    return false
+	  else
+	    case response
+	    when Net::HTTPSuccess
+				# p "success"
+	      return true
+	    when Net::HTTPRedirection
+				# p "redirect"
+	      isValidate(response['location'], limit - 1)
+	    else
+	      return false
+	    end
+	  end
+
+		return true
+	end
 
 
   def getTimeFromYMDHMS(yyyymmddhhmmss)

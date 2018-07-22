@@ -46,11 +46,14 @@ class StaticPagesController < ApplicationController
     # p "downrank = #{@down_ranks}"
 
     # @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
-    @nikkei225_now2 = Priceseries.where(ticker: "^N225").order(ymd: :asc).limit(2)
+    @nikkei225_now2 =
+    Priceseries.where(ticker: "0000").order(ymd: :desc).limit(2)
+    # Priceseries.where(ticker: "^N225").order(ymd: :asc).limit(2)
 
 
     gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^N225").order(ymd: :asc)
+    Priceseries.where(ticker: "0000").order(ymd: :desc)
+    # Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
     # p "nikkei225"
     # p gon.historical_data.length
@@ -68,7 +71,8 @@ class StaticPagesController < ApplicationController
     # ^N225:一日騰落率ランキング
     # ^N225-3days-return:3日騰落率ランキング
     # ^N225-3days-change:3日変化幅ランキング
-    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")#^N225以外
+    # @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")#^N225以外
+    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000")#^N225以外
 
   end
 
@@ -78,11 +82,11 @@ class StaticPagesController < ApplicationController
 
 
     gon.dow_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^DJI").order(ymd: :asc)
+    Priceseries.where(ticker: "^DJI").order(ymd: :desc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
 
     @dow_now2 =
-    Priceseries.where(ticker: "^DJI").order(ymd: :asc).limit(2)
+    Priceseries.where(ticker: "^DJI").order(ymd: :desc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
     p "shanghai"
     p @dow_now2[0].close.to_f
@@ -101,12 +105,14 @@ class StaticPagesController < ApplicationController
   def shanghai
 
     gon.shanghai_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "000001.SS").order(ymd: :asc)
+    # Priceseries.where(ticker: "000001.SS").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
 
     @shanghai_now2 =
+    Priceseries.where(ticker: "0823").order(ymd: :desc).limit(2)
     #Priceseries.find_by_sql("select * from Priceseries where ticker = '000001.SS' order by ymd desc limit 2")
-    Priceseries.where(ticker: "000001.SS").order(ymd: :asc).limit(2)
+    # Priceseries.where(ticker: "000001.SS").order(ymd: :asc).limit(2)
+
     p "shanghai"
     p @shanghai_now2[0].close.to_f
     p @shanghai_now2[1].close.to_f
@@ -291,12 +297,21 @@ class StaticPagesController < ApplicationController
     end
   end
   def fx
+
+    # ("0000") # 日経株価指数
+		# ("0823") # 上海総合指数
+		# ("0950") # ドル円
+		# ("0951") # ユーロ円
     @usdjpy =
-    PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)[0]
+    Priceseries.where(ticker: "0950").order(ymd: :desc).first
+
+
+    # PriceNewest.where(ticker: "USDJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'USDJPY=X' order by 'datetrade' desc")[0]
     @eurjpy =
-    PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)[0]
+    Priceseries.where(ticker: "0951").order(ymd: :desc).first
+    #PriceNewest.where(ticker: "EURJPY=X").order(datetrade: :desc).limit(1)[0]
     # PriceNewest.find_by_sql(
     # "select * from price_newests where ticker = 'EURJPY=X' order by 'datetrade' desc")[0]
     # if @usdjpy && @eurjpy
@@ -308,22 +323,23 @@ class StaticPagesController < ApplicationController
 
     # hashにして全通貨の組み合わせを格納
     @hash_fx = Hash.new
-    @hash_fx["date"] = @usdjpy.datetrade
+    @hash_fx["date"] = @usdjpy.ymd
     @arr_keys = Array.new
 
-    PriceNewest.where(datetrade: @usdjpy.datetrade).each do |pricenewest|
-      @hash_fx[pricenewest.ticker] = pricenewest.pricetrade
-      # p "hash_fx:#{pricenewest.ticker} = #{@hash_fx[pricenewest.ticker]}"
-      # p @arr_keys.include?(pricenewest.ticker.first(3))
-      unless @arr_keys.include?(pricenewest.ticker.first(3))
-        if pricenewest.ticker.last(2) == "=X"
-          @arr_keys.push((pricenewest.ticker).first(3))
-          # p "push => #{(pricenewest.ticker).first(3)}"
-        end
-      # else
-        # p "exists => #{pricenewest.ticker.first(3)}"
-      end
-    end
+    #PriceNewest.where(datetrade: @usdjpy.datetrade).each do |pricenewest|
+    # Priceseries.where(ymd: @usdjpy.ymd).each do |pricenewest|
+    #   @hash_fx[pricenewest.ticker] = pricenewest.close
+    #   # p "hash_fx:#{pricenewest.ticker} = #{@hash_fx[pricenewest.ticker]}"
+    #   # p @arr_keys.include?(pricenewest.ticker.first(3))
+    #   unless @arr_keys.include?(pricenewest.ticker.first(3))
+    #     if pricenewest.ticker.last(2) == "=X"
+    #       @arr_keys.push((pricenewest.ticker).first(3))
+    #       # p "push => #{(pricenewest.ticker).first(3)}"
+    #     end
+    #   # else
+    #     # p "exists => #{pricenewest.ticker.first(3)}"
+    #   end
+    # end
 
     # @hash_fx.each do |hash|
     #   p "hash_fx = #{hash}"
@@ -352,14 +368,15 @@ class StaticPagesController < ApplicationController
     # http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json
 # BRVM
 
+    # バブルチャート描画データの作成
     # tickerとcodeの対応表(codeはhighchartsの地名に使うもの)
     # http://www.benricho.org/translate/countrycode.html
     # http://www.yahoo-help.jp/app/answers/detail/p/546/a_id/45388/~/指数や為替の情報を表示したい
     # http://finance.yahoo.com/q?s=%5EBVSP
     tickerTable =
-    [{ticker:"^N225", code:"JP"},
+    [{ticker:"0000", code:"JP"},
      {ticker:"EZA", code:"ZA"},#SouthAfrica
-     {ticker:"RTS.RS", code:"RU"},#russia
+     {ticker:"ERUS", code:"RU"},#russia
      {ticker:"^BVSP", code:"BR"},#brazil
      {ticker:"^GSPTSE", code:"CA"},#canada
      {ticker:"^AORD", code:"AU"},#australia
@@ -367,36 +384,39 @@ class StaticPagesController < ApplicationController
      {ticker:"^KS11", code:"KR"},#korea
      {ticker:"^TWII", code:"TW"},#taiwan
      {ticker:"^GSPC", code:"US"},#S&P
+     {ticker:"EWQ", code:"FR"},#France
     #  {ticker:"DAX", code:"DE"},#German
-     {ticker:"^FTSE", code:"GB"},#FTSE100(england)
+     {ticker:"^FTSE?P=FTSE", code:"GB"},#FTSE100(england)
      {ticker:"^HSI", code:"CN"},#HangSengIndex
-     {ticker:"^NZ50", code:"NZ"},
-     {ticker:"^AXJO", code:"AT"},
-     {ticker:"^STI", code:"SG"},
+     {ticker:"^NZ50", code:"NZ"},#NewZealand
+     {ticker:"^AXJO", code:"AT"},#
+     {ticker:"EWS", code:"SG"},
      {ticker:"^GDAXI", code:"DE"},#german
-     {ticker:"FTSEMIB.MI", code:"IT"},
+     {ticker:"EWI", code:"IT"},
      {ticker:"^MERV", code:"AR"},
      {ticker:"^MXX", code:"MX"},
-     {ticker:"^KLSE", code:"MY"},
-     {ticker:"^SSMI", code:"CH"}
+     {ticker:"EWM", code:"MY"},
+     {ticker:"MCHI", code:"CH"}
      ];
     #  "^KLSE", "^SSMI"
     #  ex. tickerTable[0][:ticker]=>"^N225"
 
     # ハッシュ形式を要素とする配列を作成する=>描画に使用する
     # [{code: country-code, z: country-return},{},{}..]
+
     gon.country_return_plus =[]
     gon.country_return_minus = []
     tickerTable.each do |hash|
       ticker=hash[:ticker]
       code=hash[:code]
-      eachPriceNewest = PriceNewest.where(ticker:ticker).order(datetrade: :desc).limit(1)[0]
+      # eachPriceNewest = PriceNewest.where(ticker:ticker).order(datetrade: :desc).limit(1)[0]
+      eachPriceNewest = Priceseries.where(ticker: ticker).order(ymd: :desc).first
+      eachPriceBefore = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2).last
       # newestYMD = Priceseries.where(ticker: ticker).order(ymd: :asc).limit(1)[0].ymd
       returnStock = 0
       if eachPriceNewest
-        if eachPriceNewest.pricetrade != nil &&
-          eachPriceNewest.previoustrade != nil
-          returnStock = eachPriceNewest.pricetrade/eachPriceNewest.previoustrade-1
+        if eachPriceNewest.close != nil && eachPriceBefore.close != nil
+          returnStock = eachPriceNewest.close/eachPriceBefore.close-1
         end
       end
 
@@ -415,7 +435,6 @@ class StaticPagesController < ApplicationController
         }
         gon.country_return_minus.push(hashReturn)
       end
-
       # p "ticker=#{ticker}, return=#{returnStock}, now=#{eachPriceNewest.pricetrade},prev=#{eachPriceNewest.previoustrade},date=#{eachPriceNewest.datetrade}"
     end
     p "gon.country_return_minus=#{gon.min_return_minus}"
@@ -485,9 +504,9 @@ class StaticPagesController < ApplicationController
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
     historical_nikkei=
-    Priceseries.where(ticker: "^N225").order(ymd: :asc)
+    Priceseries.where(ticker: "0000").order(ymd: :asc)
     historical_toyota =
-    Priceseries.where(ticker: "7203-T").order(ymd: :asc)
+    Priceseries.where(ticker: "7203").order(ymd: :asc)
     # これ以上取得項目を増やすと致命的に遅くなるので描画グラフは二つまでにする。
     # historical_docomo =
     # Priceseries.where(ticker: "9437").order(ymd: :asc)
@@ -496,8 +515,8 @@ class StaticPagesController < ApplicationController
 
 
     gon.historical = {};
-    gon.historical["^N225"] = historical_nikkei
-    gon.historical["7203-T"] = historical_toyota
+    gon.historical["0000"] = historical_nikkei
+    gon.historical["7203"] = historical_toyota
     # gon.historical["9437"] = historical_docomo
     # gon.historical["8306"] = historical_mufg
 

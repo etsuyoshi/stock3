@@ -6,11 +6,11 @@ class RankController < ApplicationController
     Rank.destroy_all
 
     #１日騰落率は日経のサイトからスクレイピングして取得する
-    scrape_rank_hash('priceup')
-    scrape_rank_hash('pricedown')
+    scrape_rank_hash('priceup')#東証一部
+    scrape_rank_hash('pricedown')#東証一部
 
 
-    #３日平均、７日平均、１０日平均、３０日平均はPriceseriesから取得して更新する
+    #日経平均銘柄については３日平均、７日平均、１０日平均、３０日平均はPriceseriesから取得して更新する
     calc_rank_hash()
   end
 
@@ -25,10 +25,13 @@ class RankController < ApplicationController
       change_market_column = "#{market_column}-change"
 
       #最新の日付を取得
-      latest_ymd = Priceseries.where(ticker: "7203-T").last.ymd
+      latest_ymd = Priceseries.where(ticker: "0000").first.ymd
       latest_tickers = Priceseries.where(ymd: latest_ymd).pluck(:ticker).uniq
-      time_latest_ymd = getTimeFromYMDHMS(latest_ymd.to_s+"000000")#00000は時分秒
-      ymd_Xdays_ago = (getYMDHMSFromTime(time_latest_ymd - (term_calc-1).days))[0..7].to_i
+      # time_latest_ymd = getTimeFromYMDHMS(latest_ymd.to_s+"000000")#00000は時分秒
+      # ymd_Xdays_ago = (getYMDHMSFromTime(time_latest_ymd - (term_calc-1).days))[0..7].to_i
+      ymd_Xdays_ago = latest_ymd - term_calc*24*3600
+
+
       # p latest_ymd
       # p ymd_Xdays_ago
 
@@ -40,7 +43,7 @@ class RankController < ApplicationController
       #   end
       # end
       #最後の二文字が-Tでないものを削除
-      all_tickers.reject!{|ticker| ticker[ticker.length-2..ticker.length]!="-T"}
+      # all_tickers.reject!{|ticker| ticker[ticker.length-2..ticker.length]!="-T"}
       info_all = Hash.new
       return_all = Hash.new#[[ticker1, return1], [ticker2,return2],..]
       change_all = Hash.new#[[ticker1, change1], [ticker2,return2],..]
@@ -155,8 +158,6 @@ class RankController < ApplicationController
   end
 
   def scrape_rank_hash(priceUpOrDown)
-    # 値上がり率ランキング
-    # url = "http://www.nikkei.com/markets/ranking/stock/priceup.aspx"
     p "scrape rank hash"
     if priceUpOrDown == 'priceup'
       p "値上がり上位"
@@ -165,15 +166,16 @@ class RankController < ApplicationController
     else
       return nil;
     end
-    url = "http://www.nikkei.com/markets/ranking/stock/" + priceUpOrDown.to_s + ".aspx"
-    p "url = #{url}"
-
-    html = open(url) do |f|
-      f.read # htmlを読み込んで変数htmlに渡す
+    # url = "http://www.nikkei.com/markets/ranking/stock/" + priceUpOrDown.to_s + ".aspx"
+    url = "https://www.nikkei.com/markets/ranking/page/?bd=" + priceUpOrDown.to_s
+    doc = getDocFromHtml(url)
+    if !doc
+      p "urlが取得できませんでした→#{url}"
+      return
     end
 
     # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
-    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    # doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
     rank_all = Hash.new
 
     doc.xpath('//table[@class="tblModel-1"]').xpath('tbody').xpath('tr').each do |content|
@@ -231,21 +233,23 @@ class RankController < ApplicationController
       end
     end
 
-    if priceUpOrDown.downcase == 'priceup'
-      p "upppppppppppppppppp"
-      preserve_rank_array(rank_all, "up")
-    elsif priceUpOrDown.downcase == 'pricedown'
-      p "downnnnnnnnnnnnn"
-      preserve_rank_array(rank_all, "down")
-    else
-      p "指定エラー"
-    end
+    # preserve_rank_array(rank_all, priceUpOrDown.downcase=='priceup' ? 'up' : 'down')
+    # if priceUpOrDown.downcase == 'priceup'
+    #   p "upppppppppppppppppp"
+    #   preserve_rank_array(rank_all, "up")
+    # elsif priceUpOrDown.downcase == 'pricedown'
+    #   p "downnnnnnnnnnnnn"
+    #   preserve_rank_array(rank_all, "down")
+    # else
+    #   p "指定エラー"
+    # end
 
-    # return rank_all
+    # 取得したrank変数をRankモデルに保存する
+    preserve_rank_array(rank_all, (priceUpOrDown.downcase=='priceup') ? 'up' : 'down')
   end
 
   def preserve_rank_array(rank_array, upOrDown)
-    p "preserve_rank_array : #{rank_array},,,,#{upOrDown}"
+    p "preserve_rank_array : #{rank_array} @#{upOrDown}"
 
 
     rank_array.each do |rank_item|
@@ -271,7 +275,7 @@ class RankController < ApplicationController
       p "nowprice = #{price}"
 
       rankModel = Rank.new(
-        :market          => "^N225",
+        :market          => "TOPIX",#TOPIX採用銘柄
         :stock_code      => stock_code,
         :rank            => rank,
         :name            => name,

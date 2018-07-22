@@ -1,5 +1,11 @@
 # 世界の株価動向を一覧・一目で見れる
 # 値上がり傾向、値下がりトップ５
+# Rankモデルの更新場所はどこ？(FetchControllerで更新確認)→static_pages#nikkeiで取得して、static_pages/nikkei.html.erbで使用している
+# herokuのschedulerで更新する
+# 使い方をheroku run rails consoleで確認する
+# ModesNames.column_names
+# Priceseries.columns.map(&:type)
+# Priceseries.columns.map(&:name)
 
 
 require 'yahoo-finance'
@@ -12,62 +18,48 @@ require 'open-uri'
 
 namespace :db do
 	desc "Fill database with sample data"
-	task updatePrice: :environment do
 
-		arrCode = get225code()
+	task fetcher: :environment do
+		# Priceseries更新
+		updatePrice()
+
+		# updateRank()
+	end
+
+	# rank dataの更新
+	# task rank: :environment do
+	def updateRank
+		_controller = RankController.new
+		_controller.index
+	end
+
+	# 長く更新されていないデータを削除する
+	# 1週間に一回くらいやればいい
+	# task cleanup: :environment do
+	def cleanPriceseries
+		# 5日以上更新されていないデータは削除する
+		old_priceseries = Priceseries.where(Priceseries.arel_table[:updated_at].lteq(Date.today.in_time_zone('Tokyo')-5*24*3600))
+		old_priceseries.delete_all
+		old_priceseries.save
+	end
+
+	# task updatePrice: :environment do
+	def updatePrice
+
+		arrCode = getKabutanTicker()
     # 一気に250銘柄進めようとすると負荷をかけてしまうためまずい→updated_atを見ながら当日取得していない銘柄を5銘柄ずつくらい取得する
     arrCode.each do |code|
 			ticker_without_t = code.gsub(/-T/, '').to_s
       getPriceKabutan(ticker_without_t)
-
     end
+
+		return
 		arrCode = getYahooTicker()
 		arrCode.each do |code|
 			getPriceYahoo(code)
 		end
 	end
 
-	def isValidate(url_string, limit = 10)
-		begin
-	    response = Net::HTTP.get_response(URI.parse(URI.encode(url_string)))
-	  rescue
-			p "error"
-	    return false
-	  else
-	    case response
-	    when Net::HTTPSuccess
-				p "success"
-	      return true
-	    when Net::HTTPRedirection
-				p "redirect"
-	      isValidate(response['location'], limit - 1)
-	    else
-	      return false
-	    end
-	  end
-
-		return true
-	end
-
-	# string型のurlからhtmlを取得する
-	def getDocFromHtml(url_string)
-
-
-		if !isValidate(URI.encode(url_string))
-			p "そのURLは無効です"
-			return nil;
-		end
-
-
-		url_encoded = URI.encode(url_string)
-  	charset = nil
-  	html = open(url_encoded) do |f|
-  		charset = f.charset # 文字種別を取得
-  		f.read # htmlを読み込んで変数htmlに渡す
-  	end
-  	doc = Nokogiri::HTML.parse(html, nil, charset)
-		return doc
-	end
 
   # k-dbサービス終了に伴い、別の方法を検討
   # 日経銘柄：kabutan
@@ -76,22 +68,26 @@ namespace :db do
   # gld : https://finance.yahoo.com/quote/GC=F?p=GC=F
 	def getPriceYahoo(ticker)
 		# url_price = "https://finance.yahoo.com/quote/%5EDJI/history?p=%5EDJI"
-		url_price = "https://finance.yahoo.com/quote/#{ticker.to_s}/history?p=#{ticker.to_s}"
-		p url_price
-		doc = getDocFromHtml(url_price)
+		# ticker_for_url = ^FTSE?P=FTSE
+		# if ticker == "^FTSE"
+		# 	# ticker
+		# 	url_price = "https://finance.yahoo.com/quote/%5EFTSE%3FP%3DFTSE/history/"
+		# else
+			url_price = "https://finance.yahoo.com/quote/#{ticker.to_s}/history"
+			# url_price = "https://finance.yahoo.com/quote/#{ticker.to_s}/history?p=#{ticker.to_s}"
+		# end
+		doc = ApplicationController.new.getDocFromHtml(url_price)
 
 		if doc.nil?
 			return
 		end
 
-
-		# name = doc.css("#D(ib)")
-		# Nokogiri::CSS::SyntaxError: unexpected
-		# doc.xpath('//div[@class="thumb-block "]').each do |node|
-		# name  = doc.xpath('//div')
+		if doc.css('tbody').nil? || doc.css('h1').nil?
+			return
+		end
 		name = doc.css("h1").text
-		# price_datas = doc.xpath('//tbody[@data-reactid="50"')
-		# price_datas = doc.xpath(".//div[@id='app'")
+
+
 		price_datas = doc.css('tbody')[0].css('tr')
 		# すでにあれば削除する
 		if price_datas.count > 0
@@ -102,6 +98,14 @@ namespace :db do
 		price_datas.each do |price_row|
 				# Date, Open, High, Low, Close, Volume
 				row_date  = Date.parse(price_row.css('td')[0].text).to_time.in_time_zone('Tokyo').to_i#to_iでunix_time変換
+				# 配当データの表示などでprice_now.css('td')[1].text==nilの時が存在する
+				if price_row.css('td')[1].nil? ||
+					price_row.css('td')[2].nil? ||
+					price_row.css('td')[3].nil? ||
+					price_row.css('td')[4].nil? ||
+					price_row.css('td')[5].nil?
+					next
+				end
 				row_open  = price_row.css('td')[1].text.gsub(/,/,"").to_f
 				row_high  = price_row.css('td')[2].text.gsub(/,/,"").to_f
 				row_low   = price_row.css('td')[3].text.gsub(/,/,"").to_f
@@ -124,7 +128,7 @@ namespace :db do
   def getPriceKabutan(ticker)
   	url_price = "https://kabutan.jp/stock/kabuka?code=#{ticker.to_s}"
 
-		doc = getDocFromHtml(url_price)
+		doc = ApplicationController.new.getDocFromHtml(url_price)
 		if doc.nil?
 			return
 		end
@@ -132,7 +136,16 @@ namespace :db do
     name = doc.css(".kobetsu_data_table1_meigara").text
 
 		p "ticker = #{ticker.to_s}, name=#{name.to_s}"
-		# 時系列の最新日付がDB保存データよりも大きいならば更新:https://qiita.com/Kta-M/items/8bd941d3f61a536e21ac
+
+
+		# 最新データの取得
+		price0 = doc.css(".stock_kabuka0 > tr")
+		if (price0.nil?) | (price0.count==0)
+			p "最新株価が存在しないのでスルーします"
+			return
+		end
+
+		# 株価データが存在すれば古いデータは削除する
 		if Priceseries.where(ticker: ticker.to_s).count > 0 #該当ticker時系列データを削除したらこのくだりは不要かも
 			Priceseries.where(ticker: ticker.to_s).delete_all
 			if false
@@ -147,14 +160,6 @@ namespace :db do
 				end
 			end
 		end
-
-		# 最新データの取得
-		price0 = doc.css(".stock_kabuka0 > tr")
-		if (price0.nil?) | (price0.count==0)
-			p "最新株価が存在しないのでスルーします"
-			return
-		end
-
 		td_tags = price0.css('td')
 		target_date = td_tags[0].nil? ? "" : (td_tags[0]).text
 		target_year = "20" + target_date[0..1].to_s
@@ -234,33 +239,56 @@ namespace :db do
 		return [
 			'^DJI', # Dow Jones Industrial Index
 			'^GSPC',# :SP500
-			'^IXIC' # :NASDAQ
+			'^IXIC', # :NASDAQ
+			'^JKSE', #jakarta
+		  "EZA", # code:"ZA"},#SouthAfrica
+		  "ERUS", # code:"RU"},#russia
+		  "^BVSP", # code:"BR"},#brazil
+		  "^GSPTSE", # code:"CA"},#canada
+		  "^AORD", # code:"AU"},#australia
+		  "^KS11", # code:"KR"},#korea
+		  "^TWII", # code:"TW"},#taiwan
+	    "DAX", # code:"DE"},#German
+			"EWQ", #France
+		  "^FTSE?P=FTSE", # code:"GB"},#FTSE all
+		  "^HSI", # code:"CN"},#HangSengIndex
+		  "^NZ50", # code:"NZ"},#NewZealand
+		  "^AXJO", # code:"AT"},#
+		  "EWS", # code:"SG"}, #singapore
+		  "^GDAXI", # code:"DE"},#german
+		  "EWI", # code:"IT"},
+		  "^MERV", # code:"AR"},
+		  "^MXX", # code:"MX"},
+		  "EWM", # code:"MY"},
+		  "MCHI"
 		]
 	end
 	# nk225個別銘柄と指数値、ドル円,上海総合指数、ユーロ円のticker一覧を取得する
 	def getKabutanTicker
 		# 本来的には225銘柄を自動で取得する必要あるかも
 		#コピペで取得したコード一覧(excel自体は保存してないが上記サイトをコピペして手動＆式でコードを連結したもの)
-		return [
-			# 日経,ドル円,上海総合,ユーロ円
-			'0000','0950','0823','0951',
-			'9532','9531','9503','9502','9501','9301','9202','9107','9104','9101','9064','9062','9022',
-			'9021','9020','9009','9008','9007','9005','9001','8830','8804','8802','8801','3289','7951',
-			'7912','7911','7012','7003','7013','7011','7004','6473','6472','6471','6367','6366','6361',
-			'6326','6305','6302','6301','6113','6103','5631','1963','1928','1925','1812','1808','1803',
-			'1802','1801','1721','8058','8053','8031','8015','8002','8001','2768','5901','5803','5802',
-			'5801','5715','5714','5713','5711','5707','5706','5703','3436','5541','5413','5411','5406',
-			'5401','5333','5332','5301','5233','5232','5214','5202','5201','5108','5101','5020','5002',
-			'6988','4911','4901','4452','4272','4208','4188','4183','4063','4061','4043','4042','4021',
-			'4005','4004','3407','3405','3865','3863','3861','3402','3401','3103','3101','1605','9766',
-			'9735','9681','9602','4755','4704','4689','4324','2432','9983','8267','8252','8233','8028',
-			'3382','3099','3086','2914','2871','2802','2801','2531','2503','2502','2501','2282','2269',
-			'2002','1333','1332','8795','8766','8750','8729','8725','8630','8628','8604','8601','8253',
-			'8411','8355','8354','8331','8316','8309','8308','8306','8304','8303','7186','9984','9613',
-			'9437','9433','9432','9412','7762','7733','7731','4902','4543','7272','7270','7269','7267',
-			'7261','7211','7205','7203','7202','7201','8035','7752','7751','7735','6976','6971','6954',
-			'6952','6902','6857','6841','6773','6770','6762','6758','6752','6703','6702','6701','4151',
-			'6674','6508','6506','6504','6503','6502','6501','6479','3105','4568','4523','4519','4507',
-			'4506','4503','4502']
+
+		# 以下から取得する
+		# https://indexes.nikkei.co.jp/nkave/index/component?idx=nk225
+		nikkei_codes= []
+		nikkei_codes.push("0000") # 日経株価指数
+		nikkei_codes.push("0823") # 上海総合指数
+		nikkei_codes.push("0950") # ドル円
+		nikkei_codes.push("0951") # ユーロ円
+
+		url_nikkei = "https://indexes.nikkei.co.jp/nkave/index/component?idx=nk225"
+		doc = ApplicationController.new.getDocFromHtml(url_nikkei)
+
+		# p doc.xpath('//div[@class="row component-list"]')
+		# p doc.xpath('//div[@class="row component-list"]').count
+		# doc.xpath('//div[@class="row component-list"]').each do |each_row|
+		doc.xpath('//div[@class="col-xs-3 col-sm-1_5"]').each do |each_row|
+			if each_row.text == 'コード'
+				next
+			end
+			nikkei_codes.push(each_row.text)
+		end
+
+		return nikkei_codes
 	end
 end

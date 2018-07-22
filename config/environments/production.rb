@@ -5,7 +5,8 @@ Rails.application.configure do
 
   # Code is not reloaded between requests.
   config.cache_classes = true
-  config.serve_static_assets = true
+  # config.serve_static_assets = true
+  config.serve_static_files = true
 
 
   # Eager load code on boot. This eager loads most of Rails and

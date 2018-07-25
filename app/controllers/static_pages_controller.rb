@@ -52,7 +52,7 @@ class StaticPagesController < ApplicationController
 
 
     gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "0000").order(ymd: :desc)
+    Priceseries.where(ticker: "0000").order(ymd: :asc)
     # Priceseries.where(ticker: "^N225").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
     # p "nikkei225"
@@ -80,15 +80,15 @@ class StaticPagesController < ApplicationController
     # b = 13754.4566
     # print number_with_delimiter(b, :delimiter => ',')
 
-
-    gon.dow_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^DJI").order(ymd: :desc)
+    # candle chartはascで表示しないと正しく表示されない
+    gon.historical_data=#Priceseries.all.order(:ymd)
+    Priceseries.where(ticker: "^DJI").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^DJI' order by 'ymd' desc")
 
     @dow_now2 =
     Priceseries.where(ticker: "^DJI").order(ymd: :desc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^DJI' order by ymd desc limit 2")
-    p "shanghai"
+
     p @dow_now2[0].close.to_f
     p @dow_now2[1].close.to_f
     if @dow_now2.length == 2
@@ -105,6 +105,7 @@ class StaticPagesController < ApplicationController
   def shanghai
 
     gon.shanghai_historical=#Priceseries.all.order(:ymd)
+    Priceseries.where(ticker: "0823").order(ymd: :asc)
     # Priceseries.where(ticker: "000001.SS").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '000001.SS' order by 'ymd' desc")
 
@@ -196,13 +197,11 @@ class StaticPagesController < ApplicationController
   end
 
   def europe
-
-
     gon.europe_historical=#Priceseries.all.order(:ymd)
     Priceseries.where(ticker: "^FTSE").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
     @europe_now2 =
-    Priceseries.where(ticker: "^FTSE").order(ymd: :asc).limit(2)
+    Priceseries.where(ticker: "^FTSE").order(ymd: :desc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^FTSE' order by ymd desc limit 2")
     p "shanghai"
     p @europe_now2[0].close.to_f
@@ -227,7 +226,7 @@ class StaticPagesController < ApplicationController
     # Priceseries.find_by_sql("select * from priceseries where ticker = 'btci' order by 'ymd' desc")
 
     @btc_now2 =
-    Priceseries.where(ticker: "btci").order(ymd: :asc).limit(2)
+    Priceseries.where(ticker: "btci").order(ymd: :desc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = 'btci' order by ymd desc limit 2")
     if @btc_now2.length == 2
       @valueBtc = @btc_now2[0].close.to_f
@@ -242,11 +241,13 @@ class StaticPagesController < ApplicationController
     # 難易度などのテーブル取得
     # http://bitcoincharts.com/markets/coinbaseUSD.html
 
-    url = "http://bitcoincharts.com/markets/coinbaseUSD.html"
-    html = open(url) do |f|
-      f.read # htmlを読み込んで変数htmlに渡す
-    end
-    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    url = "https://bitcoincharts.com/markets/coinbaseUSD.html"
+    # html = open(url) do |f|
+    #   f.read # htmlを読み込んで変数htmlに渡す
+    # end
+    # doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    doc = getDocFromHtml(url)
+    p doc
     rank_all = Hash.new
     p "start"
     @hash_fundamentals = Hash.new

@@ -3,6 +3,7 @@ class FetchController < ApplicationController
   require 'open-uri'# URLアクセス
   require 'kconv'    # 文字コード変換
   require 'nokogiri' # スクレイピング
+  require 'natto'
 
   require 'time'
   require 'date'
@@ -15,8 +16,11 @@ class FetchController < ApplicationController
 
 
   def index
+    get_news()
+    # get_bitcoin_news()
+    return
 
-    
+
 # Issue
 # https://github.com/herval/yahoo-finance/issues/28
 
@@ -201,12 +205,13 @@ class FetchController < ApplicationController
     #記事本文のページを開いて時間(feed_id)と本文を取得する
     #記事リンク例
     #http://jp.reuters.com/article/usa-fed-bullard-idJPKBN13D1CF
-    article_url = "http://jp.reuters.com#{article_id}"
-    html = open(article_url) do |f|
-      f.read # htmlを読み込んで変数htmlに渡す
-    end
-    # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
-    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    article_url = "https://jp.reuters.com#{article_id}"
+    # html = open(article_url) do |f|
+    #   f.read # htmlを読み込んで変数htmlに渡す
+    # end
+    # # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
+    # doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    doc = getDocFromHtml(article_url)
 
     # <div class="group wrap" id="articleContent">
 		#   <div class="article-header">
@@ -214,68 +219,19 @@ class FetchController < ApplicationController
     #     <span class="divider"> | </span>
     #     <span class="timestamp">2016年 11月 18日 23:29 JST</span>
 
-    article_timestamp = doc.xpath('//span[@class="timestamp"]').inner_text
-    p "article_t = #{article_timestamp}"
+    # article_timestamp = doc.xpath('//span[@class="timestamp"]').inner_text
+    article_created = doc.xpath('//div[@class="ArticleHeader_date"]').inner_text
+    p "article_created = #{article_created}"
+    article_ymd = article_created.split("/")[0]
+    article_hm = article_created.split("/")[1]
 
-    #あらかじめ定められたフォーマットであれば
-    if article_timestamp.match(/.*年.*月.*日.*:.*ST/)!=nil
-      timestamp = article_timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
-
-      #timestamp = timestamp.match(/.*年.*月.*日/)[0]
-      p timestamp
-      yyyy_article = timestamp[0,4].to_i
-      p yyyy_article
-      month_article = timestamp.match(/ .*月/)[0].sub(/ /, "").sub(/月/, "").to_i
-      if month_article > 12
-        month_article = month_article - 12
-      end
-      p month_article
-      dd_article = timestamp.match(/月 .*日/)[0].sub(/ /, "").sub(/日/, "").sub(/月/, "").to_i
-      if dd_article > 31
-        dd_article = dd_article - 31
-      end
-      p dd_article
-
-
-      hh_article=timestamp.match(/日.*:/)[0].sub(/日./,"").sub(/:/, "").to_i
-      #mm_article=timestamp.match(/:.*m/)[0].sub(/.m/, "").sub(/:/,"").to_i
-      mm_article=timestamp.match(/:.*/)[0].sub(/:/,"").sub(/.JST/, "").to_i
-      #p "mm=#{timestamp.match(/:.*/)[0].sub(/.*ST/,"")}"
-
-      stringYMDHMS=yyyy_article.to_s + "-" + month_article.to_s + "-" + dd_article.to_s + " " + hh_article.to_s + ":" + mm_article.to_s + ":00"
-      p "stringYMDHMS=#{stringYMDHMS}"
-
-    end
-
+    article_timestamp = Time.parse(article_ymd + " / " + article_hm)
+    p "article_ymd = #{article_timestamp}, #{article_timestamp.to_i}"
     return_hash = Hash.new
-    return_hash["feed_id"] = Time.parse(stringYMDHMS).to_i
-    #return Time.parse(stringYMDHMS).to_i
-
-    # ex. http://jp.reuters.com/article/usa-fed-bullard-idJPKBN13D1CF
-    #article_urlに対して該当箇所のタグ情報から内容を取得してarticle_contentに格納してfeed_idが入っているハッシュとして返す
-    # <span id="articleText">
-    # <span id="midArticle_start"></span>
-    # <span class="focusParagraph"><p>［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。</p></span>
-    # <span id="midArticle_0"></span>
-    # <p>同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。</p>
-    # <span id="midArticle_1"></span>
-    # <p>ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。</p>
-    # <span id="midArticle_2"></span>
-    # <span class="first-article-divide"></span>
-    # <p>新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。</p>
-    # <span id="midArticle_3"></span>
-    # <p>またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。</p>
-    # <span id="midArticle_4"></span>
-    # <span class="second-article-divide"></span>
-    # <p>移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。</p>
-    # <span id="midArticle_5"></span>
-    # <span class="third-article-divide"></span>
-    # <p>規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。</p>
-    # <span id="midArticle_6"></span><p>＊内容を追加して再送します。</p>
-    # <span id="midArticle_7"></span></span>
+    return_hash["feed_id"] = article_timestamp.to_i#Time.parse(stringYMDHMS).to_i
 
 
-    article_content = doc.xpath('//span[@id="articleText"]').inner_text
+    article_content = doc.xpath('//div[@class="StandardArticleBody_body"]').inner_text
     return_hash["article"] = article_content
 
     return return_hash
@@ -538,15 +494,8 @@ class FetchController < ApplicationController
       #   noPage = 0
       # end
       p "search(page=#{noPage}....)"
-      url = "http://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=10"
-
-      html = open(url) do |f|
-        f.read # htmlを読み込んで変数htmlに渡す
-      end
-
-      # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
-      doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
-
+      url = "https://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=10"
+      doc = getDocFromHtml(url)
       latest_id = get_latest_id()
 
       p "latest = " + latest_id.to_s
@@ -554,24 +503,20 @@ class FetchController < ApplicationController
       #doc.xpath('//div[@class="story-content"]').each do |content|
       doc.xpath('//article[@class="story "]').each do |content|
         #content:
-        # <div class=\"feature\">
-        #   <div class=\"photo\">
-        #     <a href=\"/video/2016/11/11/%E3%83%88%E3%83%A9%E3%83%B3%E3%83%97%E5%8B%9D%E5%88%A9%E3%81%A7%E3%83%9D%E3%83%94%E3%83%A5%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%AE%E6%B4%A5%E6%B3%A2%E3%81%8C%E6%AC%A7%E5%B7%9E%E5%88%B0%E6%9D%A5%E3%81%8B%E5%AD%97%E5%B9%95%E3%83%BB9%E6%97%A5?videoId=370431312&amp;videoChannel=201\">
-        #       <div class=\"videoOverlay\">
-        #       </div>
-        #       <img src=\"http://s1.reutersmedia.net/resources/r/?d=20161111&amp;i=123948261&amp;w=140&amp;r=123948261-15_0&amp;t=2\" border=\"0\" alt=\"トランプ勝利でポピュリズムの津波が欧州到来か（字幕・9日）\">
+        # <article class=\"story \">
+        #   <div class=\"story-photo lazy-photo \">
+        #     <a href=\"/article/china-centralbank-easing-idJPKBN1KA05Y\">
+        #       <img src=\"https://s1.reutersmedia.net/resources_v2/images/1x1.png\"
+        #            org-src=\"https://s2.reutersmed&amp;sq=&amp;r=LYNXMPEE6J03H\"
+        #            border=\"0\" alt=\"\">
         #     </a>
         #   </div>
-        #   <h2>
-        #     <a href=\"/video/2016/11/11/%E3%83%88%E3%83%A9%E3%83%B3%E3%83%97%E5%8B%9D%E5%88%A9%E3%81%A7%E3%83%9D%E3%83%94%E3%83%A5%E3%83%AA%E3%82%BA%E3%83%A0%E3%81%AE%E6%B4%A5%E6%B3%A2%E3%81%8C%E6%AC%A7%E5%B7%9E%E5%88%B0%E6%9D%A5%E3%81%8B%E5%AD%97%E5%B9%95%E3%83%BB9%E6%97%A5?videoId=370431312&amp;videoChannel=201\">
-        #       トランプ勝利でポピュリズムの津波が欧州到来か（字幕・9日）
-        #     </a>
-        #   </h2>
-        # </div>
-        p "content=#{content}"
+        #   <div class=\"story-content\">
+        #     <a href=\"/article/china-centralbank-easing-idJPKBN1KA05Y\">
+        #       <h3 class=\"story-title\">\n\t\t\t\t\t\t\t\t焦点：中国人民銀が流動性増強、貿易戦争でさらなる金融緩和も</h3>\n\t\t\t\t\t\t\t</a>\n\t\t\t        <div class=\"contributor\"></div>\n\t\t\t        <p>中国人民銀行（中央銀行）が金融システムへの流動性供給を増やし、中小企業への信用供与を強化している。負債圧縮の取り組みによる借り入れコスト上昇で製造業生産や設備投資が鈍化し、元から景気の勢いが失われつつあったところに米国との貿易紛争が追い打ちを掛けたためだ。</p>\n\t\t\t\t\t<time class=\"article-time\">\n\t\t\t\t\t\t\t<span class=\"timestamp\">2018年 07月 21日</span>\n\t\t\t\t\t\t</time>\n\t\t\t\t\t</div>\n\t\t\t\t\n\t\t\t</article>
         if !(content.nil?)#contentに内容があれば
           # title
-          title = content.css('h3').css('a').inner_text
+          title = content.css('h3').inner_text.gsub(/\n/,"").gsub(/\t/, "")
           p "title=#{title}"
 
           if !(title.nil? || title == "")
@@ -587,27 +532,19 @@ class FetchController < ApplicationController
                 # description      = content.to_html
                 # link             = url + '#news' + feed_id.to_s
 
-                url = content.css('h3').css('a').attribute('href').value
+                url = content.css('a').attribute('href').value
                 url = "http://jp.reuters.com" + url
                 # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
-
-
-                # p Time.at(unixtime)
-
 
                 # desc
                 #description = content.css('p').inner_text
                 description = feed_contents["article"]
-
-
+                p "description = #{description}"
                 keyword = get_keywords_from_description(description)
-
                 description = description.sub(/。/,"。<br>")
 
-
-
-
-
+                # 謎のワードが追加されるので削除する
+                description = description.gsub(/信頼の原則/,"")
 
                 #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
                 #http://watarisein.hatenablog.com/entry/2016/01/31/163327
@@ -622,7 +559,7 @@ class FetchController < ApplicationController
                 insert_feed(feed_id, title, description, url, keyword)
                 p "db挿入完了"
               else
-                p "feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さいので格納しません。"
+                p "最新ニュースではない（feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さい）ので格納しません。"
                 p Time.at(feed_id)
               end
             end
@@ -637,7 +574,8 @@ class FetchController < ApplicationController
   def get_keywords_from_description(description)
 
     #めかぶ
-    mecab = Natto::MeCab.new
+    mecab = #Natto::MeCab.new
+    Natto::MeCab.new('-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
     #サンプルテキスト
     #sample_text = "［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。＊内容を追加して再送します"
     sample_text = description

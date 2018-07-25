@@ -13,7 +13,9 @@ class ApplicationController < ActionController::Base
   # string型のurlからhtmlを取得する
   def getDocFromHtml(url_string)
 
-    if !(url_string.include?("kabutan"))
+    # if !(url_string.include?("kabutan"))
+    if url_string.include?("finance.yahoo")
+      # https://finance.yahoo.co.jpだけはasciiコードに変換しないとだめ
       url_encoded = URI.encode(url_string).gsub(/=/,"%3D").gsub(/\?/,"%3F")
     else
       # kabutanの場合には=や？はそのままにする
@@ -21,7 +23,7 @@ class ApplicationController < ActionController::Base
     end
 
     if !isValidate(url_encoded)
-      p "そのURLは無効です"
+      p "そのURLは無効です <- #{url_encoded}"
       return nil;
     end
     p url_encoded

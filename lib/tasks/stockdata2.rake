@@ -10,11 +10,10 @@
 
 require 'yahoo-finance'
 require 'uri'
-
-#scrape255:
 require 'nokogiri'
 require 'open-uri'
-
+require 'net/http'
+require 'json'
 
 namespace :db do
 	desc "Fill database with sample data"
@@ -22,9 +21,56 @@ namespace :db do
 	task fetcher: :environment do
 		# Priceseries更新
 		updatePrice()
-
-		# updateRank()
+		updateRank()
+		get_news()
 	end
+
+	def get_news
+		# FetchController#get_news()を実行する
+		_controller = FetchController.new
+		_controller.index
+
+	end
+
+
+	def get_btc_api
+		# https://qiita.com/awakia/items/bd8c1385115df27c15fa
+		uri = URI.parse('https://apiv2.bitcoinaverage.com/indices/global/history/BTCUSD?period=alltime&format=json')
+		json = Net::HTTP.get(uri)
+		result = JSON.parse(json)
+
+		if result.nil?
+			p "btcヒストリカル：取得エラー"
+			return
+		end
+		# 既存データ消去
+		Priceseries.where(ticker: "btci").delete_all
+		# 最新の100日分のみ取得
+		result[0..29].each do |btc_daily|
+			p btc_daily["time"]
+			open_value = btc_daily["open"]
+			high_value = btc_daily["high"]
+			low_value = btc_daily["low"]
+			close_value = btc_daily["average"]
+			volume_value = btc_daily["volume"]
+			ymd_value = Date.parse(btc_daily["time"]).to_time.in_time_zone('Tokyo').to_i
+			# p "ymd: #{Time.at(ymd_value).strftime('%Y-%m-%d')}, open: #{open_value}, high: #{high_value}, low: #{low_value}, close: #{close_value}"
+
+			ps = Priceseries.new(
+				ticker: "btci",
+				name: "bitcoin",#名前をスクレイピングして取得するのも良い
+				open: open_value,
+				high: high_value,
+				low: low_value,
+				close: close_value,
+				volume: volume_value,
+				ymd: ymd_value)
+			ps.save
+		end
+		return
+  end
+
+
 
 	# rank dataの更新
 	# task rank: :environment do
@@ -45,7 +91,10 @@ namespace :db do
 
 	# task updatePrice: :environment do
 	def updatePrice
+		# ビットコインヒストリカルデータの取得
+		get_btc_api()
 
+		# 日経平均を中心にkabutanで取得できる国内銘柄
 		arrCode = getKabutanTicker()
     # 一気に250銘柄進めようとすると負荷をかけてしまうためまずい→updated_atを見ながら当日取得していない銘柄を5銘柄ずつくらい取得する
     arrCode.each do |code|
@@ -53,7 +102,7 @@ namespace :db do
       getPriceKabutan(ticker_without_t)
     end
 
-		return
+		#株価指数(YahooFinanceで取得可能なもの)
 		arrCode = getYahooTicker()
 		arrCode.each do |code|
 			getPriceYahoo(code)
@@ -96,21 +145,22 @@ namespace :db do
 			end
 		end
 		price_datas.each do |price_row|
-				# Date, Open, High, Low, Close, Volume
-				row_date  = Date.parse(price_row.css('td')[0].text).to_time.in_time_zone('Tokyo').to_i#to_iでunix_time変換
 				# 配当データの表示などでprice_now.css('td')[1].text==nilの時が存在する
-				if price_row.css('td')[1].nil? ||
+				if price_row.css('td')[0].nil? ||
+					price_row.css('td')[1].nil? ||
 					price_row.css('td')[2].nil? ||
 					price_row.css('td')[3].nil? ||
 					price_row.css('td')[4].nil? ||
 					price_row.css('td')[5].nil?
 					next
 				end
+				# Date, Open, High, Low, Close, Volume
+				row_date  = Date.parse(price_row.css('td')[0].text).to_time.in_time_zone('Tokyo').to_i#to_iでunix_time変換
 				row_open  = price_row.css('td')[1].text.gsub(/,/,"").to_f
 				row_high  = price_row.css('td')[2].text.gsub(/,/,"").to_f
 				row_low   = price_row.css('td')[3].text.gsub(/,/,"").to_f
 				row_close = price_row.css('td')[4].text.gsub(/,/,"").to_f
-				row_vol   = price_row.css('td')[5].text.gsub(/,/,"").to_f
+				row_vol   = price_row.css('td')[6].text.gsub(/,/,"").to_f
 				p "date=#{Time.at(row_date)}, o=#{row_open}, h=#{row_high}, l=#{row_low}, c=#{row_close}, v=#{row_vol}"
 				ps =
 				Priceseries.new(
@@ -236,6 +286,7 @@ namespace :db do
   	end
   end
 	def getYahooTicker
+		# yahoo finance自体の株価指数がない場合は全てMSCIで取得する？
 		return [
 			'^DJI', # Dow Jones Industrial Index
 			'^GSPC',# :SP500
@@ -278,15 +329,13 @@ namespace :db do
 
 		url_nikkei = "https://indexes.nikkei.co.jp/nkave/index/component?idx=nk225"
 		doc = ApplicationController.new.getDocFromHtml(url_nikkei)
-
-		# p doc.xpath('//div[@class="row component-list"]')
-		# p doc.xpath('//div[@class="row component-list"]').count
-		# doc.xpath('//div[@class="row component-list"]').each do |each_row|
-		doc.xpath('//div[@class="col-xs-3 col-sm-1_5"]').each do |each_row|
-			if each_row.text == 'コード'
-				next
+		if !doc.nil?
+			doc.xpath('//div[@class="col-xs-3 col-sm-1_5"]').each do |each_row|
+				if each_row.text == 'コード'
+					next
+				end
+				nikkei_codes.push(each_row.text)
 			end
-			nikkei_codes.push(each_row.text)
 		end
 
 		return nikkei_codes

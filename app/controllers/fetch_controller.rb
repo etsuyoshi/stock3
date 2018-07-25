@@ -367,11 +367,12 @@ class FetchController < ApplicationController
 
 
     # ビットコインニュース
-    url = "http://btcnews.jp"
-    html = open(url) do |f|
-      f.read # htmlを読み込んで変数htmlに渡す
-    end
-    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    url = "https://btcnews.jp/"
+    # html = open(url) do |f|
+    #   f.read # htmlを読み込んで変数htmlに渡す
+    # end
+    # doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
+    doc = getDocFromHtml(url)
     rank_all = Hash.new
     # @bitcoinNews = []
     doc.xpath('//article').each do |article|
@@ -575,7 +576,8 @@ class FetchController < ApplicationController
 
     #めかぶ
     mecab = #Natto::MeCab.new
-    Natto::MeCab.new('-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
+    Natto::MeCab.new()
+    # Natto::MeCab.new('-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
     #サンプルテキスト
     #sample_text = "［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。＊内容を追加して再送します"
     sample_text = description

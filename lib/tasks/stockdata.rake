@@ -60,9 +60,9 @@ namespace :db do
 	end
 
 	task :call_fetch_controller => :environment do
-		_controller = FetchController.new
-		_controller.index
-		#_controller.get_news
+		# 20180726無効化(以前はここでほとんど全てのデータを更新していた)
+		# _controller = FetchController.new
+		# _controller.index
 	end
 end
 

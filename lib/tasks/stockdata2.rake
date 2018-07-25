@@ -23,6 +23,8 @@ namespace :db do
 		updatePrice()
 		updateRank()
 		get_news()
+
+
 	end
 
 	def get_news

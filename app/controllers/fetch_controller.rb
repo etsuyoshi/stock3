@@ -16,8 +16,8 @@ class FetchController < ApplicationController
 
 
   def index
-    get_news()
-    # get_bitcoin_news()
+    # get_news()
+    get_bitcoin_news()
     return
 
 
@@ -375,6 +375,7 @@ class FetchController < ApplicationController
     doc = getDocFromHtml(url)
     rank_all = Hash.new
     # @bitcoinNews = []
+    # <section class="home-news">を取得する必要がある？
     doc.xpath('//article').each do |article|
       # p "article:" + article.inner_html
       title = article.xpath('a').attribute('title').value

@@ -20,8 +20,8 @@ namespace :db do
 
 	task fetcher: :environment do
 		# Priceseries更新
-		updatePrice()
-		updateRank()
+		# updatePrice()
+		# updateRank()
 		get_news()
 
 

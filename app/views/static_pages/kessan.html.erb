@@ -4,7 +4,7 @@
 
     <% @kessan_feeds.each do |kessan| %>
       <%= link_to kessan.link do %>
-        <%= Time.at(kessan.feed_id.to_i*1000).strftime('%Y-%m-%d') %>
+        <%= Time.at(kessan.feed_id.to_i).strftime('%Y-%m-%d') %>
         <br>
         <%= (kessan.feed_id.to_i) %>
         <br>

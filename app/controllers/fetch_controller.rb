@@ -18,6 +18,7 @@ class FetchController < ApplicationController
   def index
     get_news()
     get_bitcoin_news()
+    # get_kessan_news()
     return
 
 
@@ -114,14 +115,16 @@ class FetchController < ApplicationController
   end
   # feedsテーブルに1件INSERT
   def insert_feed(feed_id, title, description, link, keyword)
-    # 既に存在していないか→重複していれば一個を除いて削除する（最初にミスって重複登録してしまっていた）
+    # 既に存在していないか→重複していれば一個を除いて削除する
     if Feed.where(title: title).count > 0
       exist_num = Feed.where(title: title).count
       if exit_num > 1
         # 2個以上ダブって入力している場合は一つを残して全て削除する
         Feed.where(title: title).first(exist_num-1).each do |duplicated_feed|
           duplicated_feed.destroy
+          duplicated_feed.save
         end
+      end
       return
     end
     feed = Feed.new(
@@ -136,6 +139,14 @@ class FetchController < ApplicationController
   end
 
   def insert_feed_with_label(feed_id, title, description, link, feedlabel, keyword)
+    duplicated_feeds = Feed.where(title: title)
+    if duplicated_feeds.count > 0
+      duplicated_feeds.first(duplicated_feeds.count-1).each do |duplicates|
+        duplicates.destroy
+        duplicates.save
+      end
+      return
+    end
     feed = Feed.new(
       :feed_id          => feed_id,
       :title            => title,
@@ -167,46 +178,11 @@ class FetchController < ApplicationController
     end
   end
 
-
+  # reuterの記事からfeedの時間を取得する(執筆時刻をfeed_idとする)
   def get_feed_id(content)
-    p "get_feed_id"
-    # feed_id => "/article/"を""に置換(スラッシュの前のバックスラッシュはエスケープシーケンス)
-    # feed_id = url.sub(/\/article\//, "").to_s
-    # p "feed_id = " + feed_id
 
     # 当日記事かどうかを選ぶ
     isToday = false;
-
-
-    # <article class=\"story \">
-    #   <div class=\"story-photo lazy-photo \">
-    #     <a href=\"/article/usa-trump-putin-idJPKBN1392NA\">
-    ########これでhttp://jp.reuters.com/article/usa-trump-putin-idJPKBN1392NA
-    #       <img src=\"http://s2.reutersmedia.net/resources_v2/images/logo-placeholder-med.png\"
-    #            org-src=\"http://s4.reutersmedia.net/resources/r/?m=02&amp;d=20161114&amp;t=2&amp;i=1161686232&amp;w=200&amp;fh=&amp;fw=&amp;ll=&amp;pl=&amp;sq=&amp;r=LYNXMPECAD1GR\"
-    #            border=\"0\" alt=\"\">
-    #     </a>
-    #   </div>
-    #   <div class=\"story-content\">
-    #     <h3 class=\"story-title\">
-    #       <a href=\"/article/usa-trump-putin-idJPKBN1392NA\">
-    #         トランプ氏とプーチン大統領が電話会談、「協力関係」で一致
-    #       </a>
-    #     </h3>
-    #     <div class=\"contributor\">
-    #     </div>
-    #     <p>［モスクワ　１４日　ロイター］ - ロシア政府は、プーチン大統領とトランプ次期米大統領が１４日に電話で会談し、「国際テロリズムや過激派との戦いなどにおいて建設的な協力関係」の構築を目指すことで合意したと明らかにした。
-    #     </p>
-    #     <time class=\"article-time\">
-    #       <span class=\"timestamp\">8:11am JST</span>
-    #     </time>
-    #   </div>
-    # </article>
-
-    #doc.xpath('//article[@class="story "]').each do |content|
-
-
-    #p "aaa = #{content.xpath('h3[@class="story-title"]').css('a').attribute('href').value}"
     article_id = content.css('a').attribute('href').value#/article/usa-fed-george-rates-idJPKBN13D215
     # article_id = "http://jp.reuters.com/#{content.xpath('a[@href]').value}"
     # p "article_id = #{article_id}"
@@ -216,155 +192,22 @@ class FetchController < ApplicationController
     #記事リンク例
     #http://jp.reuters.com/article/usa-fed-bullard-idJPKBN13D1CF
     article_url = "https://jp.reuters.com#{article_id}"
-    # html = open(article_url) do |f|
-    #   f.read # htmlを読み込んで変数htmlに渡す
-    # end
-    # # htmlをパース(解析)してオブジェクトを生成(utf-8に変換）
-    # doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
     doc = getDocFromHtml(article_url)
-
-    # <div class="group wrap" id="articleContent">
-		#   <div class="article-header">
-    #     <span class="article-section">Business</span>
-    #     <span class="divider"> | </span>
-    #     <span class="timestamp">2016年 11月 18日 23:29 JST</span>
-
-    # article_timestamp = doc.xpath('//span[@class="timestamp"]').inner_text
     article_created = doc.xpath('//div[@class="ArticleHeader_date"]').inner_text
     p "article_created = #{article_created}"
     article_ymd = article_created.split("/")[0]
     article_hm = article_created.split("/")[1]
-
     article_timestamp = Time.parse(article_ymd + " / " + article_hm)
     p "article_ymd = #{article_timestamp}, #{article_timestamp.to_i}"
     return_hash = Hash.new
     return_hash["feed_id"] = article_timestamp.to_i#Time.parse(stringYMDHMS).to_i
-
-
     article_content = doc.xpath('//div[@class="StandardArticleBody_body"]').inner_text
     return_hash["article"] = article_content
 
     return return_hash
-
-
-
-    #以下、昔のフォーマット:当日ニュースか前日以前のニュースかで条件分岐してリストのみから日付データを取得する方法
-
-    p "#{content.xpath('div[@class="story-content"]').xpath('time[@class="article-time"]').xpath('span[@class="timestamp"]').inner_text}"
-    # 当日記事はxx:yy JST形式、前日以前は年月日時分JSTのような形式
-    #まずはtimestampだけで記事発行時刻の取得を試る
-    timestamp=content.xpath('div[@class="story-content"]').xpath('time[@class="article-time"]').xpath('span[@class="timestamp"]').inner_text
-    #2016年 02月 13日 08:28 JSTのような形式であればこれを分解して時刻に変換する
-    #↑のような日時形式でなければ(単なる時刻xx:yy JSTのような場合)は日にちは画像URLの中から取得する
-    p "timestamp=#{timestamp.to_s}"
-    #p "match = #{timestamp.match(/.*年.*月.*日.*:.*ST/)}"
-    p "match = #{timestamp.match(/.*年.*月.*日/)}"
-    #if timestamp.match(/.*年.*月.*日.*:.*ST/) != nil#前日以前であれば
-    if timestamp.match(/.*年.*月.*日/) != nil#前日以前
-      p timestamp.match(/.*年.*月.*日/)[0]#時間帯JSTなどの記載がなくなったので別途取得する必要
-      isToday = false
-    else#当日記事の場合
-      p timestamp.match(/.*ST/)[0]#時間帯によってはJSTなどの記号がない場合がある？=>遷移先に存在する
-      #p timestamp.match(/.*年.*月.*日/)#年月日という表記
-      isToday = true
-    end
-
-    # feed_idをunixtimeとして取得するために日時*YYYYMMDDhhmmssの記載がある画像URLを取得する
-    # http://qiita.com/mogulla3/items/195ae5d8ad574dfc6baa
-    image_url = nil
-    stringYMDHMS = nil
-    p "isToday = #{isToday}"
-    if isToday
-      # 当日記事の場合は画像URLから発行時刻を図るしかない
-      p content.xpath('div[@class="photo"]').length
-      if content.xpath('div[@class="photo"]').length > 0
-        image_url = content.xpath('div[@class="photo"]').css('a').css('img').attribute('src').value
-        p "画像あり:#{image_url}"
-      else
-        # 画像がない場合
-        p "当日の記事で画像がない場合は仕方ないのでreturn値(unixtime=-1)として返して受け取る側で追加処理をしないこととする"
-        #return -1
-      end
-
-      p "image_url=" + image_url
-      # http://s3.reutersmedia.net/resources/r/?m=02&d=20160212&t=2&i=1117106169&w=115&fh=&fw=&ll=&pl=&sq=&r=LYNXNPEC1B1A5
-      # feed_id=image_url.sub(/)
-      # yyyymmdd該当部分周辺の抜き出し
-      tmp = image_url.match(/resources\/r\/\?m=02\&d=........\&t=2/)[0]
-      p "tmp = " + tmp
-      yyyymmdd_article = tmp.sub(/resources\/r\/\?m=02\&d=/, "").sub(/\&t=2/,"")
-      p "yyyymmdd_art = " + yyyymmdd_article
-
-
-      yyyy_article = yyyymmdd_article[0,4].to_i
-      month_article = yyyymmdd_article[4,2].to_i
-      dd_article = yyyymmdd_article[6,2].to_i
-
-      # 時刻の取得：relatedInfoのjst-timepstampの中から取得する
-      # timestamp=content.xpath('div[@class="relatedInfo"]').xpath('span[@class="timestamp"]').inner_text
-      p "timestamp = " + timestamp
-      hh_article=timestamp.match(/.*:/)[0].sub(/:/, "").to_i
-      mm_article=timestamp.match(/:.*m/)[0].sub(/.m/, "").sub(/:/,"").to_i
-
-
-      # am or pmで判別して、pmの場合でhh<13ならば12を追加する
-      if hh_article < 12 && timestamp.match(/.pm/) != nil then #am-pm judge
-        hh_article = hh_article + 12
-      end
-
-      stringYMDHMS=yyyy_article.to_s + "-" + month_article.to_s + "-" + dd_article.to_s + " " + hh_article.to_s + ":" + mm_article.to_s + ":00"
-      p stringYMDHMS
-      p "exit"
-    else
-      p timestamp
-      # 前日以前の場合はtimestampに年月日時分が記載されているのでそこから抽出する
-      #timestamp = timestamp.match(/.*年.*月.*日.*:.*ST/)[0]
-      timestamp = timestamp.match(/.*年.*月.*日/)[0]
-      p timestamp
-      yyyy_article = timestamp[0,4].to_i
-      p yyyy_article
-      month_article = timestamp.match(/ .*月/)[0].sub(/ /, "").sub(/月/, "").to_i
-      if month_article > 12
-        month_article = month_article - 12
-      end
-      p month_article
-      dd_article = timestamp.match(/月 .*日/)[0].sub(/ /, "").sub(/日/, "").sub(/月/, "").to_i
-      if dd_article > 31
-        dd_article = dd_article - 31
-      end
-      p dd_article
-
-      return
-
-      # 以下は取得できない
-      # hh_article = timestamp.match(/日 .*:/)[0].sub(/ /, "").sub(/:/, "").sub(/日/, "").to_i
-      # if hh_article > 24
-      #   hh_article = hh_article - 24
-      # end
-      # p hh_article
-      # mm_article = timestamp.match(/:.* /)[0].sub(/ /, "").sub(/:/, "").to_i
-      # if mm_article > 60
-      #   mm_article = mm_article - 60
-      # end
-
-      p "y:" + yyyy_article.to_s
-      p "month:" + month_article.to_s
-      p "day:" + dd_article.to_s
-      p "hour:" + hh_article.to_s
-      p "minutes:" + mm_article.to_s
-
-      stringYMDHMS=yyyy_article.to_s + "-" + month_article.to_s + "-" + dd_article.to_s + " " + hh_article.to_s + ":" + mm_article.to_s + ":00"
-      p stringYMDHMS
-    end
-    p "param = #{stringYMDHMS}"
-    p "params2 = #{Time.parse(stringYMDHMS)}"
-    p "feed_id = #{Time.parse(stringYMDHMS).to_i}"
-
-    return Time.parse(stringYMDHMS).to_i
-
   end
 
-  # まだ作り途中
+  # bitcoin関連のニュース
   def get_bitcoin_news
     # 最後のニュースのunixtimeを取得する
     # latest_id = get_latest_id()
@@ -386,26 +229,6 @@ class FetchController < ApplicationController
     doc = getDocFromHtml(url)
     rank_all = Hash.new
 
-
-
-
-    # <article id=\"article-17684\" class=\"article-post\">
-    #   <div class=\"thumb preload-img\" style=\"background-image: url(https://btcnews.jp/wp-content/uploads/2018/07/cards-1030852_1280-640x319.jpg);\">
-    #     <div class=\"ratio-2-1\">
-    #       <div class=\"inner\">
-    #       </div>
-    #     </div>
-    #   </div>
-    #   <div class=\"txt-wrap\">
-    #     <div class=\"meta\">
-    #     <div class=\"date _en\">2018.07.25 (Wed)</div>
-    #       <span class=\"circle\"></span>
-    #       <a href=\"https://btcnews.jp/author/msanada/\" class=\"author\">真田雅幸</a>
-    #     </div>
-    #     <h4 class=\"ttl\">Augur開発者チーム「Kill Switch」の発動権限を破棄、非中央集権化へ</h4>
-    #   </div>
-    #   <a href=\"https://btcnews.jp/2s7p337717684/\" class=\"link\"></a>
-    # </article>
     doc.search('li.article-list').each do |article|
       # p "title : " + article.css('h4').inner_text
       # p "url : " + article.css('a.link').attribute('href').value
@@ -414,6 +237,13 @@ class FetchController < ApplicationController
       article_title = article.css('h4').inner_text
       article_url = article.css('a.link').attribute('href').value
       article_doc = getDocFromHtml(article_url)
+      if article.css('div.meta').nil?
+        next
+      elsif article.css('div.meta').css('div.date').nil?
+        next
+      elsif article.css('div.meta').css('div.date').inner_text.include?("Promotion")
+        next
+      end
       date_feed_id = Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"").to_time.to_i + 24*3599*Random.new.rand
       # p "date_feed_id.to_time = #{Time.at(date_feed_id)}"
       # p "description : " + article_doc.search('div.article-details-body').inner_text.gsub(/\t/,"").gsub(/\n/, "")

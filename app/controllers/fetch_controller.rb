@@ -16,7 +16,7 @@ class FetchController < ApplicationController
 
 
   def index
-    # get_news()
+    get_news()
     get_bitcoin_news()
     return
 
@@ -114,6 +114,16 @@ class FetchController < ApplicationController
   end
   # feedsテーブルに1件INSERT
   def insert_feed(feed_id, title, description, link, keyword)
+    # 既に存在していないか→重複していれば一個を除いて削除する（最初にミスって重複登録してしまっていた）
+    if Feed.where(title: title).count > 0
+      exist_num = Feed.where(title: title).count
+      if exit_num > 1
+        # 2個以上ダブって入力している場合は一つを残して全て削除する
+        Feed.where(title: title).first(exist_num-1).each do |duplicated_feed|
+          duplicated_feed.destroy
+        end
+      return
+    end
     feed = Feed.new(
       :feed_id          => feed_id,
       :title            => title,
@@ -376,7 +386,7 @@ class FetchController < ApplicationController
     doc = getDocFromHtml(url)
     rank_all = Hash.new
 
-    
+
 
 
     # <article id=\"article-17684\" class=\"article-post\">
@@ -410,11 +420,11 @@ class FetchController < ApplicationController
       article_description = article_doc.search('div.article-details-body').inner_text.gsub(/\t/,"").gsub(/\n/, "")
       article_keywords = get_keywords_from_description(article_description)
       insert_feed_with_label(date_feed_id, article_title, article_description, article_url, "bitcoin", article_keywords)
-      p "date_feed_id = #{date_feed_id}"
+      p "date_feed_id = #{Time.at(date_feed_id)}"
       p "article_title = #{article_title}"
-      p "article_description=#{article_description}"
-      p "article_url=#{article_url}"
-      p "article_keywords = #{article_keywords}"
+      # p "article_description=#{article_description}"
+      # p "article_url=#{article_url}"
+      # p "article_keywords = #{article_keywords}"
     end
   end
 

@@ -58,6 +58,9 @@ namespace :db do
 		#gets(Date.new(2016,11,18), Date.new(2016,11,18))
 
 	end
+	
+
+
 
 	task :call_fetch_controller => :environment do
 		# 20180726無効化(以前はここでほとんど全てのデータを更新していた)

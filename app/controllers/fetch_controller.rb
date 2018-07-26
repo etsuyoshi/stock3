@@ -18,7 +18,7 @@ class FetchController < ApplicationController
   def index
     get_news()
     get_bitcoin_news()
-    # get_kessan_news()
+    get_kessan_news()
     return
 
 
@@ -117,15 +117,10 @@ class FetchController < ApplicationController
   def insert_feed(feed_id, title, description, link, keyword)
     # 既に存在していないか→重複していれば一個を除いて削除する
     if Feed.where(title: title).count > 0
-      exist_num = Feed.where(title: title).count
-      if exit_num > 1
-        # 2個以上ダブって入力している場合は一つを残して全て削除する
-        Feed.where(title: title).first(exist_num-1).each do |duplicated_feed|
-          duplicated_feed.destroy
-          duplicated_feed.save
-        end
+      Feed.where(title: title).all.each do |duplicated_feed|
+        duplicated_feed.destroy
+        duplicated_feed.save
       end
-      return
     end
     feed = Feed.new(
       :feed_id          => feed_id,
@@ -141,11 +136,10 @@ class FetchController < ApplicationController
   def insert_feed_with_label(feed_id, title, description, link, feedlabel, keyword)
     duplicated_feeds = Feed.where(title: title)
     if duplicated_feeds.count > 0
-      duplicated_feeds.first(duplicated_feeds.count-1).each do |duplicates|
+      duplicated_feeds.all.each do |duplicates|
         duplicates.destroy
         duplicates.save
       end
-      return
     end
     feed = Feed.new(
       :feed_id          => feed_id,
@@ -205,6 +199,21 @@ class FetchController < ApplicationController
     return_hash["article"] = article_content
 
     return return_hash
+  end
+
+  # 決算眼形のニュース
+  def get_kessan_news
+    url = "https://www.nikkei.com/markets/ir/compinfo/"
+    doc = getDocFromHtml(url)
+    p doc.css('tbody').css('tr').count
+    doc.css('tbody').css('tr').each do |kessan_record|
+      kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.gsub(/\t/,"").gsub(/\n/,"")).to_time.to_i
+      kessan_brand = kessan_record.css('td')[0].inner_text
+      kessan_title = kessan_record.css('td')[1].inner_text
+      kessan_link = kessan_record.css('td')[1].css('a').attribute('href').value
+      insert_feed_with_label(kessan_feed_id, kessan_title, nil, kessan_link, "kessan", kessan_brand)
+    end
+
   end
 
   # bitcoin関連のニュース

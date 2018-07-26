@@ -356,6 +356,8 @@ class StaticPagesController < ApplicationController
   def portfolio
   end
   def kessan
+    @kessan_feeds = Feed.tagged_with('kessan').order(feed_id: :desc)
+    
   end
   def home
     # bar-chart

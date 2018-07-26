@@ -1,15 +1,18 @@
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-    kessan
 
-    <% @events.each do |event| %>
-      <% if event.name.include?("決算") %>
-        <%= event.ymd %>
-        <%= event.name %>
+
+    <% @kessan_feeds.each do |kessan| %>
+      <%= link_to kessan.link do %>
+        <%= Time.at(kessan.feed_id.to_i*1000).strftime('%Y-%m-%d') %>
+        <br>
+        <%= (kessan.feed_id.to_i) %>
+        <br>
+        <%= kessan.title %>
+        <br>
         <br>
       <% end %>
     <% end %>
-    http://www.nikkei.com/markets/kabu/marketcalendar.aspx?SelectDate=20160223&DispMonth=201602
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
     <%= render 'layouts/sidebar' %>

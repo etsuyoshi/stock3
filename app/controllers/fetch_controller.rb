@@ -367,123 +367,54 @@ class FetchController < ApplicationController
 
 
     # ビットコインニュース
-    url = "https://btcnews.jp/"
+    # url = "https://btcnews.jp/"
+    url = "https://btcnews.jp/category/news/"
     # html = open(url) do |f|
     #   f.read # htmlを読み込んで変数htmlに渡す
     # end
     # doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
     doc = getDocFromHtml(url)
     rank_all = Hash.new
-    # @bitcoinNews = []
-    # <section class="home-news">を取得する必要がある？
-    doc.xpath('//article').each do |article|
-      # p "article:" + article.inner_html
-      title = article.xpath('a').attribute('title').value
-      url = article.xpath('a').attribute('href').value
-      entry_date = article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').inner_html
 
-      p "#{title}, #{entry_date}"
-      published = nil
-      article.xpath('div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
-        p "pattern A"
-        published = child.attribute("title").to_s
-      end
-      if published == nil || published.equal?("") then
-        p "pattern B"
-        article.xpath('div[@class="feat-right"]/div[@class="feat-meta"]/span[@class="feat_time entry-date"]').children.each do |child|
-          published = child.attribute('title').to_s
-        end
-      end
+    
 
-      if published == nil || published.equal?("") then
-        # 本当はpublishedなしでも適当に日付設定して保存したい
-        p "publishedなし #{title}, #{url}, #{entry_date}"
-      else
-        p "published = #{published}"
 
-        hash = Hash.new
-        hash["title"] = title
-        hash["url"] = url
-        hash["entry_date"] = entry_date
-        #transform
-        # from "published"=>"2016-04-19T12:00:41+00:00"
-        # to 2016-02-17 02:42:05(Feed.created_at form)
-        years    =    published[0, 4].to_i
-        months   =    published[5, 2].to_i
-        dates    =    published[8, 2].to_i
-        hours    =    published[11,2].to_i
-        minutes  =    published[14,2].to_i
-        seconds  =    published[17,2].to_i
-        p "#{years}, #{months}, #{dates}, #{hours}, #{minutes}, #{seconds}"
-        published_datetime =
-        Time.local(years, months, dates,
-                   hours, minutes, seconds)
-        p "datetime = #{published_datetime.to_i} : #{title}"
-        hash["published"] = published_datetime
-        # @bitcoinNews[@bitcoinNews.count + 1] = hash
-        # p "latest_id = #{latest_id}"
-        p "published = #{published_datetime.to_i}"
-
-        # if latest_id < published_datetime.to_i then
-        # published_datetime.to_iを今までに格納したかどうか
-        unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
-          # titleがDBに保存されていなければ、という条件に設定する
-          insert_feed_with_label(published_datetime.to_i,
-          title, nil, url, "bitcoin", nil)
-
-          p "published = #{published_datetime.to_i}"
-          p "title = #{title}"
-          p "url = #{url}"
-
-        end
-      end
-    end
-
-    url = "https://news.bitcoin.com/"
-    html = open(url) do |f|
-      f.read # htmlを読み込んで変数htmlに渡す
-    end
-    doc = Nokogiri::HTML.parse(html.toutf8, nil, 'utf-8')
-    rank_all = Hash.new
-    doc.xpath('//div[@class="td_module_12 td_module_wrap td-animation-stack"]').each do |article|
-      # title
-      title = article.xpath('div[@class="item-details"]/h3[@class="entry-title td-module-title"]/a').inner_text
-      # time
-      published = article.xpath('div[@class="item-details"]/div[@class="meta-info"]/div[@class="td-post-date"]/time').attribute("datetime").value
-      # link
-      url = article.xpath('div[@class="item-details"]/h3[@class="entry-title td-module-title"]/a').attribute("href").value
-      hash = Hash.new
-      hash["title"] = title
-      hash["url"] = url
-      #transform
-      # from "published"=>"2016-04-19T12:00:41+00:00"
-      # to 2016-02-17 02:42:05(Feed.created_at form)
-      years    =    published[0, 4].to_i
-      months   =    published[5, 2].to_i
-      dates    =    published[8, 2].to_i
-      hours    =    published[11,2].to_i
-      minutes  =    published[14,2].to_i
-      seconds  =    published[17,2].to_i
-      published_datetime =
-      Time.local(years, months, dates,
-                 hours, minutes, seconds)
-      hash["published"] = published_datetime
-      # @bitcoinNews[@bitcoinNews.count + 1] = hash
-
-      # if latest_id < published_datetime.to_i then
-        # DBに保存されている最新ニュースより新しいニュースなので格納する
-      unless arrReservedUnixTime.include?(published_datetime.to_i.to_s) then
-        # titleがDBに保存されていなければ、という条件に設定する
-        # insert_feed(published_datetime.to_i,
-        # title, nil, url )
-        insert_feed_with_label(published_datetime.to_i,
-        title, nil, url, "bitcoin", nil)
-
-        p "published = #{published_datetime.to_i}"
-        p "title = #{title}"
-        p "url = #{url}"
-
-      end
+    # <article id=\"article-17684\" class=\"article-post\">
+    #   <div class=\"thumb preload-img\" style=\"background-image: url(https://btcnews.jp/wp-content/uploads/2018/07/cards-1030852_1280-640x319.jpg);\">
+    #     <div class=\"ratio-2-1\">
+    #       <div class=\"inner\">
+    #       </div>
+    #     </div>
+    #   </div>
+    #   <div class=\"txt-wrap\">
+    #     <div class=\"meta\">
+    #     <div class=\"date _en\">2018.07.25 (Wed)</div>
+    #       <span class=\"circle\"></span>
+    #       <a href=\"https://btcnews.jp/author/msanada/\" class=\"author\">真田雅幸</a>
+    #     </div>
+    #     <h4 class=\"ttl\">Augur開発者チーム「Kill Switch」の発動権限を破棄、非中央集権化へ</h4>
+    #   </div>
+    #   <a href=\"https://btcnews.jp/2s7p337717684/\" class=\"link\"></a>
+    # </article>
+    doc.search('li.article-list').each do |article|
+      # p "title : " + article.css('h4').inner_text
+      # p "url : " + article.css('a.link').attribute('href').value
+      # p "date : " + Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"")
+      # p "date.to_i = #{Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"").to_time.to_i}"
+      article_title = article.css('h4').inner_text
+      article_url = article.css('a.link').attribute('href').value
+      article_doc = getDocFromHtml(article_url)
+      date_feed_id = Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"").to_time.to_i + 24*3599*Random.new.rand
+      # p "date_feed_id.to_time = #{Time.at(date_feed_id)}"
+      # p "description : " + article_doc.search('div.article-details-body').inner_text.gsub(/\t/,"").gsub(/\n/, "")
+      article_description = article_doc.search('div.article-details-body').inner_text.gsub(/\t/,"").gsub(/\n/, "")
+      article_keywords = get_keywords_from_description(article_description)
+      insert_feed_with_label(date_feed_id, article_title, article_description, article_url, "bitcoin", article_keywords)
+      p "date_feed_id = #{date_feed_id}"
+      p "article_title = #{article_title}"
+      p "article_description=#{article_description}"
+      p "article_url=#{article_url}"
+      p "article_keywords = #{article_keywords}"
     end
   end
 

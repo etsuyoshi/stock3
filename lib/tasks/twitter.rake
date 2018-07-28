@@ -424,21 +424,21 @@ def getWeekDayComment
   dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 7*24*3600).first.close
   shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 7*24*3600).first.close
   rtnNikkei_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
-  rtnDow_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
-  rtnShg_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
+  rtnDow_7 = (dow_last2.first.close / dow_lw - 1) * 100
+  rtnShg_7 = (shanghai_last2.first.close / shanghai_lw - 1) * 100
 
   #前月比(last_month)
   nikkei_lm = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 30*24*3600).first.close
   dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
   shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
   rtnNikkei_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
-  rtnDow_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
-  rtnShg_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
+  rtnDow_30 = (dow_last2.first.close / dow_lm - 1) * 100
+  rtnShg_30 = (shanghai_last2.first.close / shanghai_lm - 1) * 100
 
 
   daily_comment = "昨日の日経平均は#{nikkei_last2.first.close}円で前日比#{rtnNikkei_1.abs.round(2)}%の#{rtnNikkei_1>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_1.abs.round(2)}%#{rtnDow_1>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_1.abs.round(2)}%#{rtnShg_1>0 ? "上昇" : "下落"}でした。"
   weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
-  monthly_comment = "今月の日経平均は#{nikkei_last2.first.close}円で前月比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
+  monthly_comment = "今月の日経平均は#{nikkei_last2.first.close}円で前月比#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
 
 
 

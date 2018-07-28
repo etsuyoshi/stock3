@@ -99,15 +99,19 @@ namespace :db do
 		# 日経平均を中心にkabutanで取得できる国内銘柄
 		arrCode = getKabutanTicker()
     # 一気に250銘柄進めようとすると負荷をかけてしまうためまずい→updated_atを見ながら当日取得していない銘柄を5銘柄ずつくらい取得する
-    arrCode.each do |code|
-			ticker_without_t = code.gsub(/-T/, '').to_s
-      getPriceKabutan(ticker_without_t)
-    end
+		if !arrCode.nil?
+	    arrCode.each do |code|
+				ticker_without_t = code.gsub(/-T/, '').to_s
+	      getPriceKabutan(ticker_without_t)
+	    end
+		end
 
 		#株価指数(YahooFinanceで取得可能なもの)
 		arrCode = getYahooTicker()
-		arrCode.each do |code|
-			getPriceYahoo(code)
+		if !arrCode.nil?
+			arrCode.each do |code|
+				getPriceYahoo(code)
+			end
 		end
 	end
 

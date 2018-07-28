@@ -1,5 +1,6 @@
 require 'twitter'
 require 'open-uri'
+require "date"
 
 SLICE_SIZE = 100
 
@@ -118,14 +119,15 @@ namespace :twitter do
   #http://qiita.com/kyohei8/items/5a7d7db3838728a04140
   task :tweetHello => :environment do
     client = get_twitter_client
-    tweet = "今日も株価を確認して１日楽しいひと時を！  http://www.japanchart.com"
-    if HolidayJp.holiday?(Date.today)
-      tweet = "今日は休日のため休場です！株価の振り返りをしましょう！  http://www.japanchart.com"
-    end
-    d = Time.now + 60 * 60 * 24 * 1
+    # tweet = "今日も株価を確認して１日楽しいひと時を！  http://www.japanchart.com"
+    # if HolidayJp.holiday?(Date.today)
+    #   tweet = "今日は休日のため休場です！株価の振り返りをしましょう！  http://www.japanchart.com"
+    # end
+    tweet = getWeekDayComment()
+    d = Time.now.in_time_zone('Tokyo')
     #str = d.strftime("%Y年%m月%d日 %H:%M")
-    str = d.strftime("%Y年%m月%d日")
-    tweet = str + tweet
+    # str = d.strftime("%Y年%m月%d日")
+    # tweet = str + tweet
     puts tweet
     update(client, tweet)
   end
@@ -350,6 +352,7 @@ end
 end
 
 def get_twitter_client
+  # https://twitter.com/japanchart1
   client = Twitter::REST::Client.new do |config|
   # 旧アカウント:cwkakunin2013
   # config.consumer_key        = "OtyxWXFy1QvqokhL2sHVQtco7"
@@ -398,4 +401,86 @@ def get_all_followers(screen_name)
   end
 
    all_followers
+end
+
+
+#土曜日は前の月〜金曜日の振り返り
+#日曜日は気になるニュースについて
+#月曜日以外の平日は前日の振り返り
+#月曜日は今週の予定（イベント：Feedなど）
+def getWeekDayComment
+  d = Date.today
+
+  # 日経平均、ダウ、上海総合の当落
+  nikkei_last2 = Priceseries.where(ticker: "0000").order(ymd: :desc).first(2)
+  dow_last2 = Priceseries.where(ticker: "^DJI").order(ymd: :desc).first(2)
+  shanghai_last2 = Priceseries.where(ticker: "0823").order(ymd: :desc).first(2)
+  rtnNikkei_1 = (nikkei_last2.first.close / nikkei_last2.last.close - 1) * 100
+  rtnDow_1 = (dow_last2.first.close / dow_last2.last.close - 1) * 100
+  rtnShg_1 = (shanghai_last2.first.close / shanghai_last2.last.close - 1)*100
+
+  # 前週比(last_week)
+  nikkei_lw = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 7*24*3600).first.close
+  dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 7*24*3600).first.close
+  shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 7*24*3600).first.close
+  rtnNikkei_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
+  rtnDow_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
+  rtnShg_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
+
+  #前月比(last_month)
+  nikkei_lm = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 30*24*3600).first.close
+  dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
+  shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
+  rtnNikkei_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
+  rtnDow_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
+  rtnShg_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
+
+
+  daily_comment = "昨日の日経平均は#{nikkei_last2.first.close}円で前日比#{rtnNikkei_1.abs.round(2)}%の#{rtnNikkei_1>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_1.abs.round(2)}%#{rtnDow_1>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_1.abs.round(2)}%#{rtnShg_1>0 ? "上昇" : "下落"}でした。"
+  weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
+  monthly_comment = "今月の日経平均は#{nikkei_last2.first.close}円で前月比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
+
+
+
+  case d.wday
+  when 0
+    p "日曜日"
+    # 先週の気になるニュース
+    # 今週の予定
+
+  when 1
+    # 今週の予定
+    p "月曜日"
+  when 2,3,4,5
+    p "月曜日以外の平日"
+    # 前日の振り返り
+
+  when 6
+    p "土曜日"
+
+    case Random.new.rand(5)
+    when 0
+      before_comment = "待ちに待った週末。"
+    when 1
+      before_comment = "今週もお疲れ様。"
+    when 2
+      before_comment = "やっと週末ですね。"
+    when 3
+      before_comment = "今週もお仕事ご苦労様。"
+    when 4
+      before_comment = "いよいよ週末です。"
+    else
+      before_comment = ""
+    end
+
+
+    # 今週の振り返り
+    # ニュース
+
+    comment = daily_comment + "また" + weekly_comment
+  else
+    p "曜日取得エラー"
+  end
+
+  return before_comment + comment
 end

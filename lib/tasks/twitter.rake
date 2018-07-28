@@ -429,8 +429,8 @@ def getWeekDayComment
 
   #前月比(last_month)
   nikkei_lm = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 30*24*3600).first.close
-  dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
-  shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
+  dow_lm = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
+  shanghai_lm = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
   rtnNikkei_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
   rtnDow_30 = (dow_last2.first.close / dow_lm - 1) * 100
   rtnShg_30 = (shanghai_last2.first.close / shanghai_lm - 1) * 100

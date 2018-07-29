@@ -261,20 +261,25 @@ class FetchController < ApplicationController
         affects = list_item.css('td.hl').inner_text.gsub(/ /, "").gsub(/\t/,"").gsub(/\n/,"")
         description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
 
-        Feed.where(title: title).each do |same_feed|
-          same_feed.destroy
-          same_feed.save
-        end
+        # Feed.where(title: title).each do |same_feed|
+        #   same_feed.destroy
+        #   same_feed.save
+        # end
+        # seoの観点で既に存在していれば残す
+        if Feed.where(title: title).count == 0
 
-        feed = Feed.new(
-          :feed_id          => list_time.to_time.to_i,
-          :title            => title,
-          :description      => description,
-          :link             => "",
-          :keyword          => "market_schedule"
-        )
-        feed.save
-        p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
+          feed = Feed.new(
+            :feed_id          => list_time.to_time.to_i,
+            :title            => title,
+            :description      => description,
+            :link             => "",
+            :keyword          => "market_schedule"
+          )
+          feed.save
+          p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
+        else
+          p "既に存在しているので保存しません"
+        end
       end
     end
   end

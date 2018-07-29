@@ -23,9 +23,18 @@ namespace :db do
 		updatePrice()
 		updateRank()
 		get_news()
-
-
 	end
+	# データが回ってない時の緊急実行用
+	task updatePrice: :environment do
+		updatePrice()
+	end
+	task updateRank: :environemtn do
+		updateRank()
+	end
+	task getNews: :environemnt do
+		get_news()
+	end
+
 
 	def get_news
 		# FetchController#get_news()を実行する

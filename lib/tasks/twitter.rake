@@ -21,57 +21,6 @@ OpenURI::Buffer.const_set 'StringMax', 0
 #昨日の日経平均、ダウはいくら、売買総額、直近上昇率、下落確率はx％
 namespace :twitter do
   desc "tweet hello"
-  task tttest: :environment do
-    # 月曜日用
-    # 日経平均、ダウ、上海総合の当落
-    nikkei_last2 = Priceseries.where(ticker: "0000").order(ymd: :desc).first(2)
-    dow_last2 = Priceseries.where(ticker: "^DJI").order(ymd: :desc).first(2)
-    shanghai_last2 = Priceseries.where(ticker: "0823").order(ymd: :desc).first(2)
-    rtnNikkei_1 = (nikkei_last2.first.close / nikkei_last2.last.close - 1) * 100
-    rtnDow_1 = (dow_last2.first.close / dow_last2.last.close - 1) * 100
-    rtnShg_1 = (shanghai_last2.first.close / shanghai_last2.last.close - 1)*100
-
-    # 前週比(last_week)
-    nikkei_lw = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 7*24*3600).first.close
-    dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 7*24*3600).first.close
-    shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 7*24*3600).first.close
-    rtnNikkei_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
-    rtnDow_7 = (dow_last2.first.close / dow_lw - 1) * 100
-    rtnShg_7 = (shanghai_last2.first.close / shanghai_lw - 1) * 100
-
-    #前月比(last_month)
-    nikkei_lm = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 30*24*3600).first.close
-    dow_lm = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
-    shanghai_lm = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
-    rtnNikkei_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
-    rtnDow_30 = (dow_last2.first.close / dow_lm - 1) * 100
-    rtnShg_30 = (shanghai_last2.first.close / shanghai_lm - 1) * 100
-
-    daily_comment = "昨日の日経平均は#{nikkei_last2.first.close}円で前日比#{rtnNikkei_1.abs.round(2)}%の#{rtnNikkei_1>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_1.abs.round(2)}%#{rtnDow_1>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_1.abs.round(2)}%#{rtnShg_1>0 ? "上昇" : "下落"}でした。"
-    weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
-    monthly_comment = "今月の日経平均は#{nikkei_last2.first.close}円で前月比#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
-
-    min_feed = nil
-    feed_length = 100000
-    Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
-      begin
-        if feed_each.title.encode("EUC-JP").bytesize < feed_length
-          min_feed = feed_each
-          feed_length = feed_each.title.encode('EUC-JP').bytesize
-        end
-      rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
-        next
-      end
-    end
-    if min_feed.nil?
-      next
-    end
-    # comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週は#{Time.at(min_feed.feed_id.to_i).strftime('%-d')}日に#{min_feed.keyword}による#{min_feed.title}のIRがありました。"
-    comment = "先週末の日経平均は#{nikkei_last2.first.close}円で引けた後、ダウは#{dow_last2.first.close}ドルになりました。日経平均は足元1週間で#{rtnNikkei_7.round(2)}％の#{rtnNikkei_7>0 ? "上昇" : "下落"} 、" +
-              "ダウは#{rtnDow_7.round(2)}％の#{rtnDow_7>0 ? "上昇" : "下落"}ですが、1ヶ月で見ると日経平均が#{rtnNikkei_30.round(2)}％、ダウは#{rtnDow_30.round(2)}％の#{rtnDow_30>0? "上昇" : "下落"}となります。先週は#{Time.at(min_fee.feed_id.to_i).strftime('%-d')}日に#{min_feed.title}のIRがありましたが今週はxxなどがあります。"
-    p comment
-    p "length = #{comment.length}, twitter char.length=#{comment.encode("EUC-JP").bytesize/2}"
-  end
 
   #フォロワー数を取得する
   task :get_followers do
@@ -174,7 +123,7 @@ namespace :twitter do
     # if HolidayJp.holiday?(Date.today)
     #   tweet = "今日は休日のため休場です！株価の振り返りをしましょう！  http://www.japanchart.com"
     # end
-    tweet = getWeekDayComment()
+    tweet = getWeekDayComment(Date.today)
     d = Time.now.in_time_zone('Tokyo')
     #str = d.strftime("%Y年%m月%d日 %H:%M")
     # str = d.strftime("%Y年%m月%d日")
@@ -460,8 +409,8 @@ end
 #日曜日は気になるニュースについて
 #月曜日以外の平日は前日の振り返り
 #月曜日は今週の予定（イベント：Feedなど）
-def getWeekDayComment
-  d = Date.today
+def getWeekDayComment(d)
+  # d = Date.today
 
   # 日経平均、ダウ、上海総合の当落
   nikkei_last2 = Priceseries.where(ticker: "0000").order(ymd: :desc).first(2)
@@ -504,14 +453,159 @@ def getWeekDayComment
   when 1
     # 今週の予定
     p "月曜日"
-    今週の予定です。
-    comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週の予定は#{}などがあります。"
+    min_feed_ir = Feed.tagged_with('kessan').where('title like ?', '%決算%').first
+    feed_length = min_feed_ir.nil? ? 0 : min_feed_ir.title.encode('EUC-JP').bytesize
+    Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
+      p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
+      begin
+        if feed_each.title.encode("EUC-JP").bytesize <= feed_length
+          min_feed_ir = feed_each
+          feed_length = feed_each.title.encode('EUC-JP').bytesize
+        end
+      rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
+        next
+      end
+    end
+    min_feed_event = Feed.where(keyword: 'market_schedule').first
+    feed_length = min_feed_event.nil? ? 0 : min_feed_event.title.encode('EUC-JP').bytesize
+    Feed.where(keyword: 'market_schedule').each do |feed_each|
+      p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
+      begin
+        if feed_each.title.encode("EUC-JP").bytesize <= feed_length ||
+          feed_each.title.include?('日銀') || feed_each.title.include?('雇用統計')
+          min_feed_event = feed_each
+          feed_length = feed_each.title.encode('EUC-JP').bytesize
+          if feed_each.title.include?('日銀') || feed_each.title.include?('雇用統計')
+            # 日銀や雇用統計というキーワードがあれば優先する
+            break
+          end
+        end
+      rescue
+        next
+      end
+    end
+
+    # comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週は#{Time.at(min_feed_ir.feed_id.to_i).strftime('%-d')}日に#{min_feed_ir.keyword}による#{min_feed_ir.title}のIRがありました。"
+    market_comment = "先週末の日経平均は#{nikkei_last2.first.close}円で引けた後、ダウは#{dow_last2.first.close}ドルに。日経平均は足元1週間で#{rtnNikkei_7.round(2)}％の#{rtnNikkei_7>0 ? "上昇" : "下落"} 、" +
+              "ダウは#{rtnDow_7.round(2)}％の#{rtnDow_7>0 ? "上昇" : "下落"}、1ヶ月間では日経平均が#{rtnNikkei_30.round(2)}％、ダウは#{rtnDow_30.round(2)}％の#{rtnDow_30>0? "上昇" : "下落"}。"
+    comment = market_comment
+    if !min_feed_ir.nil?
+      ir_comment = "先週は#{Time.at(min_feed_ir.feed_id.to_i).strftime('%-d')}日に#{min_feed_ir.keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}から#{min_feed_ir.title}のIRがありました。"
+      comment = comment + ir_comment
+    end
+    if !min_feed_event.nil?
+      event_comment = "今週は#{Time.at(min_feed_event.feed_id.to_i).strftime('%-d')}日に#{min_feed_event.title}の発表などがあります。"
+      comment = comment + event_comment
+    end
+    # 文字サイズに応じて文章を変更する
+    if comment.encode("EUC-JP").bytesize/2 > 140
+      comment = market_comment + event_comment
+    end
+    if comment.encode("EUC-JP").bytesize/2 > 140
+      comment = market_comment
+    end
+    p "comment = #{comment}"
     p "length = #{comment.length}, twitter char.length=#{comment.encode("EUC-JP").bytesize/2}"
 
   when 2,3,4,5
     p "月曜日以外の平日"
-    # 前日の振り返り
-    comment = daily_comment + " #japanchart http://www.japanchart.com/"
+    # 前日の振り返り、前日の決算＆指標と当日の決算＆指標
+    # 昨日の日経は円(+%)、ダウはドル(+%)でした。またAの決算とB指標などが発表されました。本日の決算はC決算とD指標が発表されます。
+    ir_todays = []
+    ir_yesterdays = []
+    today_date = Time.now().strftime('%Y%m%d')
+    yesterday_date = Time.at(Time.now().to_i-24*3600).strftime('%Y%m%d')
+    # today_date = "20180731"
+    # yesterday_date = "20180730"
+    Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
+      p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
+      begin
+        if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == today_date
+          ir_todays.push(feed_each)
+        elsif Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
+          ir_yesterday.push(feed_each)
+        end
+      rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
+        next
+      end
+    end
+    event_todays = []
+    event_yesterdays = []
+    Feed.where(keyword: 'market_schedule').each do |feed_each|
+      begin
+        if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == today_date
+          event_todays.push(feed_each)
+        elsif Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
+          event_yesterdays.push(feed_each)
+        end
+      rescue
+        next
+      end
+    end
+
+    # comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週は#{Time.at(min_feed_ir.feed_id.to_i).strftime('%-d')}日に#{min_feed_ir.keyword}による#{min_feed_ir.title}のIRがありました。"
+    market_comment = "昨日の日経平均は#{nikkei_last2.first.close}円(#{rtnNikkei_1>0 ? "+":"△"}#{rtnNikkei_1.abs.round(1)}%)、ダウは#{dow_last2.first.close}ドル(#{rtnDow_1>0 ? "+":"△"}#{rtnDow_1.abs.round(1)}%)。"
+    comment = ""
+
+    #決算情報
+    kessan_comment = ""
+    if ir_yesterdays.length > 0#昨日IR
+      ir_yesterday_comment = "#{ir_yesterdays[0].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}"+
+                             (ir_yesterdays.length>1 ? ",#{ir_yesterdays[1].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}" : "")+
+                             (ir_yesterdays.length>2 ? ",#{ir_yesterdays[2].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}" : "")
+      kessan_comment = kessan_comment + "昨日は" + ir_yesterday_comment
+    end
+    if ir_todays.length > 0#本日IR
+      ir_today_comment = "#{ir_todays[0].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}"+
+                         ir_todays.length>1 ? ",#{ir_todays[1].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}" : "" +
+                         ir_todays.length>2 ? ",#{ir_todays[2].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}など" : ""
+      kessan_comment = kessan_comment + (ir_yesterdays.length>0 ? "があり," : "") + "本日は" + ir_today_comment
+    end
+    if ir_todays.length > 0 || ir_yesterdays.length > 0
+      kessan_comment = kessan_comment + "の決算があります."
+    end
+
+    #経済指標
+    event_comment = ""
+    if event_yesterdays.length > 0
+      event_yesterday_comment =
+        "#{event_yesterdays[0].title}"+
+        (event_yesterdays.length>1 ? ",#{event_yesterdays[1].title}" : "") +
+        (event_yesterdays.length>2 ? ",#{event_yesterdays[2].title}" : "" )
+      event_comment = event_comment + "昨日は" + event_yesterday_comment
+    end
+    if event_todays.length > 0
+      event_today_comment =
+        "#{event_todays[0].title}"+
+        (event_todays.length>1 ? "#{event_todays[1].title}" : "") +
+        (event_todays.length>2 ? "#{event_todays[2].title}" : "")
+      event_comment = event_comment + (event_yesterdays.length>0 ? "の発表があり," : "") + "本日は" + event_today_comment
+    end
+    if event_todays.length > 0 || event_yesterdays.length > 0
+      event_comment = event_comment + "の発表があります."
+    end
+
+    # 文章の結合
+    if event_comment.encode("EUC-JP").bytesize/2 < 140
+      comment = event_comment
+    end
+    if (comment + kessan_comment).encode("EUC-JP").bytesize/2 < 140
+      comment = comment + kessan_comment
+    end
+    if (comment + market_comment).encode("EUC-JP").bytesize/2 < 140
+      # マーケット情報は先
+      comment = market_comment + comment
+    end
+
+    #その他の決算銘柄、マーケット情報はこちら
+    other_words = "その他の決算銘柄、マーケット情報はこちら→ http://www.japanchart.com/"
+    if (comment + other_words).encode("EUC-JP").bytesize/2 < 140
+      comment = comment + other_words
+    end
+
+    # 今日の経済指標>今日の決算>>昨日の経済指標>昨日の決算
+    p "comment = #{comment}"
+    p "length = #{comment.length}, twitter char.length=#{comment.encode("EUC-JP").bytesize/2}"
 
 
   when 6
@@ -531,12 +625,12 @@ def getWeekDayComment
     else
       before_comment = ""
     end
-    comment = daily_comment + "また" + weekly_comment
+    comment = before_comment + daily_comment + "また" + weekly_comment
     # 今週の振り返り
     # ニュースも？
   else
     p "曜日取得エラー"
   end
 
-  return before_comment + comment
+  return comment
 end

@@ -252,6 +252,9 @@ class FetchController < ApplicationController
         list_time = Time.parse(str_time)
         # p "時間 : " + list_item.to_s
         title = list_item.css('p.flexbox-grow').inner_text#本文
+        if title.include?("・")
+          title = "(" + title.gsub(/・/,")")
+        end
         data = list_item.css('td.data')
         # 今回指標予想
         expects = data[1].inner_text

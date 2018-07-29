@@ -87,7 +87,7 @@ class ApplicationController < ActionController::Base
 
 
   def get_feed
-     @feed_news = Feed.order("feed_id desc").limit(20)
+     @feed_news = Feed.order("feed_id desc").where(Feed.arel_table[:feed_id].lteq(Time.new().to_i)).limit(20)
   end
 
  def get_event

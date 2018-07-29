@@ -21,6 +21,57 @@ OpenURI::Buffer.const_set 'StringMax', 0
 #昨日の日経平均、ダウはいくら、売買総額、直近上昇率、下落確率はx％
 namespace :twitter do
   desc "tweet hello"
+  task tttest: :environment do
+    # 月曜日用
+    # 日経平均、ダウ、上海総合の当落
+    nikkei_last2 = Priceseries.where(ticker: "0000").order(ymd: :desc).first(2)
+    dow_last2 = Priceseries.where(ticker: "^DJI").order(ymd: :desc).first(2)
+    shanghai_last2 = Priceseries.where(ticker: "0823").order(ymd: :desc).first(2)
+    rtnNikkei_1 = (nikkei_last2.first.close / nikkei_last2.last.close - 1) * 100
+    rtnDow_1 = (dow_last2.first.close / dow_last2.last.close - 1) * 100
+    rtnShg_1 = (shanghai_last2.first.close / shanghai_last2.last.close - 1)*100
+
+    # 前週比(last_week)
+    nikkei_lw = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 7*24*3600).first.close
+    dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 7*24*3600).first.close
+    shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 7*24*3600).first.close
+    rtnNikkei_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
+    rtnDow_7 = (dow_last2.first.close / dow_lw - 1) * 100
+    rtnShg_7 = (shanghai_last2.first.close / shanghai_lw - 1) * 100
+
+    #前月比(last_month)
+    nikkei_lm = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 30*24*3600).first.close
+    dow_lm = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
+    shanghai_lm = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
+    rtnNikkei_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
+    rtnDow_30 = (dow_last2.first.close / dow_lm - 1) * 100
+    rtnShg_30 = (shanghai_last2.first.close / shanghai_lm - 1) * 100
+
+    daily_comment = "昨日の日経平均は#{nikkei_last2.first.close}円で前日比#{rtnNikkei_1.abs.round(2)}%の#{rtnNikkei_1>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_1.abs.round(2)}%#{rtnDow_1>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_1.abs.round(2)}%#{rtnShg_1>0 ? "上昇" : "下落"}でした。"
+    weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
+    monthly_comment = "今月の日経平均は#{nikkei_last2.first.close}円で前月比#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
+
+    min_feed = nil
+    feed_length = 100000
+    Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
+      begin
+        if feed_each.title.encode("EUC-JP").bytesize < feed_length
+          min_feed = feed_each
+          feed_length = feed_each.title.encode('EUC-JP').bytesize
+        end
+      rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
+        next
+      end
+    end
+    if min_feed.nil?
+      next
+    end
+    # comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週は#{Time.at(min_feed.feed_id.to_i).strftime('%-d')}日に#{min_feed.keyword}による#{min_feed.title}のIRがありました。"
+    comment = "先週末の日経平均は#{nikkei_last2.first.close}円で引けた後、ダウは#{dow_last2.first.close}ドルになりました。日経平均は足元1週間で#{rtnNikkei_7.round(2)}％の#{rtnNikkei_7>0 ? "上昇" : "下落"} 、" +
+              "ダウは#{rtnDow_7.round(2)}％の#{rtnDow_7>0 ? "上昇" : "下落"}ですが、1ヶ月で見ると日経平均が#{rtnNikkei_30.round(2)}％、ダウは#{rtnDow_30.round(2)}％の#{rtnDow_30>0? "上昇" : "下落"}となります。先週は#{Time.at(min_fee.feed_id.to_i).strftime('%-d')}日に#{min_feed.title}のIRがありましたが今週はxxなどがあります。"
+    p comment
+    p "length = #{comment.length}, twitter char.length=#{comment.encode("EUC-JP").bytesize/2}"
+  end
 
   #フォロワー数を取得する
   task :get_followers do
@@ -372,7 +423,8 @@ end
 
 def update(client, tweet)
   begin
-    tweet = (tweet.length > 140) ? tweet[0..139].to_s : tweet
+    p "length = #{tweet.length}, twitter char.length=#{tweet.encode("EUC-JP").bytesize/2}"
+    tweet = (tweet.encode("EUC-JP").bytesize/2 > 140) ? tweet[0..139].to_s : tweet
     client.update(tweet.chomp)
   rescue => e
     Rails.logger.error "<<twitter.rake::tweet.update ERROR : #{e.message}>>"
@@ -447,13 +499,20 @@ def getWeekDayComment
     p "日曜日"
     # 先週の気になるニュース
     # 今週の予定
+    comment = monthly_comment
 
   when 1
     # 今週の予定
     p "月曜日"
+    今週の予定です。
+    comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週の予定は#{}などがあります。"
+    p "length = #{comment.length}, twitter char.length=#{comment.encode("EUC-JP").bytesize/2}"
+
   when 2,3,4,5
     p "月曜日以外の平日"
     # 前日の振り返り
+    comment = daily_comment + " #japanchart http://www.japanchart.com/"
+
 
   when 6
     p "土曜日"
@@ -472,12 +531,9 @@ def getWeekDayComment
     else
       before_comment = ""
     end
-
-
-    # 今週の振り返り
-    # ニュース
-
     comment = daily_comment + "また" + weekly_comment
+    # 今週の振り返り
+    # ニュースも？
   else
     p "曜日取得エラー"
   end

@@ -1,0 +1,24 @@
+.kessan_table {
+  margin: 0px 10px;
+	border-collapse: collapse;
+  th, td{
+    border: 1px solid #000;
+    padding: 5px 10px;
+
+
+  }
+  th {
+    text-align: center;
+  }
+  tr:nth-child(2n+1) {
+  	background: #eee;
+  }
+
+  tr:first-child, .kessan_table th:first-child {
+  	background: #2A3132;
+    color: #fff;
+  }
+  tr:hover {
+  	background:#0ff;
+  }
+}

@@ -356,7 +356,8 @@ class StaticPagesController < ApplicationController
   def portfolio
   end
   def kessan
-    @kessan_feeds = Feed.tagged_with('kessan').order(feed_id: :desc)
+    @market_feeds = Feed.where(keyword: 'market_schedule').order(feed_id: :asc)
+    @kessan_feeds = Feed.tagged_with('kessan').order(feed_id: :asc)
 
   end
   def home

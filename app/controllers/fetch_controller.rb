@@ -8,6 +8,11 @@ class FetchController < ApplicationController
   require 'time'
   require 'date'
 
+
+  # require 'bundler/setup'
+  require 'capybara/poltergeist'
+  # Bundler.require
+
   def get_rank_from_nikkei
     _rank_controller = RankController.new
 		_rank_controller.index
@@ -19,6 +24,7 @@ class FetchController < ApplicationController
     get_news()
     get_bitcoin_news()
     get_kessan_news()
+    get_schedules()
     return
 
 
@@ -178,8 +184,6 @@ class FetchController < ApplicationController
     # 当日記事かどうかを選ぶ
     isToday = false;
     article_id = content.css('a').attribute('href').value#/article/usa-fed-george-rates-idJPKBN13D215
-    # article_id = "http://jp.reuters.com/#{content.xpath('a[@href]').value}"
-    # p "article_id = #{article_id}"
 
 
     #記事本文のページを開いて時間(feed_id)と本文を取得する
@@ -201,7 +205,81 @@ class FetchController < ApplicationController
     return return_hash
   end
 
-  # 決算眼形のニュース
+  # これからの予定
+  def get_schedules
+    p "get schedules"
+    # 今週予定
+    # url = "http://www.koyo-sec.co.jp/market/event/" #https://www.jiji.com/jc/calendar"
+    # url = "https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETmgR001Control&_PageID=WPLETmgR001Mdtl20&_DataStoreID=DSWPLETmgR001Control&_ActionID=DefaultAID&burl=iris_morningInfo&cat1=market&cat2=morningInfo&dir=tl1-minfo%7Ctl2-stmkt%7Ctl3-stkview&file=index.html&getFlg=on"
+    # url = "https://www.rakuten-sec.co.jp/web/market/calendar/"
+    # url = "https://www.rakuten-sec.co.jp/smartphone/market/calendar/"
+    # url = "https://info.finance.yahoo.co.jp/fx/marketcalendar/"
+    url = "https://fx.minkabu.jp/indicators"
+
+    # javascriptが動いているのでphantomjs(Capybaraによるpoltergeist)を使ってjs実行後のhtmlを取得する
+    #poltergistの設定
+    Capybara.register_driver :poltergeist do |app|
+      Capybara::Poltergeist::Driver.new(app, {:js_errors => false, :timeout => 1000 }) #追加のオプションはググってくださいw
+    end
+    Capybara.default_selector = :xpath
+    session = Capybara::Session.new(:poltergeist)
+    #自由にUser-Agent設定してください。
+    session.driver.headers = { 'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X)" }
+    session.visit "https://fx.minkabu.jp/indicators"
+    page = Nokogiri::HTML.parse(session.html).css('div.l-section_interval')
+
+    if page.css('h2').nil? || page.css('table.ei-list').nil?
+      return
+    else
+      Feed.tagged_with('market_schedule').each do |market_feed|
+        market_feed.destroy
+      end
+    end
+    # 日付リストを取得する
+    date_array = []
+    page.css('h2').each do |each_date|
+      p Time.at(Time.parse(each_date.inner_text).to_time.to_i)
+      date_array.push(Time.parse(each_date.inner_text).to_time.to_i)#配列への追加
+    end
+
+    counter = 0
+    page.css('table.ei-list').each do |list_day| #日付ごと
+
+      date_unix_time = date_array[counter]
+      counter = counter + 1
+      list_day.css('tr.ei-list-item').each do |list_item|
+        str_time = Time.at(date_unix_time).strftime('%Y-%m-%d').to_s + " " + list_item.css('td.time').inner_text + ":00"
+        list_time = Time.parse(str_time)
+        # p "時間 : " + list_item.to_s
+        title = list_item.css('p.flexbox-grow').inner_text#本文
+        data = list_item.css('td.data')
+        # 今回指標予想
+        expects = data[1].inner_text
+        # 前回指標予想
+        before = data[0].inner_text
+        # 影響度
+        affects = list_item.css('td.hl').inner_text.gsub(/ /, "").gsub(/\t/,"").gsub(/\n/,"")
+        description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
+
+        Feed.where(title: title).each do |same_feed|
+          same_feed.destroy
+          same_feed.save
+        end
+
+        feed = Feed.new(
+          :feed_id          => list_time.to_time.to_i,
+          :title            => title,
+          :description      => description,
+          :link             => "",
+          :keyword          => "market_schedule"
+        )
+        feed.save
+        p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
+      end
+    end
+  end
+
+  # 決算眼形のニュース（過去）
   def get_kessan_news
     url = "https://www.nikkei.com/markets/ir/compinfo/"
     doc = getDocFromHtml(url)

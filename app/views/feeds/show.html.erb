@@ -3,8 +3,7 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-offset-1 col-lg-10 feed_content">
-    <%= link_to @feed.title, @feed.link%>: <%=  feed_time.strftime('%Y-%m-%d %H:%M') %>
-    <br>
+    <%= link_to @feed.title + " : " + feed_time.strftime('(%Y年%-m月%-d日 %H:%M)'), @feed.link %>
     <br>
     <!-- brタグを有効にするためsimple_format -->
     <%= simple_format(@feed.description) %>
@@ -21,7 +20,7 @@
     <% if related_articles %><!-- nilではないことを確認 -->
       <% related_articles.each do |related_article| %>
       <div class="related_feed_cell">
-        <b><%= related_article.title %></b>
+        <b><%= link_to related_article.title, related_article %></b>
         <%= simple_format(related_article.description) %>
         <br>
       </div>

@@ -1,18 +1,30 @@
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-
-
-    <% @kessan_feeds.each do |kessan| %>
-      <%= link_to kessan.link do %>
-        <%= Time.at(kessan.feed_id.to_i).strftime('%Y-%m-%d') %>
-        <br>
-        <%= (kessan.feed_id.to_i) %>
-        <br>
-        <%= kessan.title %>
-        <br>
-        <br>
+    <h4>重要指標</h4>
+    <table class="kessan_table">
+    	<tr><th>日付</th><th>曜日</th><th>時間</th><th>指標</th><!-- th>詳細</th -->
+      <% @market_feeds.each do |market_feed| %>
+        <tr>
+          <th><%= Time.at(market_feed.feed_id.to_i).in_time_zone('Tokyo').strftime('%-m/%-d') %></th>
+          <th><%= Time.at(market_feed.feed_id.to_i).in_time_zone('Tokyo').strftime('%a') %></th>
+          <th><%= Time.at(market_feed.feed_id.to_i).in_time_zone('Tokyo').strftime('%H:%M') %></th>
+          <td><%= market_feed.title %></td>
+          <!-- td><%= market_feed.description %></td -->
       <% end %>
-    <% end %>
+    </table>
+
+    <h4>IR情報</h4>
+    <table class="kessan_table">
+      <tr><th>日付</th><th>曜日</th><th>企業</th><th>詳細</th>
+      <% @kessan_feeds.each do |kessan| %>
+        <tr>
+          <th><%= Time.at(kessan.feed_id.to_i).strftime('%-m/%-d') %></th>
+          <th><%= Time.at(kessan.feed_id.to_i).strftime('%a') %></th>
+          <td><%= link_to kessan.keyword, kessan %></td>
+          <td><%= link_to kessan.title, kessan %></td>
+      <% end %>
+    </table>
+
   </div>
   <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
     <%= render 'layouts/sidebar' %>

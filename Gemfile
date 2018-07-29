@@ -15,6 +15,9 @@ gem 'sitemap_generator'
 # seo: パンくず
 gem 'gretel'
 
+gem 'capybara'
+gem 'poltergeist'
+
 
 # 画像アップロード
 gem 'carrierwave',             '0.10.0'

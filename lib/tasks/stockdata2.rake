@@ -28,10 +28,10 @@ namespace :db do
 	task updatePrice: :environment do
 		updatePrice()
 	end
-	task updateRank: :environemtn do
+	task updateRank: :environment do
 		updateRank()
 	end
-	task getNews: :environemnt do
+	task getNews: :environment do
 		get_news()
 	end
 

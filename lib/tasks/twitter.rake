@@ -22,6 +22,10 @@ OpenURI::Buffer.const_set 'StringMax', 0
 namespace :twitter do
   desc "tweet hello"
 
+  task tttest: :environment do
+    getKessanComment()
+  end
+
   #フォロワー数を取得する
   task :get_followers do
     client = get_twitter_client
@@ -409,14 +413,27 @@ def getKessanComment()
   kessan_yesterdays = []
   today_date = Time.now().in_time_zone('Tokyo').strftime('%Y%m%d')
   yesterday_date = Time.at(Time.now().in_time_zone('Tokyo').to_i-24*3600).strftime('%Y%m%d')
+  today_date = '20180726'
+  yesterday_date = '20180725'
+  str_todays = ""
+  str_yesterdays = ""
   Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |kessan_feed|
+    p kessan_feed.title + "@" + Time.at(kessan_feed.feed_id.to_i).strftime('%Y%m%d')
     if Time.at(kessan_feed.feed_id.to_i).strftime('%Y%m%d') == today_date
       kessan_todays.push(kessan_feed)
+      if str_todays.encode('EUC-JP').bytesize < 50
+        str_todays = str_todays + (str_todays=="" ? "" : ",") + kessan_feed.keyword
+      end
     elsif Time.at(kessan_feed.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
       kessan_yesterdays.push(kessan_feed)
+      if str_yesterdays.encode('EUC-JP').bytesize < 50
+        str_yesterdays = str_yesterdays + (str_yesterdays=="" ? "" : ",") + kessan_feed.keyword
+      end
     end
   end
-  
+  p "本日決算を発表するのは#{str_todays}などの#{kessan_todays.length}企業です。"
+  p "昨日決算を発表したのは#{str_todays}などの#{kessan_todays.length}企業です。"
+
 
 
 end

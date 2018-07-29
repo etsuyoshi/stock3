@@ -17,6 +17,7 @@ gem 'gretel'
 
 gem 'capybara'
 gem 'poltergeist'
+gem 'phantomjs', :require => 'phantomjs/poltergeist'
 
 
 # 画像アップロード

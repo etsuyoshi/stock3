@@ -364,8 +364,6 @@ def get_twitter_client
     config.consumer_secret       = "1rnoHsm42mt6WgW8cFk29YD367sRdz6fgzxN5k9AcGUuSGa8Rm"
     config.access_token          = "726018073925283842-HhdJeIhJhEMebtCd84nNF0buqJbyDvJ"
     config.access_token_secret   = "IZBGHqcoirUC6METphql2l9W4AZiFxxGGRs4m5WRBoMa0"
-
-
   end
   client
 end
@@ -404,6 +402,25 @@ def get_all_followers(screen_name)
    all_followers
 end
 
+def getKessanComment()
+  # 昨日の決算情報、今日の決算情報
+  # 140文字以内になるなら全て出したいが、無理なら「a,b,cなど全10企業」と省略する
+  kessan_todays = []
+  kessan_yesterdays = []
+  today_date = Time.now().in_time_zone('Tokyo').strftime('%Y%m%d')
+  yesterday_date = Time.at(Time.now().in_time_zone('Tokyo').to_i-24*3600).strftime('%Y%m%d')
+  Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |kessan_feed|
+    if Time.at(kessan_feed.feed_id.to_i).strftime('%Y%m%d') == today_date
+      kessan_todays.push(kessan_feed)
+    elsif Time.at(kessan_feed.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
+      kessan_yesterdays.push(kessan_feed)
+    end
+  end
+  
+
+
+end
+
 
 #土曜日は前の月〜金曜日の振り返り
 #日曜日は気になるニュースについて
@@ -440,8 +457,6 @@ def getWeekDayComment(d)
   daily_comment = "昨日の日経平均は#{nikkei_last2.first.close}円で前日比#{rtnNikkei_1.abs.round(2)}%の#{rtnNikkei_1>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_1.abs.round(2)}%#{rtnDow_1>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_1.abs.round(2)}%#{rtnShg_1>0 ? "上昇" : "下落"}でした。"
   weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
   monthly_comment = "今月の日経平均は#{nikkei_last2.first.close}円で前月比#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
-
-
 
   case d.wday
   when 0
@@ -513,8 +528,8 @@ def getWeekDayComment(d)
     # 昨日の日経は円(+%)、ダウはドル(+%)でした。またAの決算とB指標などが発表されました。本日の決算はC決算とD指標が発表されます。
     ir_todays = []
     ir_yesterdays = []
-    today_date = Time.now().strftime('%Y%m%d')
-    yesterday_date = Time.at(Time.now().to_i-24*3600).strftime('%Y%m%d')
+    today_date = Time.now().in_time_zone('Tokyo').strftime('%Y%m%d')
+    yesterday_date = Time.at(Time.now().in_time_zone('Tokyo').to_i-24*3600).strftime('%Y%m%d')
     # today_date = "20180731"
     # yesterday_date = "20180730"
     Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|

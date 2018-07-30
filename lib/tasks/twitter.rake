@@ -454,18 +454,20 @@ def getWeekDayComment(d)
   rtnDow_1 = (dow_last2.first.close / dow_last2.last.close - 1) * 100
   rtnShg_1 = (shanghai_last2.first.close / shanghai_last2.last.close - 1)*100
 
+  # 厳密に7日前という風にすると存在しない場合があるので、x日前以前の最大の日付として取得する
+  # Priceseries.arel_table[:ymd].lteq(nikkei_last2.first.ymd - 7*24*3600)
   # 前週比(last_week)
-  nikkei_lw = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 7*24*3600).first.close
-  dow_lw = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 7*24*3600).first.close
-  shanghai_lw = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 7*24*3600).first.close
+  nikkei_lw = Priceseries.where(ticker: "0000").where(Priceseries.arel_table[:ymd].lteq(nikkei_last2.first.ymd - 7*24*3600)).order(ymd: :desc).first.close
+  dow_lw = Priceseries.where(ticker: "^DJI").where(Priceseries.arel_table[:ymd].lteq(dow_last2.first.ymd - 7*24*3600)).order(ymd: :desc).first.close
+  shanghai_lw = Priceseries.where(ticker: "0823").where(Priceseries.arel_table[:ymd].lteq(shanghai_last2.first.ymd-7*24*3600)).order(ymd: :desc).first.close
   rtnNikkei_7 = (nikkei_last2.first.close / nikkei_lw - 1) * 100
   rtnDow_7 = (dow_last2.first.close / dow_lw - 1) * 100
   rtnShg_7 = (shanghai_last2.first.close / shanghai_lw - 1) * 100
 
   #前月比(last_month)
-  nikkei_lm = Priceseries.where(ticker: "0000").where(ymd: nikkei_last2.first.ymd - 30*24*3600).first.close
-  dow_lm = Priceseries.where(ticker: "^DJI").where(ymd: dow_last2.first.ymd - 30*24*3600).first.close
-  shanghai_lm = Priceseries.where(ticker: "0823").where(ymd: shanghai_last2.first.ymd - 30*24*3600).first.close
+  nikkei_lm = Priceseries.where(ticker: "0000").where(Priceseries.arel_table[:ymd].lteq(nikkei_last2.first.ymd - 30*24*3600)).order(ymd: :desc).first.close
+  dow_lm = Priceseries.where(ticker: "^DJI").where(Priceseries.arel_table[:ymd].lteq(dow_last2.first.ymd - 30*24*3600)).order(ymd: :desc).first.close
+  shanghai_lm = Priceseries.where(ticker: "0823").where(Priceseries.arel_table[:ymd].lteq(shanghai_last2.first.ymd - 30*24*3600)).order(ymd: :desc).first.close
   rtnNikkei_30 = (nikkei_last2.first.close / nikkei_lm - 1) * 100
   rtnDow_30 = (dow_last2.first.close / dow_lm - 1) * 100
   rtnShg_30 = (shanghai_last2.first.close / shanghai_lm - 1) * 100

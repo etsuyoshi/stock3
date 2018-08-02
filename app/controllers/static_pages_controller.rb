@@ -441,14 +441,14 @@ class StaticPagesController < ApplicationController
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-    historical_nikkei=
-    Priceseries.where(ticker: "0000").order(ymd: :asc)
-    historical_toyota =
-    Priceseries.where(ticker: "7203").order(ymd: :asc)
+    historical_nikkei= Priceseries.where(ticker: "0000").order(ymd: :asc)
+    historical_toyota = Priceseries.where(ticker: "7203").order(ymd: :asc)
+    historical_dollar = Priceseries.where(ticker: "0950").order(ymd: :asc)
 
     gon.historical = {};
     gon.historical["0000"] = historical_nikkei
     gon.historical["7203"] = historical_toyota
+    gon.historical["0950"] = historical_dollar
   end
 
   def help

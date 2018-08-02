@@ -160,34 +160,37 @@ namespace :db do
 			end
 		end
 		price_datas.each do |price_row|
-				# 配当データの表示などでprice_now.css('td')[1].text==nilの時が存在する
-				if price_row.css('td')[0].nil? ||
-					price_row.css('td')[1].nil? ||
-					price_row.css('td')[2].nil? ||
-					price_row.css('td')[3].nil? ||
-					price_row.css('td')[4].nil? ||
-					price_row.css('td')[5].nil?
-					next
-				end
-				# Date, Open, High, Low, Close, Volume
-				row_date  = Date.parse(price_row.css('td')[0].text).to_time.in_time_zone('Tokyo').to_i#to_iでunix_time変換
-				row_open  = price_row.css('td')[1].text.gsub(/,/,"").to_f
-				row_high  = price_row.css('td')[2].text.gsub(/,/,"").to_f
-				row_low   = price_row.css('td')[3].text.gsub(/,/,"").to_f
-				row_close = price_row.css('td')[4].text.gsub(/,/,"").to_f
-				row_vol   = price_row.css('td')[6].text.gsub(/,/,"").to_f
-				p "date=#{Time.at(row_date)}, o=#{row_open}, h=#{row_high}, l=#{row_low}, c=#{row_close}, v=#{row_vol}"
-				ps =
-				Priceseries.new(
-					ticker: ticker.to_s,
-					name: name,#名前をスクレイピングして取得するのも良い
-					open: row_open,
-					high: row_high,
-					low: row_low,
-					close: row_close,
-					volume: row_vol,
-					ymd: row_date)
-				ps.save
+			if Priceseries.where(ticker: ticker.to_s).count >= 30
+				break
+			end
+			# 配当データの表示などでprice_now.css('td')[1].text==nilの時が存在する
+			if price_row.css('td')[0].nil? ||
+				price_row.css('td')[1].nil? ||
+				price_row.css('td')[2].nil? ||
+				price_row.css('td')[3].nil? ||
+				price_row.css('td')[4].nil? ||
+				price_row.css('td')[5].nil?
+				next
+			end
+			# Date, Open, High, Low, Close, Volume
+			row_date  = Date.parse(price_row.css('td')[0].text).to_time.in_time_zone('Tokyo').to_i#to_iでunix_time変換
+			row_open  = price_row.css('td')[1].text.gsub(/,/,"").to_f
+			row_high  = price_row.css('td')[2].text.gsub(/,/,"").to_f
+			row_low   = price_row.css('td')[3].text.gsub(/,/,"").to_f
+			row_close = price_row.css('td')[4].text.gsub(/,/,"").to_f
+			row_vol   = price_row.css('td')[6].text.gsub(/,/,"").to_f
+			p "date=#{Time.at(row_date)}, o=#{row_open}, h=#{row_high}, l=#{row_low}, c=#{row_close}, v=#{row_vol}"
+			ps =
+			Priceseries.new(
+				ticker: ticker.to_s,
+				name: name,#名前をスクレイピングして取得するのも良い
+				open: row_open,
+				high: row_high,
+				low: row_low,
+				close: row_close,
+				volume: row_vol,
+				ymd: row_date)
+			ps.save
 		end
 	end
   def getPriceKabutan(ticker)

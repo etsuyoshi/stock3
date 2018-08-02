@@ -21,7 +21,7 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()
+    # get_news()
     get_bitcoin_news()
     get_kessan_news()
     get_schedules()
@@ -330,23 +330,29 @@ class FetchController < ApplicationController
       # p "date : " + Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"")
       # p "date.to_i = #{Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"").to_time.to_i}"
       article_title = article.css('h4').inner_text
+      p "article_title = #{article_title}"
       article_url = article.css('a.link').attribute('href').value
+      p "article_url = #{article_url}"
       article_doc = getDocFromHtml(article_url)
-      if article.css('div.meta').nil?
+      if article_doc.nil?
+        next
+      elsif article.css('div.meta').nil?
         next
       elsif article.css('div.meta').css('div.date').nil?
         next
       elsif article.css('div.meta').css('div.date').inner_text.include?("Promotion")
         next
       end
+      p "article.css(div.meta) = #{article.css('div.meta')}"
       date_feed_id = Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"").to_time.to_i + 24*3599*Random.new.rand
+      p "date_feed_id = #{Time.at(date_feed_id)}"
       # p "date_feed_id.to_time = #{Time.at(date_feed_id)}"
       # p "description : " + article_doc.search('div.article-details-body').inner_text.gsub(/\t/,"").gsub(/\n/, "")
       article_description = article_doc.search('div.article-details-body').inner_text.gsub(/\t/,"").gsub(/\n/, "")
       article_keywords = get_keywords_from_description(article_description)
       insert_feed_with_label(date_feed_id, article_title, article_description, article_url, "bitcoin", article_keywords)
-      p "date_feed_id = #{Time.at(date_feed_id)}"
-      p "article_title = #{article_title}"
+
+
       # p "article_description=#{article_description}"
       # p "article_url=#{article_url}"
       # p "article_keywords = #{article_keywords}"

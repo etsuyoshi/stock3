@@ -92,9 +92,7 @@ namespace :twitter do
       user_ids.each do |user_id|
 
         begin
-
           user = client.user(user_id)
-
           #p all_count.to_s + " , " + user.screen_name.to_s + " , ", user_id + " , " + user.name.to_s + " , " + user.followers_count.to_s
           p all_count.to_s + " , " + user.screen_name.to_s + " , " +  user_id.to_s + " , " + user.name.to_s + " , " + user.followers_count.to_s
           all_count = all_count + 1
@@ -528,7 +526,7 @@ def getWeekDayComment(d)
       comment = comment + ir_comment
     end
     if !min_feed_event.nil?
-      event_comment = "今週は#{Time.at(min_feed_event.feed_id.to_i).strftime('%-d')}日に#{min_feed_event.title}の発表などがあります。"
+      event_comment = "今週は#{Time.at(min_feed_event.feed_id.to_i).strftime('%-d')}日に#{min_feed_event.title}などの発表を控えている。"
       comment = comment + event_comment
     end
     # 文字サイズに応じて文章を変更する
@@ -611,8 +609,8 @@ def getWeekDayComment(d)
     if event_todays.length > 0
       event_today_comment =
         "#{event_todays[0].title}"+
-        (event_todays.length>1 ? "#{event_todays[1].title}" : "") +
-        (event_todays.length>2 ? "#{event_todays[2].title}" : "")
+        (event_todays.length>1 ? ",#{event_todays[1].title}" : "") +
+        (event_todays.length>2 ? ",#{event_todays[2].title}" : "")
       event_comment = event_comment + (event_yesterdays.length>0 ? "の発表があり," : "") + "本日は" + event_today_comment
     end
     if event_todays.length > 0 || event_yesterdays.length > 0

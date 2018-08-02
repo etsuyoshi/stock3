@@ -40,11 +40,9 @@ $(function () {//３番目に表示される(TOYOTA)
         // create data
         // var historicals = gon.historical_toyota
         var historicals = gon.historical["7203"]
+        var historicals_dollar = gon.historical["0950"]
         var ohlc = [],volume = [];
-        // dataLength = historicals.length;
-        // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
-        // var unixtime=data[0][0]/1000
-        // alert("original unix=" + unixtime)
+        var ohlc_dol = [], volume_dol = [];
 
         // unixtime->Date : http://yut.hatenablog.com/entry/20111015/1318633937
 
@@ -55,10 +53,18 @@ $(function () {//３番目に表示される(TOYOTA)
             var low=historicals[i]["low"];
             var close=historicals[i]["close"];
             var volume1=historicals[i]["volume"];
-            // console.log("ymd=",data[i][0]);
-            // console.log("ymd2=", unixtime1);
             ohlc.push([unixtime1,open,high,low,close]);
             volume.push([unixtime1,volume1])
+        }
+        for (i = 0; i < historicals_dollar.length; i++) {
+            var unixtime1 = historicals_dollar[i]["ymd"] * 1000
+            var open=historicals_dollar[i]["open"];
+            var high=historicals_dollar[i]["high"];
+            var low=historicals_dollar[i]["low"];
+            var close=historicals_dollar[i]["close"];
+            var volume1=historicals_dollar[i]["volume"];
+            ohlc_dol.push([unixtime1,open,high,low,close]);
+            volume_dol.push([unixtime1,volume1])
         }
 
         // set the allowed units for data grouping
@@ -70,102 +76,63 @@ $(function () {//３番目に表示される(TOYOTA)
             [1, 2, 3, 4, 6]
         ]];
 
-        // 2位以降docomo9437done, ntt9432, jt2914, kddi9433, MUFG8306, softbank9984,日本郵政6178,ゆうちょ7282,honda7267
-
-        //create the chart:docomo
-        // $('#container_docomo').highcharts('StockChart', {
-        //
-        //
-        //     rangeSelector : {
-        //         selected : 1
-        //     },
-        //
-        //     title : {
-        //       // http://www.nikkei.com/markets/ranking/stock/caphigh.aspx
-        //         text : 'NTTドコモ株(9437.T)'
-        //     },
-        //     yAxis: [{
-        //         title: {
-        //             text: 'price'
-        //         },
-        //         height: 170,
-        //         lineWidth: 2
-        //     }, {
-        //         title: {
-        //             text: 'Volume'
-        //         },
-        //         top: 250,
-        //         height: 40,
-        //         offset: 0,
-        //         lineWidth: 2
-        //     }],
-        //
-        //     series : [{
-        //         type : 'candlestick',
-        //         name : 'Toyota 7203.T',
-        //         data : ohlc,
-        //         dataGrouping: {
-        //             units: groupingUnits
-        //         }
-        //     },{
-        //       type: 'column',
-        //       name: 'Volume',
-        //       data: volume,
-        //       yAxis: 1,
-        //       dataGrouping: {
-        //           units: groupingUnits
-        //       }
-        //     }
-        //   ]
-        // });
-
         // create the chart:toyota
         $('#container_toyota').highcharts('StockChart', {
-
-
-            rangeSelector : {
-                selected : 1
-            },
-
-            title : {
-              // http://www.nikkei.com/markets/ranking/stock/caphigh.aspx
-                text : 'トヨタ株(7203.T)'
-            },
+            rangeSelector : {selected : 1},
+            title : {text : 'トヨタ株(7203.T)'},
             yAxis: [{
-                title: {
-                    text: 'price'
-                },
+                title: {text: 'price'},
                 height: 170,
                 lineWidth: 2
             }, {
-                title: {
-                    text: 'Volume'
-                },
+                title: {text: 'Volume'},
                 top: 250,
                 height: 40,
                 offset: 0,
-                lineWidth: 2
-            }],
-
+                lineWidth: 2}],
             series : [{
                 type : 'candlestick',
                 name : 'Toyota 7203.T',
                 data : ohlc,
-                dataGrouping: {
-                    units: groupingUnits
-                }
+                dataGrouping: {units: groupingUnits}
               },{
                 type: 'column',
                 name: 'Volume',
                 data: volume,
                 yAxis: 1,
-                dataGrouping: {
-                    units: groupingUnits
-                }
+                dataGrouping: {units: groupingUnits}
               }
             ]
         });
-    // });
+        // create the chart:toyota
+        $('#container_dollar').highcharts('StockChart', {
+            rangeSelector : {selected : 1},
+            title : {text : 'ドル円'},
+            yAxis: [{
+                title: {text: 'price'},
+                height: 170,
+                lineWidth: 2
+            }, {
+                title: {text: 'Volume'},
+                top: 250,
+                height: 40,
+                offset: 0,
+                lineWidth: 2}],
+            series : [{
+                type : 'candlestick',
+                name : 'dollar-yen',
+                data : ohlc_dol,
+                dataGrouping: {units: groupingUnits}
+              },{
+                type: 'column',
+                name: 'Volume',
+                data: volume_dol,
+                yAxis: 1,
+                dataGrouping: {units: groupingUnits}
+              }
+            ]
+        });
+
 });
 
 // parameterを渡す設計にすれば一つのjqueryで複数のデータに対して実行できるが、、
@@ -309,7 +276,6 @@ $(function () {
         // Create the chart
         $('#container_apple').highcharts('StockChart', {
 
-
             rangeSelector : {
                 selected : 1
             },
@@ -343,15 +309,8 @@ $(function () {
         //     }
         // });
         $('#container_map').highcharts('Map', {
-
-            chart : {
-                borderWidth : 1
-            },
-
-            title: {
-                text: 'World Return-Rate'
-            },
-
+            chart : {borderWidth : 1},
+            title: {text: 'World Return-Rate'},
             subtitle : {
                 text : '各国の株式市場の騰落率(直近の引け値からの現値騰落率)'
             },
@@ -452,18 +411,12 @@ $(function () {
   <div class="col-xs-offset-1 col-xs-11 col-sm-offset-1 col-sm-11 col-md-offset-1 col-md-11 col-lg-offset-1 col-lg-11">
     <h1>世界経済と日本株チャート</h1>
     <div class="graybackground_withline">
-      このサイトは元銀行員の管理人が個人投資家に転身した時に
-      日本株の売買をしていて必要な情報が手に入らなかったり、重要なニュースを見逃してしまったという、
-      苦い経験から銘柄の管理や情報の取得がもっと便利になるようにするために作ったサイトです。<br>
-      銀行でファンドマネージャーを経験していた視点で個人投資家に有用な情報を提供できるようにしたいです。<br>
-      このサイトは有料のホスティングサービスを使っており、一部広告も表示されておりますのでご了承ください。<br>
-      <br>
-      【このサイトで解消したいこと】<br>
+      <!-- 【このサイトで解消したいこと】<br>
       ・個別銘柄や先物の売買していた時、長期トレンドと短期トレンドを確認したかったがすぐに自由にチャートの表示期間等を動かしながら確認出来るリソースがなかったこと。<br>
       ・前日のダウや上海市場の引け値、その他海外の株式インデックス騰落率の状況<br>
       ・値動きをもたらすニュースの即時確認<br>
       ・値動きがあった時の出来高<br>
-      ・なぜ今値動きが生じているのかというチャートとイベントの関連性の解説<br>
+      ・なぜ今値動きが生じているのかというチャートとイベントの関連性の解説<br> -->
     </div>
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
@@ -538,12 +491,9 @@ $(function () {
       <br><br>
       <div class="row">
 
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
-            <!-- 90, 120 -->
-            <%= image_tag("http://www.nikkei.co.jp/gifdata/nk_chart_L.gif",
-            alt: "日経平均チャート", :width => '235', :height => '150') %>
-          <% end %>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
+          <!-- ドル円を表示したい -->
+          <div id="container_dollar" style="width:100%; height:400px;"></div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
           <%= link_to "http://www.nikkei.com/markets/kabu/" do %>

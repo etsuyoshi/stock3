@@ -90,7 +90,7 @@ namespace :db do
 
 	# rank dataの更新
 	# task rank: :environment do
-	def updateRank
+	def updateRank()
 		_controller = RankController.new
 		_controller.index
 	end
@@ -98,7 +98,7 @@ namespace :db do
 	# 長く更新されていないデータを削除する
 	# 1週間に一回くらいやればいい
 	# task cleanup: :environment do
-	def cleanPriceseries
+	def cleanPriceseries()
 		# 5日以上更新されていないデータは削除する
 		old_priceseries = Priceseries.where(Priceseries.arel_table[:updated_at].lteq(Date.today.in_time_zone('Tokyo')-5*24*3600))
 		old_priceseries.delete_all
@@ -106,7 +106,7 @@ namespace :db do
 	end
 
 	# task updatePrice: :environment do
-	def updatePrice
+	def updatePrice()
 		# ビットコインヒストリカルデータの取得
 		get_btc_api()
 

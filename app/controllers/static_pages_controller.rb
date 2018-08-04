@@ -72,7 +72,7 @@ class StaticPagesController < ApplicationController
     # ^N225-3days-return:3日騰落率ランキング
     # ^N225-3days-change:3日変化幅ランキング
     # @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")#^N225以外
-    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000")#^N225以外
+    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000").where.not(name: "bitcoin")#^N225以外
 
   end
 

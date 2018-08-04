@@ -336,7 +336,8 @@ namespace :db do
 		  "^MERV", # code:"AR"},->used
 		  "^MXX", # code:"MX"},->used
 		  "EWM", # code:"MY"},->used
-		  "MCHI" #->used
+		  "MCHI", # code: "CH"}, #->used
+			"EGPT"  #EGYPT -> used
 		]
 	end
 	# nk225個別銘柄と指数値、ドル円,上海総合指数、ユーロ円のticker一覧を取得する

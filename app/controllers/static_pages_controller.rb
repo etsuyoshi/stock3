@@ -377,6 +377,8 @@ class StaticPagesController < ApplicationController
     # http://www.benricho.org/translate/countrycode.html
     # http://www.yahoo-help.jp/app/answers/detail/p/546/a_id/45388/~/指数や為替の情報を表示したい
     # http://finance.yahoo.com/q?s=%5EBVSP
+
+    # http://www1.coralnet.or.jp/kusuto/Data-Room/country-codes.html
     tickerTable =
     [{ticker:"0000", code:"JP"},
      {ticker:"EZA", code:"ZA"},#SouthAfrica
@@ -400,7 +402,8 @@ class StaticPagesController < ApplicationController
      {ticker:"^MERV", code:"AR"},
      {ticker:"^MXX", code:"MX"},
      {ticker:"EWM", code:"MY"},
-     {ticker:"MCHI", code:"CH"}
+     {ticker:"MCHI", code:"CH"},
+     {ticker:"EGPT", code:"EG"}
      ];
     #  "^KLSE", "^SSMI"
     #  ex. tickerTable[0][:ticker]=>"^N225"

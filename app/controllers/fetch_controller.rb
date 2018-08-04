@@ -270,7 +270,6 @@ class FetchController < ApplicationController
         # end
         # seoの観点で既に存在していれば残す
         if Feed.where(title: title).count == 0
-
           feed = Feed.new(
             :feed_id          => list_time.to_time.to_i,
             :title            => title,
@@ -291,7 +290,6 @@ class FetchController < ApplicationController
   def get_kessan_news
     url = "https://www.nikkei.com/markets/ir/compinfo/"
     doc = getDocFromHtml(url)
-    p doc.css('tbody').css('tr').count
     doc.css('tbody').css('tr').each do |kessan_record|
       kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.gsub(/\t/,"").gsub(/\n/,"")).to_time.to_i
       kessan_brand = kessan_record.css('td')[0].inner_text

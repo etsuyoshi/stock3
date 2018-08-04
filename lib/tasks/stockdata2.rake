@@ -1,3 +1,8 @@
+# ページ中断のロウソク足
+# ダウ、アップル、アマゾン
+# 日経平均、トヨタ、ドル円
+
+
 # 世界の株価動向を一覧・一目で見れる
 # 値上がり傾向、値下がりトップ５
 # Rankモデルの更新場所はどこ？(FetchControllerで更新確認)→static_pages#nikkeiで取得して、static_pages/nikkei.html.erbで使用している

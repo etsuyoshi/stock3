@@ -21,7 +21,7 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    # get_news()
+    get_news()
     get_bitcoin_news()
     get_kessan_news()
     get_schedules()
@@ -359,8 +359,15 @@ class FetchController < ApplicationController
 
 
   def get_news
-    noPage = 5
+    # ニュース(Feed.count)が300以上ある場合,300個以内になるように最初のものから順番に削除していく
+    all_feed_count = Feed.count
+    if all_feed_count > 300
+      Feed.order(updated_at: :asc).first(all_feed_count - 300).all.destroy_all
+    end
 
+
+
+    noPage = 5
     while noPage >= 0 do
       # if TRUE#テスト用
       #   noPage = 0

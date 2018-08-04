@@ -131,7 +131,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    update(client, tweet)
+    # update(client, tweet)
   end
 
 
@@ -472,8 +472,12 @@ def getWeekDayComment(d)
 
 
   daily_comment = "昨日の日経平均は#{nikkei_last2.first.close}円で前日比#{rtnNikkei_1.abs.round(2)}%の#{rtnNikkei_1>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_1.abs.round(2)}%#{rtnDow_1>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_1.abs.round(2)}%#{rtnShg_1>0 ? "上昇" : "下落"}でした。"
-  weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
+  #weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}、ダウは#{dow_last2.first.close}ドルで#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{shanghai_last2.first.close}ptで#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}でした。"
+  weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}(前月比#{rtnNikkei_30.abs.round(2)}%#{rtnNikkei_30>0 ? "上昇" : "下落"})、" +
+    "ダウは#{dow_last2.first.close}ドルで前週比#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}(前月比#{rtnDow_30.abs.round(2)}%#{rtnDow_30>0 ? "上昇" : "下落"})、" +
+    "上海総合は#{shanghai_last2.first.close}ptで前週比#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}(前月比#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"})でした。"
   monthly_comment = "1ヶ月で#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
+
 
   case d.wday
   when 0
@@ -657,7 +661,7 @@ def getWeekDayComment(d)
     else
       before_comment = ""
     end
-    #comment = before_comment + daily_comment + "また" + weekly_comment
+    #騰落率上位
     comment = before_comment + weekly_comment
 
     # 今週の振り返り

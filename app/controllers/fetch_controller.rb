@@ -358,11 +358,13 @@ class FetchController < ApplicationController
   end
 
 
-  def get_news
+  def get_news()
     # ニュース(Feed.count)が300以上ある場合,300個以内になるように最初のものから順番に削除していく
     all_feed_count = Feed.count
     if all_feed_count > 300
-      Feed.order(updated_at: :asc).first(all_feed_count - 300).all.destroy_all
+      Feed.order(updated_at: :asc).first(all_feed_count - 300).each do |old_feed|
+        old_feed.destroy
+      end
     end
 
 

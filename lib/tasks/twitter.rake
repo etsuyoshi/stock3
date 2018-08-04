@@ -131,7 +131,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    # update(client, tweet)
+    update(client, tweet)
   end
 
 
@@ -663,6 +663,9 @@ def getWeekDayComment(d)
     end
     #騰落率上位
     comment = before_comment + weekly_comment
+
+    #騰落率ランキングトップ
+    # Rank.where(market: "^N225-3days-return").where(sort: "up").
 
     # 今週の振り返り
     # ニュースも？

@@ -667,7 +667,8 @@ def getWeekDayComment(d)
     #騰落率ランキングトップ(where(rank: 1)としないでorderでやるのは１位がbitcoinや指数である可能性があるため)
     top_rank = Rank.where(market: "^N225-3days-return").where(sort: "up").where.not(name: "bitcoin").order(rank: :asc).first
     bottom_rank = Rank.where(market: "^N225-3days-return").where(sort: "down").where.not(name: "bitcoin").order(rank: :asc).first
-    comment = comment + "騰落率トップは#{top_rank.name}、最下位は#{bottom_rank.name}でした。"
+    comment = comment + "日経での騰落率トップは#{top_rank.name}(#{top_rank.return.to_f>0 ? "+" : "-"}#{top_rank.return.to_f.abs.round(2)}%)、" +
+      "最下位は#{bottom_rank.name}(#{bottom_rank.return.to_f>0 ? "+" : "-"}#{bottom_rank.return.to_f.abs.round(2)}%)でした。"
 
     # 今週の振り返り
     # ニュースも？

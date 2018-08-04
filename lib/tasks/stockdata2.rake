@@ -45,7 +45,6 @@ namespace :db do
 		# FetchController#get_news()を実行する
 		_controller = FetchController.new
 		_controller.index
-
 	end
 
 
@@ -312,29 +311,32 @@ namespace :db do
 		# yahoo finance自体の株価指数がない場合は全てMSCIで取得する？
 		return [
 			'^DJI', # Dow Jones Industrial Index
-			'^GSPC',# :SP500
-			'^IXIC', # :NASDAQ
-			'^JKSE', #jakarta
-		  "EZA", # code:"ZA"},#SouthAfrica
-		  "ERUS", # code:"RU"},#russia
-		  "^BVSP", # code:"BR"},#brazil
-		  "^GSPTSE", # code:"CA"},#canada
-		  "^AORD", # code:"AU"},#australia
-		  "^KS11", # code:"KR"},#korea
-		  "^TWII", # code:"TW"},#taiwan
-	    "DAX", # code:"DE"},#German
-			"EWQ", #France
-		  "^FTSE?P=FTSE", # code:"GB"},#FTSE all
-		  "^HSI", # code:"CN"},#HangSengIndex
-		  "^NZ50", # code:"NZ"},#NewZealand
-		  "^AXJO", # code:"AT"},#
-		  "EWS", # code:"SG"}, #singapore
-		  "^GDAXI", # code:"DE"},#german
-		  "EWI", # code:"IT"},
-		  "^MERV", # code:"AR"},
-		  "^MXX", # code:"MX"},
-		  "EWM", # code:"MY"},
-		  "MCHI"
+			'AAPL',#apple
+			'FB',
+			'AMZN',#amazon
+			# '^GSPC',# :SP500
+			# '^IXIC', # :NASDAQ
+			'^JKSE', #jakarta->used
+		  "EZA", # code:"ZA"},#SouthAfrica->used
+		  "ERUS", # code:"RU"},#russia->used
+		  "^BVSP", # code:"BR"},#brazil->used
+		  "^GSPTSE", # code:"CA"},#canada->used
+		  "^AORD", # code:"AU"},#australia->used
+		  "^KS11", # code:"KR"},#korea->used
+		  "^TWII", # code:"TW"},#taiwan->used
+	    # "DAX", # code:"DE"},#German->no use
+			"EWQ", #France->used
+		  "^FTSE?P=FTSE", # code:"GB"},#FTSE all->used
+		  "^HSI", # code:"CN"},#HangSengIndex->used
+		  "^NZ50", # code:"NZ"},#NewZealand->used
+		  "^AXJO", # code:"AT"},#->used
+		  "EWS", # code:"SG"}, #singapore->used
+		  "^GDAXI", # code:"DE"},#german->used
+		  "EWI", # code:"IT"},->used
+		  "^MERV", # code:"AR"},->used
+		  "^MXX", # code:"MX"},->used
+		  "EWM", # code:"MY"},->used
+		  "MCHI" #->used
 		]
 	end
 	# nk225個別銘柄と指数値、ドル円,上海総合指数、ユーロ円のticker一覧を取得する

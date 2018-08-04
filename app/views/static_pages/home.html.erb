@@ -35,279 +35,87 @@
 <script>
 $(function () {//３番目に表示される(TOYOTA)
     // $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
-      //  console.log("data=" + data);
-
-        // create data
-        // var historicals = gon.historical_toyota
-        var historicals = gon.historical["7203"]
-        var historicals_dollar = gon.historical["0950"]
-        var ohlc = [],volume = [];
-        var ohlc_dol = [], volume_dol = [];
-
-        // unixtime->Date : http://yut.hatenablog.com/entry/20111015/1318633937
-
-        for (i = 0; i < historicals.length; i++) {
-            var unixtime1 = historicals[i]["ymd"] * 1000
-            var open=historicals[i]["open"];
-            var high=historicals[i]["high"];
-            var low=historicals[i]["low"];
-            var close=historicals[i]["close"];
-            var volume1=historicals[i]["volume"];
-            ohlc.push([unixtime1,open,high,low,close]);
-            volume.push([unixtime1,volume1])
+        var container_ticker = ["7203", "0950", "6758", "0000", "FB", "AMZN", "AAPL", "^DJI"];
+        var data_price = [], data_volume = [];
+        for(ticker_label = 0 ; ticker_label < container_ticker.length ; ticker_label ++ ){
+          historicals = gon.historical[container_ticker[ticker_label]];
+          ohlc = [], volume = [];
+          for (i = 0 ; i < historicals.length ; i++ ){
+            ohlc.push([historicals[i]["ymd"]*1000,historicals[i]["open"],historicals[i]["high"],historicals[i]["low"],historicals[i]["close"]]);
+            volume.push([historicals[i]["ymd"]*1000,historicals[i]["volume"]]);
+          }
+          dict_price = {type : 'candlestick', name : "ohlc", data : ohlc, dataGrouping: {units: groupingUnits}}
+          dict_volume = {type: 'column', name: 'Volume', data: volume, yAxis: 1, dataGrouping: {units: groupingUnits}}
+          data_price[container_ticker[ticker_label]] = dict_price;
+          data_volume[container_ticker[ticker_label]] = dict_volume;
         }
-        for (i = 0; i < historicals_dollar.length; i++) {
-            var unixtime1 = historicals_dollar[i]["ymd"] * 1000
-            var open=historicals_dollar[i]["open"];
-            var high=historicals_dollar[i]["high"];
-            var low=historicals_dollar[i]["low"];
-            var close=historicals_dollar[i]["close"];
-            var volume1=historicals_dollar[i]["volume"];
-            ohlc_dol.push([unixtime1,open,high,low,close]);
-            volume_dol.push([unixtime1,volume1])
-        }
-
         // set the allowed units for data grouping
-        var groupingUnits = [[
-            'week',                         // unit name
-            [1]                             // allowed multiples
-        ], [
-            'month',
-            [1, 2, 3, 4, 6]
-        ]];
-
-        // create the chart:toyota
+        var groupingUnits = [['week',[1]], ['month',[1, 2, 3, 4, 6]]];
+        var param_yaxis =[{ title: {text: 'price'}, height: 170, lineWidth: 2},
+                          { title: {text: 'Volume'}, top: 250, height: 40, offset: 0, lineWidth: 2}];
+        // create the chart:
+        $('#container_nikkei').highcharts('StockChart', {
+            rangeSelector : {selected : 1},
+            title : {text : '日経平均'},
+            yAxis: param_yaxis,
+            series: [data_price["0000"], data_volume["0000"]]
+        });
         $('#container_toyota').highcharts('StockChart', {
             rangeSelector : {selected : 1},
             title : {text : 'トヨタ株(7203.T)'},
-            yAxis: [{
-                title: {text: 'price'},
-                height: 170,
-                lineWidth: 2
-            }, {
-                title: {text: 'Volume'},
-                top: 250,
-                height: 40,
-                offset: 0,
-                lineWidth: 2}],
-            series : [{
-                type : 'candlestick',
-                name : 'Toyota 7203.T',
-                data : ohlc,
-                dataGrouping: {units: groupingUnits}
-              },{
-                type: 'column',
-                name: 'Volume',
-                data: volume,
-                yAxis: 1,
-                dataGrouping: {units: groupingUnits}
-              }
-            ]
+            yAxis:param_yaxis,
+            series: [data_price["7203"], data_volume["7203"]]
+        });
+        $('#container_sony').highcharts('StockChart', {
+            rangeSelector : {selected : 1},
+            title : {text : 'ソニー株(6758.T)'},
+            yAxis:param_yaxis,
+            series: [data_price["6758"], data_volume["6758"]]
         });
         // create the chart:toyota
         $('#container_dollar').highcharts('StockChart', {
             rangeSelector : {selected : 1},
             title : {text : 'ドル円'},
-            yAxis: [{
-                title: {text: 'price'},
-                height: 170,
-                lineWidth: 2
-            }, {
-                title: {text: 'Volume'},
-                top: 250,
-                height: 40,
-                offset: 0,
-                lineWidth: 2}],
-            series : [{
-                type : 'candlestick',
-                name : 'dollar-yen',
-                data : ohlc_dol,
-                dataGrouping: {units: groupingUnits}
-              },{
-                type: 'column',
-                name: 'Volume',
-                data: volume_dol,
-                yAxis: 1,
-                dataGrouping: {units: groupingUnits}
-              }
-            ]
+            yAxis: param_yaxis,
+            series: [data_price["0950"], data_volume["0950"]]
         });
-
-});
-
-// parameterを渡す設計にすれば一つのjqueryで複数のデータに対して実行できるが、、
-// cssで呼び出すときにどうやってパラメータを渡すのであろうか。。
-// appleみたいにjsonを返すapi経由でもらうとか？
-$(function() {
-    // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=aapl-ohlcv.json&callback=?',
-    //  function(data) {
-      //model-db(active_record)からデータを取得してjsに渡す方法
-      //http://qiita.com/s_nakamura/items/5d153f7d9db1b1190296
-      // split the data set into ohlc and volume
-
-      // 日経チャートを表示する
-      // var historicals=gon.historical_nikkei
-      var historicals = gon.historical["0000"]
-      // var historicals = gon.historical[ticker]
-      // alert(historicals[0]["ymd"])
-      // console.log('historicals=', historicals[0])
-      // console.log('style=', style);
-      var ohlc = [],
-          volume = [];
-          // dataLength = data.length;
-          // console.log("length=", dataLength)
-      // alert(historicals.length)
-      // alert(data[0][0]+","+data[1][0]+","+data[2][0]+","+data[3][0])
-      // var unixtime=data[0][0]/1000
-      // alert("original unix=" + unixtime)
-
-      for (i = 0; i<historicals.length; i++) {
-          var unixtime1 = historicals[i]["ymd"] * 1000
-          // var ymd=String(historicals[i]["ymd"])
-          // var year=ymd.substring(0, 4);
-          // var month=ymd.substring(4, 6);
-          // var day=ymd.substring(6, 8);
-          // var ts = String(year+"-"+month+"-"+day+" 00:00:00");//"2011-10-14 00:00:00";
-          // // console.log(ts);
-          // var unixtime1=Date.parse( ts.replace( /-/g, '/') )
-          // console.log("ymd:"+ymd+",unix="+unixtime1);
-          // 1367247600000
-
-          // alert(ymd)
-          // alert(year)
-          // alert(month)
-          // alert(day)
-          // alert(ts)
-          // alert( Date.parse( ts.replace( /-/g, '/') ) / 1000 );
-          // alert("unixtime="+unixtime1)
-
-          // console.log("unixtime1=" + unixtime1)
-
-          var open=historicals[i]["open"];
-          var high=historicals[i]["high"];
-          var low=historicals[i]["low"];
-          var close=historicals[i]["close"];
-          var volume1=historicals[i]["volume"];
-          // console.log("ymd=",data[i][0]);
-          // console.log("ymd2=", unixtime1);
-          ohlc.push([
-            unixtime1,
-            open,
-            high,
-            low,
-            close
-              // data[i][0], // the date : unixtime
-              // data[i][1], // open
-              // data[i][2], // high
-              // data[i][3], // low
-              // data[i][4] // close
-          ]);
-
-          volume.push([
-            unixtime1,
-            volume1
-              // data[i][0], // the date
-              // data[i][5] // the volume
-          ])
-
-
-      }
-
-
-      // set the allowed units for data grouping
-      var groupingUnits = [[
-          'week',                         // unit name
-          [1]                             // allowed multiples
-      ], [
-          'month',
-          [1, 2, 3, 4, 6]
-      ]];
-
-      // create the chart
-      $('#nikkei_chart').highcharts('StockChart', {
-          rangeSelector: {
-              selected: 1
-          },
-          title: {
-              text: "日経平均"
-              //historicals[0]["name"]//gon.user_name//arrayData[0]//gon.user_name
-              // text: array[0]["20151230"]//gon.@pseries.
-          },
-          yAxis: [{
-              title: {
-                  text: 'price'
-              },
-              height: 170,
-              lineWidth: 2
-          }, {
-              title: {
-                  text: 'Volume'
-              },
-              top: 250,
-              height: 40,
-              offset: 0,
-              lineWidth: 2
-          }],
-
-          series: [{
-              type:'candlestick',
-              name: 'Nikkei225',
-              data: ohlc,
-              dataGrouping: {
-                  units: groupingUnits
-              }
-          }, {
-              type: 'column',
-              name: 'Volume',
-              data: volume,
-              yAxis: 1,
-              dataGrouping: {
-                  units: groupingUnits
-              }
-          }]
-      });
-    // });
-});
-
-
-$(function () {
-
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
-        // Create the chart
         $('#container_apple').highcharts('StockChart', {
-
-            rangeSelector : {
-                selected : 1
-            },
-
-            title : {
-                text : 'アップル株(AAPL)'
-            },
-
-            series : [{
-                name : 'AAPL',
-                data : data,
-                tooltip: {
-                    valueDecimals: 2
-                }
-            }]
+            rangeSelector : {selected : 1},
+            title : {text : 'アップル株(AAPL)'},
+            yAxis: param_yaxis,
+            series: [data_price["AAPL"], data_volume["AAPL"]],
         });
-    });
-
+        $('#container_FB').highcharts('StockChart', {
+            rangeSelector : {selected : 1},
+            title : {text : 'フェイスブック株(FB)'},
+            yAxis: param_yaxis,
+            series: [data_price["FB"], data_volume["FB"]]
+        });
+        $('#container_AMZN').highcharts('StockChart', {
+            rangeSelector : {selected : 1},
+            title : {text : 'アマゾン株(AMZN)'},
+            yAxis: param_yaxis,
+            series: [data_price["AMZN"], data_volume["AMZN"]]
+        });
+        $('#container_DOW').highcharts('StockChart', {
+            rangeSelector : {selected : 1},
+            title : {text : 'ダウ平均(DJI)'},
+            yAxis: param_yaxis,
+            series: [data_price["^DJI"], data_volume["^DJI"]]
+        });
 });
+// $(function () {
+//     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
+//         // Create the chart
+//         $('#container_apple').highcharts('StockChart', {
+//             rangeSelector : {selected : 1},
+//             title : {text : 'アップル株(AAPL)'},
+//             series : [{name : 'AAPL', data : data, tooltip: {valueDecimals: 2}}]});});
+// });
 
   $(function () {
-
     // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
-
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
-
-        // Correct UK to GB in data
-        // $.each(data, function () {
-        //     if (this.code === 'UK') {
-        //         this.code = 'GB';
-        //     }
-        // });
         $('#container_map').highcharts('Map', {
             chart : {borderWidth : 1},
             title: {text: 'World Return-Rate'},
@@ -479,86 +287,37 @@ $(function () {
 
       <div class = "row">
         <!-- candle stick @apple -->
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
-          <div id="container_toyota" style="width:100%; height:400px;"></div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+          <div id="container_nikkei" style="width:100%; height:400px;"></div>
         </div>
-        <!-- line chart -->
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-6">
-          <div id="container_apple" style="width:100%; height:400px;"></div>
-        </div>
-      </div>
-
-      <br><br>
-      <div class="row">
-
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
-          <!-- ドル円を表示したい -->
           <div id="container_dollar" style="width:100%; height:400px;"></div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
-            <!-- 90, 120 -->
-            <%= image_tag("http://www.nikkei.co.jp/gifdata/yen_chart_L.gif",
-             alt: "ドル円チャート", :width => '250', :height => '165', :class=>"dol_yen_chart") %>
-          <% end %>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+          <div id="container_toyota" style="width:100%; height:400px;"></div>
         </div>
-        <!-- alt: "トピックスチャート", :width => '205', :height => '160') -->
-        <!-- ドル円チャート及び日経ダウ平均チャートは画像自体が若干ずれているので/assets/static_pages.scssで調整 -->
-
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-            <!-- div class="col-xs-12 col-sm-12 col-md-offset-1 col-md-3 col-lg-offset-3 col-lg-3" -->
-              <%= link_to "http://www.nikkei.com/markets/chart/#!/0101" do %>
-                 <%= image_tag("http://www.nikkei.co.jp/chart/nka_l.gif",
-                  alt: "日経平均とダウ平均", :width => '350', :height => '193', :class=>"dow_and_nikkei_chart") %>
-              <% end %>
-
-          </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
+          <div id="container_sony" style="width:100%; height:400px;"></div>
         </div>
-      </div>
-      <br>
-
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <center>日経平均</center>
+        <!-- line chart -->
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+          <div id="container_apple" style="width:100%; height:400px;"></div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <center>ドル円</center>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
+          <!-- ドル円を表示したい -->
+          <div id="container_DOW" style="width:100%; height:400px;"></div>
         </div>
-        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-          <center>日経平均とダウ（日次比較)</center>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+          <!-- ドル円を表示したい -->
+          <div id="container_AMZN" style="width:100%; height:400px;"></div>
+        </div>
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
+          <!-- ドル円を表示したい -->
+          <div id="container_FB" style="width:100%; height:400px;"></div>
         </div>
       </div>
 
-      <br><br>
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-
-          <%= link_to "http://www.nikkei.com/markets/kabu/" do %>
-            <!-- 90, 120 -->
-            <%= image_tag("http://quote.jpx.co.jp/jpx/chart/chart23.exe?template=ini/realindex&basequote=151",
-             alt: "TOPIXチャート", :width => '245', :height => '160') %>
-             <!-- alt: "トピックスチャート", :width => '205', :height => '160') -->
-            <br>
-
-          <% end %>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <%= link_to "http://www.google.com" do %>
-            <%= image_tag("http://www.jpx.co.jp/top/indices/charts/TseMothersIndexChart.gif",
-            alt: "マザーズチャート", :width => '265', :height => '183', :class => "mothers_chart") %>
-          <% end %>
-        </div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <center>トピックスチャート</center>
-        </div>
-        <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
-          <center>マザーズチャート</center>
-        </div>
-      </div>
+      
 
 
 

@@ -373,8 +373,16 @@ end
 def update(client, tweet)
   begin
     p "length = #{tweet.length}, twitter char.length=#{tweet.encode("EUC-JP").bytesize/2}"
-    tweet = (tweet.encode("EUC-JP").bytesize/2 > 140) ? tweet[0..139].to_s : tweet
-    client.update(tweet.chomp)
+    tweet_contents = (tweet.encode("EUC-JP").bytesize/2 > 140) ? tweet[0..139].to_s : tweet
+    client.update(tweet_contents.chomp)
+
+
+
+    if tweet.encode("EUC-JP").bytesize/2 > 140
+      sleep(60)
+      tweet_contents2 = "..(続き)" + tweet[140..[tweet.length-1,280].min].to_s + " 詳しくは→ http://www.japanchart.com"
+      client.update(tweet_contents2.chomp)
+    end
   rescue => e
     Rails.logger.error "<<twitter.rake::tweet.update ERROR : #{e.message}>>"
   end
@@ -653,7 +661,7 @@ def getWeekDayComment(d)
     when 1
       before_comment = "今週もお疲れ様。"
     when 2
-      before_comment = "やっと週末ですね。"
+      before_comment = "やっと土曜日ですね。"
     when 3
       before_comment = "今週もお仕事ご苦労様。"
     when 4

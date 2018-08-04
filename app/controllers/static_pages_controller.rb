@@ -389,12 +389,12 @@ class StaticPagesController < ApplicationController
      {ticker:"^TWII", code:"TW"},#taiwan
      {ticker:"^GSPC", code:"US"},#S&P
      {ticker:"EWQ", code:"FR"},#France
-    #  {ticker:"DAX", code:"DE"},#German
+     # {ticker:"DAX", code:"DE"},#German
      {ticker:"^FTSE?P=FTSE", code:"GB"},#FTSE100(england)
      {ticker:"^HSI", code:"CN"},#HangSengIndex
      {ticker:"^NZ50", code:"NZ"},#NewZealand
      {ticker:"^AXJO", code:"AT"},#
-     {ticker:"EWS", code:"SG"},
+     {ticker:"EWS", code:"SG"},#singapore
      {ticker:"^GDAXI", code:"DE"},#german
      {ticker:"EWI", code:"IT"},
      {ticker:"^MERV", code:"AR"},
@@ -441,14 +441,19 @@ class StaticPagesController < ApplicationController
 
     # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-    historical_nikkei= Priceseries.where(ticker: "0000").order(ymd: :asc)
-    historical_toyota = Priceseries.where(ticker: "7203").order(ymd: :asc)
-    historical_dollar = Priceseries.where(ticker: "0950").order(ymd: :asc)
+    # historical_nikkei= Priceseries.where(ticker: "0000").order(ymd: :asc)
+    # historical_toyota = Priceseries.where(ticker: "7203").order(ymd: :asc)
+    # historical_dollar = Priceseries.where(ticker: "0950").order(ymd: :asc)
 
     gon.historical = {};
-    gon.historical["0000"] = historical_nikkei
-    gon.historical["7203"] = historical_toyota
-    gon.historical["0950"] = historical_dollar
+    gon.historical["0000"] = Priceseries.where(ticker: "0000").order(ymd: :asc)
+    gon.historical["7203"] = Priceseries.where(ticker: "7203").order(ymd: :asc)
+    gon.historical["6758"] = Priceseries.where(ticker: "6758").order(ymd: :asc)
+    gon.historical["0950"] = Priceseries.where(ticker: "0950").order(ymd: :asc)
+    gon.historical["FB"] = Priceseries.where(ticker: "FB").order(ymd: :asc)
+    gon.historical["AAPL"] = Priceseries.where(ticker: "AAPL").order(ymd: :asc)
+    gon.historical["AMZN"] = Priceseries.where(ticker: "AMZN").order(ymd: :asc)
+    gon.historical["^DJI"] = Priceseries.where(ticker: "^DJI").order(ymd: :asc)
   end
 
   def help

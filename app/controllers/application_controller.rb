@@ -38,6 +38,24 @@ class ApplicationController < ActionController::Base
     return doc
   end
 
+  #url_encodeするとうまく正しく遷移しない場合があるので、渡す際にencodeしているようにする！
+  def getDocFromHtmlWithJS(url_encoded)
+    # url_encoded = URI.encode(url_string)
+
+    # javascriptが動いているのでphantomjs(Capybaraによるpoltergeist)を使ってjs実行後のhtmlを取得する
+    #poltergistの設定
+    Capybara.register_driver :poltergeist do |app|
+      Capybara::Poltergeist::Driver.new(app, {:js_errors => false, :timeout => 1000 }) #追加のオプションはググってくださいw
+    end
+    Capybara.default_selector = :xpath
+    session = Capybara::Session.new(:poltergeist)
+    #自由にUser-Agent設定してください。
+    session.driver.headers = { 'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X)" }
+    #session.visit "https://fx.minkabu.jp/indicators"
+    session.visit url_encoded
+    return Nokogiri::HTML.parse(session.html)
+  end
+
   def isValidate(url_string, limit = 10)
 		begin
 	    response = Net::HTTP.get_response(URI.parse(URI.encode(url_string)))

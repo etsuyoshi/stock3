@@ -484,7 +484,7 @@ def getWeekDayComment(d)
   weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}(前月比#{rtnNikkei_30.abs.round(2)}%#{rtnNikkei_30>0 ? "上昇" : "下落"})、" +
     "ダウは#{dow_last2.first.close}ドルで前週比#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}(前月比#{rtnDow_30.abs.round(2)}%#{rtnDow_30>0 ? "上昇" : "下落"})、" +
     "上海総合は#{shanghai_last2.first.close}ptで前週比#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}(前月比#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"})でした。"
-  monthly_comment = "1ヶ月で#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
+  monthly_comment = "日経平均は1ヶ月で#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
 
 
   case d.wday
@@ -493,6 +493,48 @@ def getWeekDayComment(d)
     # 先週の気になるニュース
     # 今週の予定
     comment = monthly_comment
+
+    # 先週の決算があった銘柄の中で最も騰落率が大きかったのはxxxです。
+    last_kessans = Feed.tagged_with('kessan').where('title like ?', '%決算%').where(Feed.arel_table[:feed_id].lteq(Time.new.to_i)).order(feed_id: :desc)
+    min_return = max_return = 0
+    min_kessan = nil
+    max_kessan = nil
+    last_kessans.each do |kessan|
+      # 決算企業の銘柄コードを取得して１週間騰落率を取得して、その中で最もabsが大きい銘柄を探す
+      ticker = kessan.ticker
+      #7日以上前で最近の値(=7日前の株価)
+      before7 = Priceseries.where(ticker: ticker).where('ymd < ?', Time.new.to_i - 3600*24*7).order(ymd: :desc).first
+      todayPrice = Priceseries.where(ticker: ticker).order(ymd: :desc).first
+      returnPrice = todayPrice.close/before7.close-1
+      if returnPrice > max_return
+        returnPrice = max_return
+        max_kessan = todayPrice
+      end
+      if returnPrice < min_return
+        returnPrice < min_return
+        min_kessan = todayPrice
+      end
+    end
+
+    # 先週の決算総括
+    kessan_feature = nil;
+    if !max_kessan.nil? || !min_kessan.nil?
+      kessan_feature = "先週の決算で最も反応があった銘柄は";
+      if !max_kessan.nil?
+        kessan_feature = kessan_feture +
+        "#{max_kessan.keyword}(#{max_kessan.ticker.nil? ? "" : (max_kessan.ticker + ":")}" +
+        "#{max_return>0 ? '+' : '-'}#{max_return}" + (!min_kessan.nil? ? "" : "と")
+      end
+      if !min_kessan.nil?
+        kessan_feature = kessan_feature +
+        "#{min_kessan.keyword}(#{min_kessan.ticker.nil? ? "" : (min_kessan.ticker + ":")}" +
+        "#{min_return>0 ? '+' : '-'}#{min_return}"
+      end
+      kessan_feature = kessan_feature + "です。"
+    end
+    comment = comment + kessan_feature;
+    # ↑まだ確認してない
+
 
   when 1
     # 今週の予定
@@ -531,7 +573,7 @@ def getWeekDayComment(d)
 
     # comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週は#{Time.at(min_feed_ir.feed_id.to_i).strftime('%-d')}日に#{min_feed_ir.keyword}による#{min_feed_ir.title}のIRがありました。"
     market_comment = "先週末の日経平均は#{nikkei_last2.first.close}円で引けた後、ダウは#{dow_last2.first.close}ドルに。日経平均は足元1週間で#{rtnNikkei_7.round(2)}％の#{rtnNikkei_7>0 ? "上昇" : "下落"} 、" +
-              "ダウは#{rtnDow_7.round(2)}％の#{rtnDow_7>0 ? "上昇" : "下落"}、1ヶ月間では日経平均が#{rtnNikkei_30.round(2)}％、ダウは#{rtnDow_30.round(2)}％の#{rtnDow_30>0? "上昇" : "下落"}。"
+              "ダウは#{rtnDow_7.round(2)}％の#{rtnDow_7>0 ? "上昇" : "下落"}、1ヶ月間ではそれぞれ#{rtnNikkei_30.round(2)}％の#{rtnNikkei_30>0? "上昇" : "下落"}、#{rtnDow_30.round(2)}％の#{rtnDow_30>0? "上昇" : "下落"}。"
     comment = market_comment
     if !min_feed_ir.nil?
       ir_comment = "先週は#{Time.at(min_feed_ir.feed_id.to_i).strftime('%-d')}日に#{min_feed_ir.keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}から#{min_feed_ir.title}のIRがありました。"

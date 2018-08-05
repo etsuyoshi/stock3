@@ -21,10 +21,10 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()
-    get_bitcoin_news()
+    # get_news()
+    # get_bitcoin_news()
     get_kessan_news()
-    get_schedules()
+    # get_schedules()
     return
 
 
@@ -121,25 +121,14 @@ class FetchController < ApplicationController
   end
   # feedsテーブルに1件INSERT
   def insert_feed(feed_id, title, description, link, keyword)
-    # 既に存在していないか→重複していれば一個を除いて削除する
-    if Feed.where(title: title).count > 0
-      Feed.where(title: title).all.each do |duplicated_feed|
-        duplicated_feed.destroy
-        duplicated_feed.save
-      end
-    end
-    feed = Feed.new(
-      :feed_id          => feed_id,
-      :title            => title,
-      :description      => description,
-      :link             => link,
-      :keyword          => keyword
-    )
-    feed.save
-    p "#{feed_id}保存成功"
+    insert_feed_with_all(feed_id, title, description, link, nil, keyword, nil)
   end
 
   def insert_feed_with_label(feed_id, title, description, link, feedlabel, keyword)
+    insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, nil)
+  end
+
+  def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
     duplicated_feeds = Feed.where(title: title)
     if duplicated_feeds.count > 0
       duplicated_feeds.all.each do |duplicates|
@@ -152,9 +141,12 @@ class FetchController < ApplicationController
       :title            => title,
       :description      => description,
       :link             => link,
-      :keyword          => keyword
+      :keyword          => keyword,
+      :ticker           => ticker
     )
-    feed.tag_list.add(feedlabel)
+    if !feedlabel.nil?
+      feed.tag_list.add(feedlabel)
+    end
     feed.save
   end
 
@@ -205,7 +197,7 @@ class FetchController < ApplicationController
     return return_hash
   end
 
-  # これからの予定
+  # これからの予定(統計情報など)
   def get_schedules
     p "get schedules"
     # 今週予定
@@ -218,6 +210,7 @@ class FetchController < ApplicationController
 
     # javascriptが動いているのでphantomjs(Capybaraによるpoltergeist)を使ってjs実行後のhtmlを取得する
     #poltergistの設定
+    # getDocFromHtmlWithJSで取れるようにする？した？
     Capybara.register_driver :poltergeist do |app|
       Capybara::Poltergeist::Driver.new(app, {:js_errors => false, :timeout => 1000 }) #追加のオプションはググってくださいw
     end
@@ -225,7 +218,8 @@ class FetchController < ApplicationController
     session = Capybara::Session.new(:poltergeist)
     #自由にUser-Agent設定してください。
     session.driver.headers = { 'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X)" }
-    session.visit "https://fx.minkabu.jp/indicators"
+    #session.visit "https://fx.minkabu.jp/indicators"
+    session.visit url
     page = Nokogiri::HTML.parse(session.html).css('div.l-section_interval')
 
     if page.css('h2').nil? || page.css('table.ei-list').nil?
@@ -286,16 +280,79 @@ class FetchController < ApplicationController
     end
   end
 
-  # 決算眼形のニュース（過去）
-  def get_kessan_news
-    url = "https://www.nikkei.com/markets/ir/compinfo/"
-    doc = getDocFromHtml(url)
-    doc.css('tbody').css('tr').each do |kessan_record|
-      kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.gsub(/\t/,"").gsub(/\n/,"")).to_time.to_i
-      kessan_brand = kessan_record.css('td')[0].inner_text
-      kessan_title = kessan_record.css('td')[1].inner_text
-      kessan_link = kessan_record.css('td')[1].css('a').attribute('href').value
-      insert_feed_with_label(kessan_feed_id, kessan_title, nil, kessan_link, "kessan", kessan_brand)
+
+  def get_kessan_news()
+    # 決算眼形のニュース（過去）→過去のデータならこれでいい
+    # url = "https://www.nikkei.com/markets/ir/compinfo/"
+    # doc = getDocFromHtml(url)
+    # doc.css('tbody').css('tr').each do |kessan_record|
+    #   kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.gsub(/\t/,"").gsub(/\n/,"")).to_time.to_i
+    #   kessan_brand = kessan_record.css('td')[0].inner_text
+    #   if !kessan_brand.nil?
+    #     kessan_brand = kessan_brand.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/グループ/,"")
+    #   end
+    #   kessan_title = kessan_record.css('td')[1].inner_text
+    #   kessan_link = kessan_record.css('td')[1].css('a').attribute('href').value
+    #   insert_feed_with_label(kessan_feed_id, kessan_title, nil, kessan_link, "kessan", kessan_brand)
+    # end
+
+    # 未来のニュースも含めて取得するなら以下のリンクから→そのうちやる？（その場合は取得側も現在以降を取得する必要がある）
+    # https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&SearchDate1=2018%E5%B9%B408&SearchDate2=01
+    # https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2
+    #常に7日前から7日後まで確認する
+    start_time = Time.new - 7*24*3600
+    #end_time = Time.new + 7*24*3600
+    for i in 0..14
+      p i.to_s + "日目"
+      target_time = start_time + i * 24*3600
+      searchDate1 = target_time.strftime('%Y') + "%E5%B9%B4" + target_time.strftime('%m')
+      searchDate2 = target_time.strftime('%d')
+      url_param = "ResultFlag=1&kwd=&KessanMonth=&SearchDate1=#{searchDate1}&SearchDate2=#{searchDate2}&Gcode=%20&hm="
+      base_url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?" + url_param
+
+      loop_count = 1
+      url = base_url + loop_count.to_s
+      # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
+  		doc = getDocFromHtmlWithJS(url)
+      if doc.css('tbody').nil?
+        next
+      elsif doc.css('tbody').css('tr.tr2').nil?
+        next
+      elsif doc.css('tbody').css('tr.tr2')[0].nil?
+        next
+      elsif doc.css('tbody').css('tr.tr2')[0].css('th').nil?
+        next
+      end
+  		doc.css('tbody').css('tr.tr2').each do |kessan_record|
+        if !kessan_record.nil? && !kessan_record.css('th').nil?
+          tds = kessan_record.css('td')
+          ticker = tds[0].inner_text.gsub(/\t/, "").gsub(/\n/,"")
+          # 量が多いのでPriceseriesの中にある銘柄だけで実施する
+          if Priceseries.where(ticker: ticker).count == 0
+            next
+          end
+
+          kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
+          name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")
+          timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
+          phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
+          company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
+          market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
+          kessan_title = name + "(#{market_type}一部:#{company_type}) " + phase + "決算"
+          kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
+            Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
+            (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"
+          kessan_link = "https://www.nikkei.com/nkd/company/kigyo/?scode=" + ticker
+
+          p "title = #{kessan_title}"
+          p "desc = #{kessan_description}"
+          insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, nil, name, ticker)
+
+        end
+      end
+
+
+
     end
 
   end

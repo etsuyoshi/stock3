@@ -292,8 +292,6 @@ namespace :db do
           end_value = (td_tags[4].nil? ? "" : (td_tags[4]).text).gsub(/,/, "").to_f
           # 出来高
           vol_value = (td_tags[7].nil? ? "" : (td_tags[7]).text).gsub(/,/, "").to_f
-
-          p "#{ticker.to_s},start:#{start_value},high:#{high_value},low:#{low_value},end:#{end_value},vol:#{vol_value},#{target_ymd}"
   				Priceseries.new(
     				ticker: ticker.to_s,
             name: name,#名前をスクレイピングして取得するのも良い

@@ -10,6 +10,41 @@ class ApplicationController < ActionController::Base
   #全コントローラー及びビュー内で使用可能なメソッドの定義
   helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime, :getDocFromHtml, :isValidate
 
+  #該当日付(yyyymmdd)に該当する日付のIR情報(feed)を取得する
+  def getIrArrays(target_yyyymmdd)
+    p "target_yyyymmdd = #{target_yyyymmdd}"
+    irs_at_day=[]
+    Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
+      # p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
+      begin
+        p "loop" + Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d').to_s
+        if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == target_yyyymmdd
+          irs_at_day.push(feed_each)
+        end
+      rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
+        next
+      end
+    end
+    return irs_at_day
+  end
+
+  def getMarketSchedules(target_yyyymmdd)
+    schedules_at_day = [];
+    if target_yyyymmdd.to_s.length != 8
+      return [];
+    end
+    Feed.where(keyword: 'market_schedule').each do |feed_each|
+      begin
+        if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == target_yyyymmdd
+          schedule_at_day.push(feed_each)
+        end
+      rescue
+        next
+      end
+    end
+    return schedules_at_day
+  end
+
   # string型のurlからhtmlを取得する
   def getDocFromHtml(url_string)
 

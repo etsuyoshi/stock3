@@ -131,7 +131,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    update(client, tweet)
+    # update(client, tweet)
   end
 
 
@@ -597,37 +597,42 @@ def getWeekDayComment(d)
     p "月曜日以外の平日"
     # 前日の振り返り、前日の決算＆指標と当日の決算＆指標
     # 昨日の日経は円(+%)、ダウはドル(+%)でした。またAの決算とB指標などが発表されました。本日の決算はC決算とD指標が発表されます。
-    ir_todays = []
-    ir_yesterdays = []
     today_date = Time.now().in_time_zone('Tokyo').strftime('%Y%m%d')
     yesterday_date = Time.at(Time.now().in_time_zone('Tokyo').to_i-24*3600).strftime('%Y%m%d')
-    # today_date = "20180731"
-    # yesterday_date = "20180730"
-    Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
-      p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
-      begin
-        if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == today_date
-          ir_todays.push(feed_each)
-        elsif Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
-          ir_yesterday.push(feed_each)
-        end
-      rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
-        next
-      end
-    end
-    event_todays = []
-    event_yesterdays = []
-    Feed.where(keyword: 'market_schedule').each do |feed_each|
-      begin
-        if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == today_date
-          event_todays.push(feed_each)
-        elsif Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
-          event_yesterdays.push(feed_each)
-        end
-      rescue
-        next
-      end
-    end
+    ir_todays = ApplicationController.new.getIrArrays(today_date)
+    ir_yesterdays = ApplicationController.new.getIrArrays(yesterday_date)
+    # Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
+    #   p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
+    #   begin
+    #     if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == today_date
+    #       ir_todays.push(feed_each)
+    #     elsif Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
+    #       ir_yesterday.push(feed_each)
+    #     end
+    #   rescue #エンコードや文字カウント絡みで何かしらのエラーが発生した時は無視して次を見る
+    #     next
+    #   end
+    # end
+    p ir_todays
+    p ir_yesterdays
+
+
+    event_todays = ApplicationController.new.getMarketSchedules(today_date)
+    event_yesterdays = ApplicationController.new.getMarketSchedules(yesterday_date)
+    p event_todays
+    p event_yesterdays
+    # Feed.where(keyword: 'market_schedule').each do |feed_each|
+    #   begin
+    #     if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == today_date
+    #       event_todays.push(feed_each)
+    #     elsif Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == yesterday_date
+    #       event_yesterdays.push(feed_each)
+    #     end
+    #   rescue
+    #     next
+    #   end
+    # end
+
 
     # comment = "まず先週末のダウは#{dow_last2.first.close}ドルで引けました。これは前週比で#{rtnDow_7.round(2)}%です。今週は#{Time.at(min_feed_ir.feed_id.to_i).strftime('%-d')}日に#{min_feed_ir.keyword}による#{min_feed_ir.title}のIRがありました。"
     market_comment = "昨日の日経平均は#{nikkei_last2.first.close}円(#{rtnNikkei_1>0 ? "+":"△"}#{rtnNikkei_1.abs.round(1)}%)、ダウは#{dow_last2.first.close}ドル(#{rtnDow_1>0 ? "+":"△"}#{rtnDow_1.abs.round(1)}%)。"

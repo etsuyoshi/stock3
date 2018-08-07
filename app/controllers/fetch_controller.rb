@@ -21,10 +21,10 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    # get_news()
-    # get_bitcoin_news()
+    get_news()
+    get_bitcoin_news()
     get_kessan_news()
-    # get_schedules()
+    get_schedules()
     return
 
 

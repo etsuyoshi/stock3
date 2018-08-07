@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
   def getIrArrays(target_yyyymmdd)
     p "target_yyyymmdd = #{target_yyyymmdd}"
     irs_at_day=[]
+    if target_yyyymmdd.to_s.length != 8
+      p "8ではないので終了"
+      return [];
+    end
     Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
       # p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
       begin
@@ -31,6 +35,7 @@ class ApplicationController < ActionController::Base
   def getMarketSchedules(target_yyyymmdd)
     schedules_at_day = [];
     if target_yyyymmdd.to_s.length != 8
+      p "8ではないので終了"
       return [];
     end
     Feed.where(keyword: 'market_schedule').each do |feed_each|
@@ -56,7 +61,6 @@ class ApplicationController < ActionController::Base
       # kabutanの場合には=や？はそのままにする
       url_encoded = url_string
     end
-
     if !isValidate(url_encoded)
       p "そのURLは無効です <- #{url_encoded}"
       return nil;

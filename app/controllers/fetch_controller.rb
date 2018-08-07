@@ -21,10 +21,10 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()
-    get_bitcoin_news()
+    # get_news()
+    # get_bitcoin_news()
     get_kessan_news()
-    get_schedules()
+    # get_schedules()
     return
 
 
@@ -313,6 +313,7 @@ class FetchController < ApplicationController
       loop_count = 1
       url = base_url + loop_count.to_s
       # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
+      p "url = #{url}"
   		doc = getDocFromHtmlWithJS(url)
       if doc.css('tbody').nil?
         next
@@ -346,8 +347,7 @@ class FetchController < ApplicationController
 
           p "title = #{kessan_title}"
           p "desc = #{kessan_description}"
-          insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, nil, name, ticker)
-
+          insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, 'kessan', name, ticker)
         end
       end
 

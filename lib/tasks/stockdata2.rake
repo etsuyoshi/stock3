@@ -24,8 +24,6 @@ namespace :db do
 	desc "Fill database with sample data"
 
 	task fetch_test: :environment do
-		_controller = FetchController.new
-		_controller.index
 
 
 	end

@@ -134,7 +134,7 @@ module ApplicationHelper
     related_tag_feeds.each do |related_feed|
       return_array.push(related_feed.id)
 
-      p "related_feed = #{related_feed.id}, #{Feed.find(related_feed.id).first.}"
+      p "related_feed = #{related_feed.id}, #{Feed.find(related_feed.id).first.tag_list}"
     end
 
     if feed.description

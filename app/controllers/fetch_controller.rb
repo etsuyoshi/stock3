@@ -331,6 +331,7 @@ class FetchController < ApplicationController
             ticker = tds[0].inner_text.gsub(/\t/, "").gsub(/\n/,"")
             # 量が多いのでPriceseriesの中にある銘柄だけで実施する
             if Priceseries.where(ticker: ticker).count == 0
+              p "225採用銘柄ではないのでスルー"
               next
             end
 

@@ -3,7 +3,7 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-12 col-md-12 col-lg-offset-1 col-lg-10 feed_content">
-    <%= link_to @feed.title + " : " + feed_time.strftime('(%Y年%-m月%-d日 %H:%M)'), @feed.link %>
+    <%= link_to @feed.title + " : " + (feed_time.strftime('%H').to_s != '00' ? feed_time.strftime('(%Y年%-m月%-d日 %H:%M)') : feed_time.strftime('(%Y年%-m月%-d日)')), @feed.link %>
     <br>
     <!-- brタグを有効にするためsimple_format -->
     <%= simple_format(@feed.description) %>

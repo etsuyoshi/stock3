@@ -51,7 +51,9 @@ module ApplicationHelper
 
   #Feedモデルの記事IDからkeywordを抽出し、同じキーワードが多く含まれている他の記事id配列を多い順番に作成する
   def similar_article(article_id)
+    p "similar_article" + article_id.to_s
     feed = Feed.find(article_id)
+    return_array = []
 
     if feed.keyword
       arr_keywords = feed.keyword.split(',')
@@ -78,16 +80,36 @@ module ApplicationHelper
       #arr_hist_article = hist_article.sort{|(k1, v1), (k2, v2)| k2 <=> k1 }
       #頻度順:hash to array
       arr_hist_article = hist_article.sort{|(k1, v1), (k2, v2)| v2 <=> v1 }
-
-      return_array = []
       arr_hist_article.each_with_index do |hist_art|
-        return_array.push(hist_art[0])
+        # 自分以外の記事のみ格納する
+        p "hist_art = #{hist_art[0]}"
+        p "article_id = #{article_id}"
+        if hist_art[0] != article_id#<-機能している？
+          return_array.push(hist_art[0])
+        end
       end
+    end #if keyword
 
-      return return_array#記事ID配列（多い順）
 
-    else
-      return nil
+    # 同じ業種の他の記事を探索
+    # keyword、tagで業種、銘柄検索する
+    # tagに業種、企業名、決算などを追加してrelated_tagsで検索する？
+    related_tag_feeds = feed.find_related_tags
+    related_tag_feeds.each do |related_feed|
+      return_array.push(related_feed.id)
     end
+
+    if feed.description
+      description_parsed_keyword = Natto::MeCab.new().parse(feed.description)
+      description_parsed_keyword.each do |related_keyword|
+        
+      end
+    end
+
+
+
+    return return_array#記事ID配列（多い順）
+
+
   end
 end

@@ -21,10 +21,14 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()
-    get_bitcoin_news()
-    get_kessan_news()
-    get_schedules()
+
+    p get_keywords_from_description("今日はとてもいい天気で雨も降っており台風の風がつよいです。強いですね！")
+
+
+    # get_news()
+    # get_bitcoin_news()
+    # get_kessan_news()
+    # get_schedules()
     return
 
 
@@ -334,7 +338,6 @@ class FetchController < ApplicationController
               p "225採用銘柄ではないのでスルー"
               next
             end
-
             kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
             name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")
             timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期

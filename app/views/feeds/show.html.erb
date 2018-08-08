@@ -9,21 +9,23 @@
     <%= simple_format(@feed.description) %>
     <br>
 
-
-    <b>他に見られている記事</b>
-    <br><br>
-    <!-- 関連フィード -->
     <% related_article_ids = similar_article(@feed.id) %>
-    <% related_articles = Feed.where(id: related_article_ids) %>
+    <% if related_article_ids.length > 0 %>
+      <b>他に見られている記事</b>
+      <br><br>
+      <!-- 関連フィード -->
 
-    <!-- 理想：tfidfでスコアリングした文章をベースに高いスコアのワードで共有 -->
-    <% if related_articles %><!-- nilではないことを確認 -->
-      <% related_articles.each do |related_article| %>
-      <div class="related_feed_cell">
-        <b><%= link_to related_article.title, related_article %></b>
-        <%= simple_format(related_article.description) %>
-        <br>
-      </div>
+      <% related_articles = Feed.where(id: related_article_ids) %>
+
+      <!-- 理想：tfidfでスコアリングした文章をベースに高いスコアのワードで共有 -->
+      <% if related_articles %><!-- nilではないことを確認 -->
+        <% related_articles.each do |related_article| %>
+        <div class="related_feed_cell">
+          <b><%= link_to related_article.title, related_article %></b>
+          <%= simple_format(related_article.description) %>
+          <br>
+        </div>
+        <% end %>
       <% end %>
     <% end %>
   </div>

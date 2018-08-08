@@ -1,3 +1,5 @@
+require 'natto'
+
 module ApplicationHelper
   # seo-meta-tag
   # http://qiita.com/hirooooooo/items/f1a75cf0f2c581f0b620
@@ -49,6 +51,40 @@ module ApplicationHelper
     return get_foreign_hour(japanese_hour.to_i, hour_diff)
   end
 
+  #パラメータのデスクリプションから一般名詞及び固有名詞のみを抽出する（カンマ区切りで連結してreturn）
+  def get_keywords_from_description(description)
+
+    #めかぶ
+    mecab = Natto::MeCab.new()
+    # Natto::MeCab.new('-d /usr/local/lib/mecab/dic/mecab-ipadic-neologd')
+    #サンプルテキスト
+    #sample_text = "［フランクフルト　１８日　ロイター］ - 米セントルイス地区連銀のブラード総裁は、１２月の利上げ支持に傾きつつあるとし、実質的な問題は２０１７年の金利の道筋だとの見方を示した。同総裁はフランクフルトでのセミナーで「市場は現在、１２月の連邦公開市場委員会（ＦＯＭＣ）で措置を講じる可能性が高いと考えている。私もこれを支持する方向に傾いている」と述べた。ＦＯＭＣで投票権を有する同総裁は、米新政権の措置は２０１８年の経済に大きく影響する可能性があるが、移民制限や通商面での提案は大きく影響するのに１０年かかるかもしれないと指摘。「通商は協議が必要で何年もかかる。経済に大きく影響する可能性があるが、何年も、１０年もかかる問題だ」と述べた。新政権への移行に伴う政策変更の影響が実際に出てくるのは２０１８年から２０１９年にかけてとし、米連邦準備理事会（ＦＲＢ）の来年の見通しが変わることはないとの見方を示した。またＦＲＢの緩やかな利上げペースを正常化と呼ぶべきではないと指摘。２５ベーシスポイント（ｂｐ）程度の金利引き上げがマクロ経済に及ぼす影響は軽微で、ＦＲＢはやや上向きながらも事実上は据え置きのスタンスだとの見解を示した。移民については、どのような改革でも労働力の構成を変える可能性があるが、大きな影響は５－１０年で表れるとの見方を示した。規制や税制改革は１８－１９年に影響がでるとしたが、具体策が明らかになるまで判断は控えたいと語った。＊内容を追加して再送します"
+    sample_text = description
+    #予約語(これらのワードは抽出対象外とする)
+    super_words = ["ロイター", "reuter", "世界", "内容", "あれ", "これ", "どれ", "それ"]
+
+    keywords = ""
+    mecab.parse(sample_text) do |n|
+
+      word = n.surface.to_s#単語
+      parts = n.feature#品詞
+
+      # heroku側で日本語で機能することを確認済み
+      if (parts.match(/(固有名詞|名詞,一般)/)) and (word.length>0)#1文字以上の固有名詞と一般名詞のみ抽出
+        if !super_words.include?(word) and !keywords.include?(word)
+          if keywords == ""
+            keywords = word
+          else
+            keywords = keywords + "," + word
+          end
+        end
+      end
+    end
+    return keywords
+  end
+
+
+
   #Feedモデルの記事IDからkeywordを抽出し、同じキーワードが多く含まれている他の記事id配列を多い順番に作成する
   def similar_article(article_id)
     p "similar_article" + article_id.to_s
@@ -84,7 +120,7 @@ module ApplicationHelper
         # 自分以外の記事のみ格納する
         p "hist_art = #{hist_art[0]}"
         p "article_id = #{article_id}"
-        if hist_art[0] != article_id#<-機能している？
+        if hist_art[0] != article_id
           return_array.push(hist_art[0])
         end
       end
@@ -100,15 +136,28 @@ module ApplicationHelper
     end
 
     if feed.description
-      description_parsed_keyword = Natto::MeCab.new().parse(feed.description)
-      description_parsed_keyword.each do |related_keyword|
-        
+      hash_related_description = Hash.new(0)
+      get_keywords_from_description(feed.description).each do |included_keyword|
+        # 最終的にはより多くの単語にマッチしているfeedのみを取得したい
+        related_desc_feeds = Feed.where('description like ?', "%#{included_keyword}%")
+        related_desc_feeds.each do |f|
+          if hash_related_description.has_key?(f.id)
+            hash_related_description[f.id] += 1
+          else
+            hash_related_description[f.id] = 1
+          end
+        end
+      end
+      hash_related_description.each do |hash_related_feed_id|
+        if hash_related_feed_id[1].to_i>=2#2回以上出現するfeedに限定する
+          return_array.push(hash_related_feed_id[0])
+        end
       end
     end
 
 
 
-    return return_array#記事ID配列（多い順）
+    return return_array.length > 0 ? return_array : nil#記事ID配列（多い順）
 
 
   end

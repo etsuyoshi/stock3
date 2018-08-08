@@ -3,7 +3,7 @@ class FetchController < ApplicationController
   require 'open-uri'# URLアクセス
   require 'kconv'    # 文字コード変換
   require 'nokogiri' # スクレイピング
-  
+
 
   require 'time'
   require 'date'
@@ -21,10 +21,10 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()
+    get_news()#個別企業などのニュース
     get_bitcoin_news()
-    get_kessan_news()
-    get_schedules()
+    get_kessan_news()#決算短信や本決算情報
+    get_schedules()#国際統計情報
     return
 
 

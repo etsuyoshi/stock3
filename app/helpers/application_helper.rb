@@ -133,11 +133,14 @@ module ApplicationHelper
     related_tag_feeds = feed.find_related_tags
     related_tag_feeds.each do |related_feed|
       return_array.push(related_feed.id)
+
+      p "related_feed = #{related_feed.id}, #{Feed.find(related_feed.id).first.}"
     end
 
     if feed.description
       hash_related_description = Hash.new(0)
-      get_keywords_from_description(feed.description).each do |included_keyword|
+      # description中における名詞の数だけループさせる
+      get_keywords_from_description(feed.description).split(",").each do |included_keyword|
         # 最終的にはより多くの単語にマッチしているfeedのみを取得したい
         related_desc_feeds = Feed.where('description like ?', "%#{included_keyword}%")
         related_desc_feeds.each do |f|
@@ -149,6 +152,7 @@ module ApplicationHelper
         end
       end
       hash_related_description.each do |hash_related_feed_id|
+        p "hash_related_feed_id = #{hash_related_feed_id}"
         if hash_related_feed_id[1].to_i>=2#2回以上出現するfeedに限定する
           return_array.push(hash_related_feed_id[0])
         end

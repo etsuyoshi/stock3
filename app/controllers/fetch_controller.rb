@@ -310,49 +310,49 @@ class FetchController < ApplicationController
       url_param = "ResultFlag=1&kwd=&KessanMonth=&SearchDate1=#{searchDate1}&SearchDate2=#{searchDate2}&Gcode=%20&hm="
       base_url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?" + url_param
 
-      loop_count = 1
-      url = base_url + loop_count.to_s
-      # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
-      p "url = #{url}"
-  		doc = getDocFromHtmlWithJS(url)
-      if doc.css('tbody').nil?
-        next
-      elsif doc.css('tbody').css('tr.tr2').nil?
-        next
-      elsif doc.css('tbody').css('tr.tr2')[0].nil?
-        next
-      elsif doc.css('tbody').css('tr.tr2')[0].css('th').nil?
-        next
-      end
-  		doc.css('tbody').css('tr.tr2').each do |kessan_record|
-        if !kessan_record.nil? && !kessan_record.css('th').nil?
-          tds = kessan_record.css('td')
-          ticker = tds[0].inner_text.gsub(/\t/, "").gsub(/\n/,"")
-          # 量が多いのでPriceseriesの中にある銘柄だけで実施する
-          if Priceseries.where(ticker: ticker).count == 0
-            next
+      #loop_count = 1
+      (1..100).each do |loop_count|
+        url = base_url + loop_count.to_s
+        # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
+        p "url = #{url}"
+    		doc = getDocFromHtmlWithJS(url)
+        if doc.css('tbody').nil?
+          break;
+        elsif doc.css('tbody').css('tr.tr2').nil?
+          break;
+        elsif doc.css('tbody').css('tr.tr2')[0].nil?
+          break;
+        elsif doc.css('tbody').css('tr.tr2')[0].css('th').nil?
+          break;
+        end
+    		doc.css('tbody').css('tr.tr2').each do |kessan_record|
+          if !kessan_record.nil? && !kessan_record.css('th').nil?
+            tds = kessan_record.css('td')
+            ticker = tds[0].inner_text.gsub(/\t/, "").gsub(/\n/,"")
+            # 量が多いのでPriceseriesの中にある銘柄だけで実施する
+            if Priceseries.where(ticker: ticker).count == 0
+              next
+            end
+
+            kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
+            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")
+            timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
+            phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
+            company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
+            market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
+            kessan_title = name + "(#{market_type}一部:#{company_type}) " + phase + "決算"
+            kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
+              Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
+              (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"
+            kessan_link = "https://www.nikkei.com/nkd/company/kigyo/?scode=" + ticker
+
+            p "title = #{kessan_title}"
+            p "desc = #{kessan_description}"
+            #insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
+            insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, 'kessan', name, ticker)
           end
-
-          kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
-          name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")
-          timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
-          phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
-          company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
-          market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
-          kessan_title = name + "(#{market_type}一部:#{company_type}) " + phase + "決算"
-          kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
-            Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
-            (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"
-          kessan_link = "https://www.nikkei.com/nkd/company/kigyo/?scode=" + ticker
-
-          p "title = #{kessan_title}"
-          p "desc = #{kessan_description}"
-          insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, 'kessan', name, ticker)
         end
       end
-
-
-
     end
 
   end

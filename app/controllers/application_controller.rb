@@ -3,13 +3,13 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
   include SessionsHelper
-  include ApplicationHelper
+  include ApplicationHelper#ApplicationHelperのメソッドも他のcontrollerからもcallできるようにする
 
   before_action :get_feed, :get_event
   # before_action :get_event
 
   #全コントローラー及びビュー内で使用可能なメソッドの定義
-  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime, :getDocFromHtml, :isValidate
+  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime, :getDocFromHtmlWithJS, :getDocFromHtml, :isValidate
 
   #該当日付(yyyymmdd)に該当する日付のIR情報(feed)を取得する
   def getIrArrays(target_yyyymmdd)

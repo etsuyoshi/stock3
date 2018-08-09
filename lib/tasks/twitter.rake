@@ -647,10 +647,13 @@ def getWeekDayComment(d)
       kessan_comment = kessan_comment + "昨日は" + ir_yesterday_comment
     end
     if ir_todays.length > 0#本日IR
+      p "ir_todays.length = #{ir_todays.length}, ir_todays[1].keyword = #{ir_todays[1]}, #{ir_todays[1].keyword}"
+      p "ir_todays.length = #{ir_todays.length}, ir_todays[1].keyword = #{ir_todays[2]}, #{ir_todays[2].keyword}"
+
       ir_today_comment = "#{ir_todays[0].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}"+
-                         ir_todays.length>1 ? ",#{ir_todays[1].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}" : "" +
-                         ir_todays.length>2 ? ",#{ir_todays[2].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}など" : ""
-      kessan_comment = kessan_comment + (ir_yesterdays.length>0 ? "があり," : "") + "本日は" + ir_today_comment
+                         (ir_todays.length>1 ? ",#{ir_todays[1].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}" : "") +
+                         (ir_todays.length>2 ? ",#{ir_todays[2].keyword.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")}など" : "")
+      kessan_comment = kessan_comment + (ir_yesterdays.length>0 ? "," : "") + "本日は" + ir_today_comment
     end
     if ir_todays.length > 0 || ir_yesterdays.length > 0
       kessan_comment = kessan_comment + "の決算があります."

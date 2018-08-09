@@ -335,7 +335,7 @@ class FetchController < ApplicationController
               next
             end
             kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
-            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"")
+            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"")
             timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
             phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
             company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種

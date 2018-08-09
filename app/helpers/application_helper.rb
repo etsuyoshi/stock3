@@ -139,8 +139,12 @@ module ApplicationHelper
 
     if feed.description
       hash_related_description = Hash.new(0)
+      exclusive_words = ["東証", "決算", "一部", "株式会社", "会社", "株"]
       # description中における名詞の数だけループさせる
       get_keywords_from_description(feed.description).split(",").each do |included_keyword|
+        if exclusive_words.include?(included_keyword)
+          next
+        end
         # 最終的にはより多くの単語にマッチしているfeedのみを取得したい
         related_desc_feeds = Feed.where('description like ?', "%#{included_keyword}%")
         related_desc_feeds.each do |f|

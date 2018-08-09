@@ -482,7 +482,7 @@ class FetchController < ApplicationController
                 description = description.sub(/。/,"。<br>")
 
                 # 謎のワードが追加されるので削除する
-                description = description.gsub(/信頼の原則/,"")
+                description = description.gsub(/「信頼の原則」/,"").gsub(/信頼の原則/,"")
 
                 #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
                 #http://watarisein.hatenablog.com/entry/2016/01/31/163327

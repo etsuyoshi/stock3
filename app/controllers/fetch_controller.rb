@@ -21,10 +21,10 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()#個別企業などのニュース
+    # get_news()#個別企業などのニュース
     get_bitcoin_news()
-    get_kessan_news()#決算短信や本決算情報
-    get_schedules()#国際統計情報
+    # get_kessan_news()#決算短信や本決算情報
+    # get_schedules()#国際統計情報
     return
 
 
@@ -129,25 +129,34 @@ class FetchController < ApplicationController
   end
 
   def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
+    p "title:#{title}, desc:#{description}, feedlabel:#{feedlabel}, keyword:#{keyword}, ticker:#{ticker}"
     duplicated_feeds = Feed.where(title: title)
-    if duplicated_feeds.count > 0
-      duplicated_feeds.all.each do |duplicates|
-        duplicates.destroy
-        duplicates.save
+    # if duplicated_feeds.count > 0
+    #   duplicated_feeds.all.each do |duplicates|
+    #     duplicates.destroy
+    #     duplicates.save
+    #   end
+    # end
+    if duplicated_feeds.count == 0
+      feed = Feed.new(
+        :feed_id          => feed_id,
+        :title            => title,
+        :description      => description,
+        :link             => link,
+        :keyword          => keyword,
+        :ticker           => ticker
+      )
+      if !feedlabel.nil?
+        feed.tag_list.add(feedlabel)
       end
+      if !keyword.nil?
+        feed.tag_list.add(keyword.split(','))
+      end
+      feed.save
+      p "「#{Feed.where(title: title).first.title}」を保存しました"
+    else
+      p "既に存在するので保存しません"
     end
-    feed = Feed.new(
-      :feed_id          => feed_id,
-      :title            => title,
-      :description      => description,
-      :link             => link,
-      :keyword          => keyword,
-      :ticker           => ticker
-    )
-    if !feedlabel.nil?
-      feed.tag_list.add(feedlabel)
-    end
-    feed.save
   end
 
   # DBに保存されている最新のfeed_id(unixtime)を取得
@@ -398,7 +407,6 @@ class FetchController < ApplicationController
       elsif article.css('div.meta').css('div.date').inner_text.include?("Promotion")
         next
       end
-      p "article.css(div.meta) = #{article.css('div.meta')}"
       date_feed_id = Date.parse(article.css('div.meta').css('div.date').inner_text).to_s.gsub(/\n/,"").gsub(/\t/,"").to_time.to_i + 24*3599*Random.new.rand
       p "date_feed_id = #{Time.at(date_feed_id)}"
       # p "date_feed_id.to_time = #{Time.at(date_feed_id)}"

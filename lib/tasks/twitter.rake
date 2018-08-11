@@ -733,7 +733,9 @@ def get_kessan_summary(today)
     from_unixtime = Time.at((today.strftime('%Y-%m-%d') + " 00:00:00").to_time).to_i
     to_unixtime = Time.at((today.strftime('%Y-%m-%d') + " 23:59:59").to_time).to_i
 
-    kessans = Feed.where("feed_id >= ? and feed_id < ?", from_unixtime, to_unixtime).tagged_with('kessan')
+    #localでは使えるが、herokuでは使えない
+    #kessans = Feed.where("feed_id >= ? and feed_id < ?", from_unixtime, to_unixtime).tagged_with('kessan')
+    kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')
     if kessans.count == 0
       return nil
     end

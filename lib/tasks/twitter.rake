@@ -707,3 +707,10 @@ def getWeekDayComment(d)
 
   return comment
 end
+
+#決算データの総括
+def get_kessan_summary
+  comment = nil
+  
+  return comment
+end

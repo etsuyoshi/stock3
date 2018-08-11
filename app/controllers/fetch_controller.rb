@@ -210,8 +210,16 @@ class FetchController < ApplicationController
       if !keyword.nil?
         feed.tag_list.add(keyword.split(','))
       end
-      feed.save
-      p "「#{Feed.where(title: title).first.title}」を保存しました"
+      if feed.save
+        if !Feed.where(title: title).first.nil?
+          p "「#{Feed.where(title: title).first.title}」を保存しました"
+        else
+          p "#{title}→保存失敗"
+        end
+      else
+        p "#{title}→保存失敗"
+      end
+
     else
       p "既に存在するので保存しません"
     end
@@ -402,7 +410,7 @@ class FetchController < ApplicationController
               next
             end
             kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
-            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"")
+            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"").gsub(/自動車/,"")
             timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
             phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
             company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種

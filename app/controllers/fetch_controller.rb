@@ -18,13 +18,71 @@ class FetchController < ApplicationController
 		_rank_controller.index
   end
 
+  def gg(keyword)
+    keyword = keyword.nil? ? "エストロゲン" : keyword
+    p keyword
+    Capybara.register_driver :poltergeist do |app|
+      Capybara::Poltergeist::Driver.new(app, {:js_errors => false, :timeout => 5000 })
+    end
+    session = Capybara::Session.new(:poltergeist)
+    session.driver.headers = {
+        'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36"
+    }
+    session.visit 'http://www.related-keywords.com/'
+    #search_input = session.find('#twotabsearchtextbox')#<input type="text" id="twotabsearchtextbox" value="" name="field-keywords" autocomplete="off" placeholder="" class="nav-input" dir="auto" tabindex="6">
+    search_input = session.find("input[type='text']")#<input type="text" name="keyword" value="" style="width:258px;">
+    search_input.native.send_key(keyword)
+
+    #submit = session.find(:xpath, '//*[@id="nav-search"]/form/div[2]/div/input')#<input type="submit" value="取得開始">
+    #submit = session.find("input[type='submit']")
+    submit = session.find("input[value='取得開始']")
+    submit.trigger('click')# 検索ボタンを押下
+    # 検索結果を表示するまでスリープ
+    sleep(1)
+
+    # 検索結果が表示されたページをnokogiriでパース
+    page = Nokogiri::HTML.parse(session.html)
+    session.driver.quit
+    outputs = []
+    p "ppppppppp"
+    mecab = Natto::MeCab.new()
+    page.css('li').each do |li|
+      inner_text = li.inner_text
+      if inner_text.include?(keyword)
+        word = inner_text.gsub(/#{keyword}/,"").gsub(/ /,"").gsub(/　/,"").gsub(/\t/, "").to_s
+        if word.nil? || word==""
+          next
+        end
+        # 過去に存在しないもの
+        if !outputs.include?(word)
+          # 固有名詞判断
+          mecabed = mecab.parse(word)
+          mecab.parse(word) do |n|
+            kkk = n.surface.to_s#単語
+            parts = n.feature#品詞
+
+            if parts.match(/(固有名詞|名詞,一般)/)#1文字以上の固有名詞と一般名詞のみ抽出
+              outputs.push(kkk)
+              p kkk + ":" + parts
+            end
+          end
+        end
+      end
+    end
+    p "----------------------------------------"
+
+    # outputs.each do |output|
+    #   p output
+    # end
+  end
+
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    # get_news()#個別企業などのニュース
+    get_news()#個別企業などのニュース
     get_bitcoin_news()
-    # get_kessan_news()#決算短信や本決算情報
-    # get_schedules()#国際統計情報
+    get_kessan_news()#決算短信や本決算情報
+    get_schedules()#国際統計情報
     return
 
 
@@ -147,7 +205,7 @@ class FetchController < ApplicationController
         :ticker           => ticker
       )
       if !feedlabel.nil?
-        feed.tag_list.add(feedlabel)
+        feed.tag_list.add(feedlabel.split(','))
       end
       if !keyword.nil?
         feed.tag_list.add(keyword.split(','))

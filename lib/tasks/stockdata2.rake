@@ -23,9 +23,9 @@ require 'json'
 namespace :db do
 	desc "Fill database with sample data"
 
-	task fetch_test: :environment do
-
-
+	task gg: :environment do
+		_controller = FetchController.new
+		_controller.gg("幼虫")
 	end
 
 	task fetcher: :environment do

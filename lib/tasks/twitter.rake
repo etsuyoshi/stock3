@@ -23,7 +23,7 @@ namespace :twitter do
   desc "tweet hello"
 
   task tttest: :environment do
-    getKessanComment()
+
   end
 
   #フォロワー数を取得する
@@ -126,12 +126,22 @@ namespace :twitter do
     #   tweet = "今日は休日のため休場です！株価の振り返りをしましょう！  http://www.japanchart.com"
     # end
     tweet = getWeekDayComment(Date.today)
-    d = Time.now.in_time_zone('Tokyo')
+    # d = Time.now.in_time_zone('Tokyo')
     #str = d.strftime("%Y年%m月%d日 %H:%M")
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
     update(client, tweet)
+  end
+
+  # 10時にtweetする内容
+  task :tweetBranch => :environment do
+    client = get_twitter_client
+    tweet = get_kessan_summary(Date.today)
+    puts tweet
+    if !tweet.nil?
+      update(client, tweet)
+    end
   end
 
 
@@ -486,7 +496,6 @@ def getWeekDayComment(d)
     "上海総合は#{shanghai_last2.first.close}ptで前週比#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}(前月比#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"})でした。"
   monthly_comment = "日経平均は1ヶ月で#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
 
-
   case d.wday
   when 0
     p "日曜日"
@@ -676,20 +685,21 @@ def getWeekDayComment(d)
   when 6
     p "土曜日"
 
-    case Random.new.rand(5)
-    when 0
-      before_comment = "待ちに待った週末。"
-    when 1
-      before_comment = "今週もお疲れ様。"
-    when 2
-      before_comment = "やっと土曜日ですね。"
-    when 3
-      before_comment = "今週もお仕事ご苦労様。"
-    when 4
-      before_comment = "いよいよ週末です。"
-    else
-      before_comment = ""
-    end
+    # case Random.new.rand(5)
+    # when 0
+    #   before_comment = "待ちに待った週末。"
+    # when 1
+    #   before_comment = "今週もお疲れ様。"
+    # when 2
+    #   before_comment = "やっと土曜日ですね。"
+    # when 3
+    #   before_comment = "今週もお仕事ご苦労様。"
+    # when 4
+    #   before_comment = "いよいよ週末です。"
+    # else
+    #   before_comment = ""
+    # end
+    before_comment = ""
     #騰落率上位
     comment = before_comment + weekly_comment
 
@@ -708,9 +718,87 @@ def getWeekDayComment(d)
   return comment
 end
 
-#決算データの総括
-def get_kessan_summary
-  comment = nil
-  
+#今週の決算データの総括(10時時点なので)
+def get_kessan_summary(today)
+  comment = nil;
+  case today.wday
+  when 0#日曜日
+    p "日曜日"
+    return nil;
+  when 1,2,3,4,5 #平日
+    p "平日"
+    #今日の決算データの総括
+    # from_unixtime = Time.at((Time.new.strftime('%Y-%m-%d') + " 00:00:00").to_time).to_i
+    # to_unixtime = Time.at((Time.new.strftime('%Y-%m-%d') + " 23:59:59").to_time).to_i
+    from_unixtime = Time.at((today.strftime('%Y-%m-%d') + " 00:00:00").to_time).to_i
+    to_unixtime = Time.at((today.strftime('%Y-%m-%d') + " 23:59:59").to_time).to_i
+
+    kessans = Feed.where("feed_id >= ? and feed_id < ?", from_unixtime, to_unixtime).tagged_with('kessan')
+    if kessans.count == 0
+      return nil
+    end
+    kessan_names = ""
+    kessans.last(10).each_with_index do |kessan, i|
+      kessan_names = kessan_names + (i==0 ? "" : ",") + kessan.keyword
+    end
+    comment = "本日は" + kessan_names + "など" + (kessans.count == 1 ? "" : "日経平均採用#{kessans.count}銘柄") + "の決算発表があります。"
+    return comment
+  when 6 #土曜日
+    p "土曜日"
+    #today_unixtime = Time.new.to_time.to_i
+    today_unixtime = today.to_time.to_i
+    # get feed for 7days ago
+    kessans = Feed.where("feed_id >= ?", today_unixtime - 7 * 24 * 3600).tagged_with('kessan').order(feed_id: :asc)
+    if kessans.count == 0
+      return nil
+    end
+
+    kessan_names = ""
+    kessan_date = ""
+    before_date = ""
+    if kessans.count >= 10
+      kessans.first(5).each_with_index do |kessan, i|
+        # p kessan.title + ":" + kessan.description + ":" + kessan.tag_list.to_s
+        if before_date != Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+          kessan_date = Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+          before_date = Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+        else
+          kessan_date = "同日"
+        end
+        kessan_names = kessan_names + (i==0 ? "" : ",") + kessan.keyword + "(#{kessan_date})"
+      end
+      if kessan_names != ""
+        kessan_names = kessan_names + "から"
+      end
+      kessans.last(5).each_with_index do |kessan, i|
+        if before_date != Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+          kessan_date = Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+          before_date = Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+        else
+          kessan_date = "同日"
+        end
+        kessan_names = kessan_names + (i==0 ? "" : ",") + kessan.keyword + "(#{kessan_date})"
+      end
+    else
+      kessans.each_with_index do |kessan, i|
+        if before_date != Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+          kessan_date = Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+          before_date = Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')
+        else
+          kessan_date = "同日"
+        end
+        kessan_names = kessan_names + (i==0 ? "" : ",") + kessan.keyword + "(#{Time.at(kessan.feed_id.to_i).strftime('%-m/%-d')})"
+      end
+    end
+    if kessans.count > 1
+      comment = kessan_names + "など日経225採用銘柄では#{kessans.count}銘柄の決算発表がありました。"
+    else
+      comment = kessan_names + "の決算発表がありました。"
+    end
+    comment = "今週は" + comment
+  else
+    return nil
+  end
+  p comment.length
   return comment
 end

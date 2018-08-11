@@ -410,12 +410,12 @@ class FetchController < ApplicationController
               next
             end
             kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
-            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"").gsub(/自動車/,"")
+            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"").gsub(/自動車/,"自").gsub(/グループ/, "")
             timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
             phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
             company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
             market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
-            kessan_title = name + "(#{market_type}一部:#{company_type}) " + phase + "決算"
+            kessan_title = name + "(#{market_type}一部:#{company_type}) " + (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算
             kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
               Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
               (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"
@@ -556,7 +556,7 @@ class FetchController < ApplicationController
                 description = description.sub(/。/,"。<br>")
 
                 # 謎のワードが追加されるので削除する
-                description = description.gsub(/「信頼の原則」/,"").gsub(/信頼の原則/,"")
+                description = description.gsub(/「信頼の原則」/,"").gsub(/信頼の原則/,"").gsub(/私たちの行動規範：/,"")
 
                 #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
                 #http://watarisein.hatenablog.com/entry/2016/01/31/163327

@@ -748,7 +748,8 @@ def get_kessan_summary(today)
     #today_unixtime = Time.new.to_time.to_i
     today_unixtime = today.to_time.to_i
     # get feed for 7days ago
-    kessans = Feed.where("feed_id >= ?", today_unixtime - 7 * 24 * 3600).tagged_with('kessan').order(feed_id: :asc)
+    #kessans = Feed.where("feed_id >= ?", today_unixtime - 7 * 24 * 3600).tagged_with('kessan').order(feed_id: :asc)
+    kessans = Feed.where(Feed.arel_table[:feed_id].gteq(today_unixtime - 7 * 24 * 3600)).tagged_with('kessan').order(feed_id: :asc)
     if kessans.count == 0
       return nil
     end

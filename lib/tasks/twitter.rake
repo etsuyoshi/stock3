@@ -512,8 +512,6 @@ def getWeekDayComment(d)
       # 決算企業の銘柄コードを取得して１週間騰落率を取得して、その中で最もabsが大きい銘柄を探す
       ticker = kessan.ticker
       #7日以上前で最近の値(=7日前の株価)
-      #nikkei_lm = Priceseries.where(ticker: "0000").where(Priceseries.arel_table[:ymd].lteq(nikkei_last2.first.ymd - 30*24*3600)).order(ymd: :desc).first.close
-      #before7 = Priceseries.where(ticker: ticker).where('ymd < ?', Time.new.to_i - 3600*24*7).order(ymd: :desc).first
       before7 = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(Time.new.to_i-3600*24*7)).order(ymd: :desc).first
       todayPrice = Priceseries.where(ticker: ticker).order(ymd: :desc).first
       returnPrice = todayPrice.close/before7.close-1
@@ -736,7 +734,6 @@ def get_kessan_summary(today)
     to_unixtime = Time.at((today.strftime('%Y-%m-%d') + " 23:59:59").to_time).to_i
 
     #localでは使えるが、herokuでは使えない
-    #kessans = Feed.where("feed_id >= ? and feed_id < ?", from_unixtime, to_unixtime).tagged_with('kessan')
     kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')
     if kessans.count == 0
       return nil

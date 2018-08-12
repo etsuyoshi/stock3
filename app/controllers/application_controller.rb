@@ -163,7 +163,7 @@ class ApplicationController < ActionController::Base
    #決算情報と統計情報だけ取り出す
    start_unixtime = today.to_time.to_i - 3600*24*5 #Time.now.to_i #
    end_unixtime = today.to_time.to_i + 3600*24*5
-   @event_feeds = Feed.where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan')
+   @event_feeds = Feed.where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan').order(ticker: :desc).order(feed_id: :desc)
     #Feed.(where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan')).or(Feed.tagged_with('market_schedule'))
 
    #kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')

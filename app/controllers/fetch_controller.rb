@@ -262,8 +262,9 @@ class FetchController < ApplicationController
     p "article_created = #{article_created}"
     article_ymd = article_created.split("/")[0]
     article_hm = article_created.split("/")[1]
-    article_timestamp = Time.parse(article_ymd + " / " + article_hm)
-    p "article_ymd = #{article_timestamp}, #{article_timestamp.to_i}"
+    #article_timestamp = Time.parse(article_ymd + " / " + article_hm)
+    article_timestamp = (article_ymd + " / " + article_hm).in_time_zone
+    p "article_ymd = #{article_timestamp}, #{article_timestamp.to_i}, #{Time.at(article_timestamp.to_i).in_time_zone('Tokyo')}"
     return_hash = Hash.new
     return_hash["feed_id"] = article_timestamp.to_i#Time.parse(stringYMDHMS).to_i
     article_content = doc.xpath('//div[@class="StandardArticleBody_body"]').inner_text
@@ -499,8 +500,6 @@ class FetchController < ApplicationController
       end
     end
 
-
-
     noPage = 5
     while noPage >= 0 do
       # if TRUE#テスト用
@@ -535,8 +534,6 @@ class FetchController < ApplicationController
           if !(title.nil? || title == "")
             feed_contents = get_feed_id(content)
             feed_id = feed_contents["feed_id"]
-
-            p "feed_id = #{feed_id}"
             if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
               p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
               if latest_id < feed_id

@@ -23,6 +23,15 @@ require 'json'
 namespace :db do
 	desc "Fill database with sample data"
 
+	task :delete_unused => :environment do
+
+		ActsAsTaggableOn::Tag.joins(
+      "LEFT JOIN taggings on taggings.tag_id = tags.id").where("taggings.id is null").delete_all
+    ActsAsTaggableOn::Tagging.joins(
+      "LEFT JOIN tags on tags.id = taggings.tag_id").where("tags.id is null").delete_all
+  end
+
+
 	task gg: :environment do
 		_controller = FetchController.new
 		_controller.gg("幼虫")

@@ -499,12 +499,13 @@ def getWeekDayComment(d)
   case d.wday
   when 0
     p "日曜日"
+
     # 先週の気になるニュース
     # 今週の予定
     comment = monthly_comment
 
     # 先週の決算があった銘柄の中で最も騰落率が大きかったのはxxxです。
-    last_kessans = Feed.tagged_with('kessan').where('title like ?', '%決算%').where(Feed.arel_table[:feed_id].lteq(Time.new.to_i)).order(feed_id: :desc)
+    last_kessans = Feed.tagged_with('kessan').where('ticker is not null').where('title like ?', '%決算%').where(Feed.arel_table[:feed_id].lteq(Time.new.to_i)).order(feed_id: :desc)
     min_return = max_return = 0
     min_kessan = nil
     max_kessan = nil
@@ -514,30 +515,34 @@ def getWeekDayComment(d)
       #7日以上前で最近の値(=7日前の株価)
       before7 = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(Time.new.to_i-3600*24*7)).order(ymd: :desc).first
       todayPrice = Priceseries.where(ticker: ticker).order(ymd: :desc).first
-      returnPrice = todayPrice.close/before7.close-1
+
+      returnPrice = (todayPrice.close.to_f/before7.close.to_f-1 ) * 100
       if returnPrice > max_return
-        returnPrice = max_return
-        max_kessan = todayPrice
+        max_return = returnPrice
+        max_kessan = kessan
       end
       if returnPrice < min_return
-        returnPrice < min_return
-        min_kessan = todayPrice
+        min_return = returnPrice
+        min_kessan = kessan
       end
     end
+
+    #日経平均は1ヶ月で1.67%の上昇、ダウは2.48%下落、上海総合は0.63%上昇でした。先週の決算で最も反応があった銘柄はＫＤＤＩ(9433:-0京王電鉄(9008:-0で
 
     # 先週の決算総括
     kessan_feature = nil;
     if !max_kessan.nil? || !min_kessan.nil?
-      kessan_feature = "先週の決算で最も反応があった銘柄は";
+      kessan_feature = "先週の決算で特に反応があった銘柄は";
       if !max_kessan.nil?
-        kessan_feature = kessan_feture +
+        p max_kessan
+        kessan_feature = kessan_feature +
         "#{max_kessan.keyword}(#{max_kessan.ticker.nil? ? "" : (max_kessan.ticker + ":")}" +
-        "#{max_return>0 ? '+' : '-'}#{max_return}" + (!min_kessan.nil? ? "" : "と")
+        "前週比#{max_return>0 ? '+' : '-'}#{max_return.abs.round(1)}%)" + (min_kessan.nil? ? "" : "と")
       end
       if !min_kessan.nil?
         kessan_feature = kessan_feature +
         "#{min_kessan.keyword}(#{min_kessan.ticker.nil? ? "" : (min_kessan.ticker + ":")}" +
-        "#{min_return>0 ? '+' : '-'}#{min_return}"
+        "前週比#{min_return>0 ? '+' : '-'}#{min_return.abs.round(1)}%)"
       end
       kessan_feature = kessan_feature + "です。"
     end

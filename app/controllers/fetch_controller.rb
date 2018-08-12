@@ -262,8 +262,8 @@ class FetchController < ApplicationController
     p "article_created = #{article_created}"
     article_ymd = article_created.split("/")[0]
     article_hm = article_created.split("/")[1]
-    #article_timestamp = Time.parse(article_ymd + " / " + article_hm)
-    article_timestamp = (article_ymd + " / " + article_hm).in_time_zone
+    #article_timestamp = Time.parse(article_ymd + " / " + article_hm)#<-こっちだと記事に記載されている時間をUTCとして登録してしまう
+    article_timestamp = (article_ymd + " / " + article_hm).in_time_zone#記事に記載されている時間をJSTとして登録する
     p "article_ymd = #{article_timestamp}, #{article_timestamp.to_i}, #{Time.at(article_timestamp.to_i).in_time_zone('Tokyo')}"
     return_hash = Hash.new
     return_hash["feed_id"] = article_timestamp.to_i#Time.parse(stringYMDHMS).to_i

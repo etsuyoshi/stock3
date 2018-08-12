@@ -236,8 +236,6 @@
       <div id="newssidebarcontents">
         <% today = Time.now %>
         <% the_date = "" %>
-        <%= @event_feeds.count %>
-        
         <% @event_feeds.each do |event| %>
           <% event_time = event.feed_id.to_i %>
           <% if the_date != Time.at(event_time).strftime('%Y%m%d') %> <!-- 前回と同じ場合は表示しない -->
@@ -251,7 +249,7 @@
             </div>
           <% end %>
           <div class="eventsidebaritem">
-            <%= event.title %>
+            <%= link_to event.title, event %>
           </div>
         <% end %>
 

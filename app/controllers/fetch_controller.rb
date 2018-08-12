@@ -80,7 +80,7 @@ class FetchController < ApplicationController
   def index
     # get_news()#個別企業などのニュース
     # get_bitcoin_news()
-    get_kessan_news()#決算短信や本決算情報
+    # get_kessan_news()#決算短信や本決算情報
     get_schedules()#国際統計情報
     return
 
@@ -285,21 +285,15 @@ class FetchController < ApplicationController
 
     # javascriptが動いているのでphantomjs(Capybaraによるpoltergeist)を使ってjs実行後のhtmlを取得する
     #poltergistの設定
-    # getDocFromHtmlWithJSで取れるようにする？した？
-    Capybara.register_driver :poltergeist do |app|
-      Capybara::Poltergeist::Driver.new(app, {:js_errors => false, :timeout => 1000 }) #追加のオプションはググってくださいw
-    end
-    Capybara.default_selector = :xpath
-    session = Capybara::Session.new(:poltergeist)
-    #自由にUser-Agent設定してください。
-    session.driver.headers = { 'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X)" }
-    #session.visit "https://fx.minkabu.jp/indicators"
-    session.visit url
-    page = Nokogiri::HTML.parse(session.html).css('div.l-section_interval')
+    doc = getDocFromHtmlWithJS(url)
+    page = doc.css('div.box')
+    p "page = #{page}"
 
-    if page.css('h2').nil? || page.css('table.ei-list').nil?
+    if page.css('h2').nil? || page.css('h2').count==0 || page.css('table.ei-list').nil?
+      p "null"
       return
     else
+      p "all delete"
       Feed.tagged_with('market_schedule').each do |market_feed|
         market_feed.destroy
       end
@@ -320,7 +314,8 @@ class FetchController < ApplicationController
         str_time = Time.at(date_unix_time).strftime('%Y-%m-%d').to_s + " " + list_item.css('td.time').inner_text + ":00"
         list_time = Time.parse(str_time)
         # p "時間 : " + list_item.to_s
-        title = list_item.css('p.flexbox-grow').inner_text#本文
+        # <p class="flexbox__grow">ドイツ・卸売物価指数(前月比/前年比)</p>
+        title = list_item.css('p.flexbox__grow').inner_text#本文
         if title.include?("・")
           title = "(" + title.gsub(/・/,")")
         end
@@ -338,6 +333,7 @@ class FetchController < ApplicationController
         #   same_feed.save
         # end
         # seoの観点で既に存在していれば残す
+        p "title = #{title}"
         if Feed.where(title: title).count == 0
           feed = Feed.new(
             :feed_id          => list_time.to_time.to_i,

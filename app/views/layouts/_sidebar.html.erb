@@ -199,7 +199,7 @@
       <div id="newssidebarcontents">
         <% today = Time.now %>
         <% @feed_news.each do |feed| %>
-          <% feed_time = Time.at(feed.feed_id.to_i) %>
+          <% feed_time = Time.at(feed.feed_id.to_i).in_time_zone('Tokyo') %>
           <div class="newssidebaritem">
             <div class="newsSideBarItemTime">
               <% if feed_time.strftime('%Y').to_i == today.year.to_i &&

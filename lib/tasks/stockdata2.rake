@@ -1,8 +1,3 @@
-# ページ中断のロウソク足
-# ダウ、アップル、アマゾン
-# 日経平均、トヨタ、ドル円
-
-
 # 世界の株価動向を一覧・一目で見れる
 # 値上がり傾向、値下がりトップ５
 # Rankモデルの更新場所はどこ？(FetchControllerで更新確認)→static_pages#nikkeiで取得して、static_pages/nikkei.html.erbで使用している
@@ -24,17 +19,14 @@ namespace :db do
 	desc "Fill database with sample data"
 
 	task :delete_unused => :environment do
-
-		ActsAsTaggableOn::Tag.joins(
-      "LEFT JOIN taggings on taggings.tag_id = tags.id").where("taggings.id is null").delete_all
-    ActsAsTaggableOn::Tagging.joins(
-      "LEFT JOIN tags on tags.id = taggings.tag_id").where("tags.id is null").delete_all
+		# 使っていないタグを削除する
+		delete_unused_tags()
   end
 
 
 	task gg: :environment do
 		_controller = FetchController.new
-		_controller.gg("幼虫")
+		_controller.gg("インターネット")
 	end
 
 	task fetcher: :environment do
@@ -42,6 +34,7 @@ namespace :db do
 		updatePrice()
 		updateRank()
 		get_news()
+		delete_unused_tags()
 	end
 	# データが回ってない時の緊急実行用
 	task updatePrice: :environment do
@@ -52,6 +45,14 @@ namespace :db do
 	end
 	task getNews: :environment do
 		get_news()
+	end
+
+	def delete_unused_tags()
+		# 使っていないタグを削除する
+		ActsAsTaggableOn::Tag.joins(
+			"LEFT JOIN taggings on taggings.tag_id = tags.id").where("taggings.id is null").delete_all
+		ActsAsTaggableOn::Tagging.joins(
+			"LEFT JOIN tags on tags.id = taggings.tag_id").where("tags.id is null").delete_all
 	end
 
 

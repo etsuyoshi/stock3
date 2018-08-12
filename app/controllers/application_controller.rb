@@ -93,6 +93,7 @@ class ApplicationController < ActionController::Base
     session.driver.headers = { 'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X)" }
     #session.visit "https://fx.minkabu.jp/indicators"
     session.visit url_encoded
+    sleep(1)
     output_html = session.html
     session.driver.quit
     return Nokogiri::HTML.parse(output_html)

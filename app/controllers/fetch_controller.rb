@@ -287,16 +287,15 @@ class FetchController < ApplicationController
     #poltergistの設定
     doc = getDocFromHtmlWithJS(url)
     page = doc.css('div.box')
-    p "page = #{page}"
-
     if page.css('h2').nil? || page.css('h2').count==0 || page.css('table.ei-list').nil?
       p "null"
       return
     else
-      p "all delete"
-      Feed.tagged_with('market_schedule').each do |market_feed|
-        market_feed.destroy
-      end
+      # どうせ古いやつから消されるし、ここではあえて消さなくてもいいかな(SEO的にも)
+      # p "all delete"
+      # Feed.tagged_with('market_schedule').each do |market_feed|
+      #   market_feed.destroy
+      # end
     end
     # 日付リストを取得する
     date_array = []

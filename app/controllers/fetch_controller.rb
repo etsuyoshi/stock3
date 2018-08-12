@@ -44,7 +44,6 @@ class FetchController < ApplicationController
     page = Nokogiri::HTML.parse(session.html)
     session.driver.quit
     outputs = []
-    p "ppppppppp"
     mecab = Natto::MeCab.new()
     page.css('li').each do |li|
       inner_text = li.inner_text
@@ -79,8 +78,8 @@ class FetchController < ApplicationController
 
   # phantomjsをheroku上で実行させる方法→https://pgmemo.tokyo/data/archives/1061.html
   def index
-    get_news()#個別企業などのニュース
-    get_bitcoin_news()
+    # get_news()#個別企業などのニュース
+    # get_bitcoin_news()
     get_kessan_news()#決算短信や本決算情報
     get_schedules()#国際統計情報
     return
@@ -416,8 +415,8 @@ class FetchController < ApplicationController
             phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
             company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
             market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
-            #kessan_title = name.to_s + "(#{market_type}一部:#{company_type}) " + (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算
-            kessan_title = name.to_s + "決算公表"
+            kessan_title = name.to_s + "(#{market_type}一部:#{company_type}) " + (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算"
+            #kessan_title = name.to_s + "決算公表"
             kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
               Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
               (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"

@@ -93,7 +93,9 @@ class ApplicationController < ActionController::Base
     session.driver.headers = { 'User-Agent' => "Mozilla/5.0 (Macintosh; Intel Mac OS X)" }
     #session.visit "https://fx.minkabu.jp/indicators"
     session.visit url_encoded
-    return Nokogiri::HTML.parse(session.html)
+    output_html = session.html
+    session.driver.quit
+    return Nokogiri::HTML.parse(output_html)
   end
 
   def isValidate(url_string, limit = 10)
@@ -151,11 +153,20 @@ class ApplicationController < ActionController::Base
  def get_event
    #  ５日分のデータを取得する
    today = Time.now
-   startDay = today - 3600*24*5
-   startYmd = startDay.strftime('%Y%m%d').to_i
-   endDay = today + 3600*24*5
-   endYmd = endDay.strftime('%Y%m%d').to_i
-   @events = Event.where(ymd: (startYmd)..(endYmd)).order("ymd").limit(200)
+   # startDay = today - 3600*24*5
+   # startYmd = startDay.strftime('%Y%m%d').to_i
+   # endDay = today + 3600*24*5
+   # endYmd = endDay.strftime('%Y%m%d').to_i
+   # @events = Event.where(ymd: (startYmd)..(endYmd)).order("ymd").limit(200)
+
+
+   #決算情報と統計情報だけ取り出す
+   start_unixtime = today.to_time.to_i - 3600*24*5 #Time.now.to_i #
+   end_unixtime = today.to_time.to_i + 3600*24*5
+   @event_feeds = Feed.where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan')
+    #Feed.(where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan')).or(Feed.tagged_with('market_schedule'))
+
+   #kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')
  end
 
 

@@ -234,32 +234,27 @@
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
       <div id="newssidebarcontents">
-        <% the_time = Time.now %>
         <% today = Time.now %>
-        <% @events.each do |event| %>
-          <% event_time =
-            Time.local(
-              event.ymd.to_s[0,4].to_i,
-              event.ymd.to_s[4,2].to_i,
-              event.ymd.to_s[6,2].to_i,
-              0,0,0) %>
-
-          <% if the_time != event_time %>
-            <% the_time = event_time %>
+        <% the_date = "" %>
+        <%= @event_feeds.count %>
+        
+        <% @event_feeds.each do |event| %>
+          <% event_time = event.feed_id.to_i %>
+          <% if the_date != Time.at(event_time).strftime('%Y%m%d') %> <!-- 前回と同じ場合は表示しない -->
+            <% the_date = Time.at(event_time).strftime('%Y%m%d') %>
             <div class="eventSideBarItemTime">
-              <% if event_time.strftime('%Y').to_i == today.year.to_i &&
-                    event_time.strftime('%m').to_i == today.month.to_i &&
-                    event_time.strftime('%d').to_i == today.day.to_i %>
+              <% if today.strftime('%Y%m%d') == Time.at(event_time).strftime('%Y%m%d').in_time_zone('Tokyo') %>
                 <%= "本日" %>
               <% else %>
-                <%= event_time.strftime('%m/%d').to_s %>
+                <%= Time.at(event_time).strftime('%-m/%-d') %>
               <% end %>
             </div>
           <% end %>
           <div class="eventsidebaritem">
-            <%= event.name %>
+            <%= event.title %>
           </div>
         <% end %>
+
       </div>
     </div>
 

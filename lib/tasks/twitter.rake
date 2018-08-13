@@ -751,9 +751,9 @@ def get_kessan_summary(today)
       end
     end
     if kessans.count > 1
-      comment = kessan_names + "など日経225採用銘柄では#{kessans.count}銘柄の決算発表がありました。"
+      comment = kessan_names + "など日経225採用銘柄では#{kessans.count}銘柄の決算発表があった。"
     else
-      comment = kessan_names + "の決算発表がありました。"
+      comment = kessan_names + "の決算発表もあった。"
     end
     comment = "今週は" + comment
   else

@@ -44,8 +44,20 @@ namespace :db do
 		updateRank()
 	end
 	task getNews: :environment do
-		get_news()
+		# FetchController#get_news()を実行する
+		_controller = FetchController.new
+		_controller.get_news()
+		# _controller.index
 	end
+
+	task getKessanNews: :environment do
+		FetchController.new.get_kessan_news()
+	end
+
+	task getSchedules: :environment do
+		FetchController.new.get_schedules()
+	end
+
 
 	def delete_unused_tags()
 		# 使っていないタグを削除する
@@ -55,12 +67,6 @@ namespace :db do
 			"LEFT JOIN tags on tags.id = taggings.tag_id").where("tags.id is null").delete_all
 	end
 
-
-	def get_news
-		# FetchController#get_news()を実行する
-		_controller = FetchController.new
-		_controller.index
-	end
 
 
 	def get_btc_api
@@ -137,7 +143,8 @@ namespace :db do
 		#株価指数(YahooFinanceで取得可能なもの)
 		arrCode = getYahooTicker()
 		if !arrCode.nil?
-			arrCode.each do |code|
+			arrCode.each_with_index do |code, i|
+				p "#{i}番目の株価取得中"
 				getPriceYahoo(code)
 			end
 		end

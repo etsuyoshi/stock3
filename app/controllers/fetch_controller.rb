@@ -84,64 +84,257 @@ class FetchController < ApplicationController
     get_schedules()#国際統計情報
     return
 
-
-# Issue
-# https://github.com/herval/yahoo-finance/issues/28
-
-#以下デバッグ用に擬似コメントアウト
-    #全体のデータ数が多い時に個別銘柄の中で多くの日数を抱えている銘柄を削除する
-    remove_price_series#時系列データの削除
-
-    #最新データを全て削除する
-    remove_price_newest#最新データの削除
-
-
-    #取得系
-
-    get_bitcoin_news #bitcoin関連ニュースのノコギリ
-
-
-
-    # スクレイピング先のURL
-    # url = 'http://example.com/news/index.html'
-    # ここらへんは全てfetch_controllerに寄せるべき
-    #各インデックスをPriceseriesモデルに格納
-    get_price_series("^DJI")
-
-
-    get_price_series("^N225")
-    get_price_series("000001.SS")
-    get_price_series("^FTSE")
-
-
-
-    # yahoo_client.historical_quotes("7203", { start_date: Time::now-3600*24*3, end_date: Time::now})
-    # 以下、yahooのデータ提供停止に伴いコメントアウト
-    # get_price_series("7203")#toyota
-    # get_price_series("9437")#docomo
-    # get_price_series("8306")#mufg
-    # ここまではエラーなしで通過したことがある。
-    # エラーの要因はActiveRecordを使わずに文字列で強制的に実行してしまっていることが問題である可能性
-
-    #Priceseriesの7203の最新ymdから当日のランキングを作成するので個別銘柄Priceseries(db:nk225)を更新した後に実施する
-    get_rank_from_nikkei
-
-    get_price_newest#最新データの取得
-
-    get_news#feedの更新
-
-    # bitcoinの時系列データの取得
-    #get_btc
-
-    #coindeskに保存されている対USDのビットコイン価格を全て取得して最新の10件だけを格納する
-    get_btc_csv
-
-    get_event
-
     # render :text => "Done!"
     # 最新データの取得
     render 'price_newest/index'
   end
+
+  def get_news()
+    # ニュース(Feed.count)が300以上ある場合,300個以内になるように最初のものから順番に削除していく
+    all_feed_count = Feed.count
+    if all_feed_count > 300
+      Feed.order(updated_at: :asc).first(all_feed_count - 300).each do |old_feed|
+        old_feed.destroy
+      end
+    end
+
+    noPage = 5
+    while noPage >= 0 do
+      # if TRUE#テスト用
+      #   noPage = 0
+      # end
+      p "search(page=#{noPage}....)"
+      url = "https://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=10"
+      doc = getDocFromHtml(url)
+      latest_id = get_latest_id()
+
+      p "latest = " + latest_id.to_s
+
+      #doc.xpath('//div[@class="story-content"]').each do |content|
+      doc.xpath('//article[@class="story "]').each do |content|
+        #content:
+        # <article class=\"story \">
+        #   <div class=\"story-photo lazy-photo \">
+        #     <a href=\"/article/china-centralbank-easing-idJPKBN1KA05Y\">
+        #       <img src=\"https://s1.reutersmedia.net/resources_v2/images/1x1.png\"
+        #            org-src=\"https://s2.reutersmed&amp;sq=&amp;r=LYNXMPEE6J03H\"
+        #            border=\"0\" alt=\"\">
+        #     </a>
+        #   </div>
+        #   <div class=\"story-content\">
+        #     <a href=\"/article/china-centralbank-easing-idJPKBN1KA05Y\">
+        #       <h3 class=\"story-title\">\n\t\t\t\t\t\t\t\t焦点：中国人民銀が流動性増強、貿易戦争でさらなる金融緩和も</h3>\n\t\t\t\t\t\t\t</a>\n\t\t\t        <div class=\"contributor\"></div>\n\t\t\t        <p>中国人民銀行（中央銀行）が金融システムへの流動性供給を増やし、中小企業への信用供与を強化している。負債圧縮の取り組みによる借り入れコスト上昇で製造業生産や設備投資が鈍化し、元から景気の勢いが失われつつあったところに米国との貿易紛争が追い打ちを掛けたためだ。</p>\n\t\t\t\t\t<time class=\"article-time\">\n\t\t\t\t\t\t\t<span class=\"timestamp\">2018年 07月 21日</span>\n\t\t\t\t\t\t</time>\n\t\t\t\t\t</div>\n\t\t\t\t\n\t\t\t</article>
+        if !(content.nil?)#contentに内容があれば
+          # title
+          title = content.css('h3').inner_text.gsub(/\n/,"").gsub(/\t/, "")
+          p "title=#{title}"
+
+          if !(title.nil? || title == "")
+            feed_contents = get_feed_id(content)
+            feed_id = feed_contents["feed_id"]
+            if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
+              p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
+              if latest_id < feed_id
+                # DBに未登録の情報があったらDBに保存
+                # title            = content.css('h1').to_html
+                # description      = content.to_html
+                # link             = url + '#news' + feed_id.to_s
+
+                url = content.css('a').attribute('href').value
+                url = "http://jp.reuters.com" + url
+                # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
+
+                # desc
+                #description = content.css('p').inner_text
+                description = feed_contents["article"]
+                p "description = #{description}"
+                keyword = get_keywords_from_description(description)
+                description = description.sub(/。/,"。<br>")
+
+                # 謎のワードが追加されるので削除する
+                description = description.gsub(/「信頼の原則」/,"").gsub(/信頼の原則/,"").gsub(/私たちの行動規範：/,"")
+
+                #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
+                #http://watarisein.hatenablog.com/entry/2016/01/31/163327
+
+                p feed_id
+                p title
+                p description
+                p url
+                p keyword
+
+
+                insert_feed(feed_id, title, description, url, keyword)
+                p "db挿入完了"
+              else
+                p "最新ニュースではない（feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さい）ので格納しません。"
+                p Time.at(feed_id)
+              end
+            end
+          end
+        end
+      end
+      noPage = noPage - 1
+    end
+  end
+
+  # これからの予定(統計情報など)
+  def get_schedules
+    p "get schedules"
+    # 今週予定
+    # url = "http://www.koyo-sec.co.jp/market/event/" #https://www.jiji.com/jc/calendar"
+    # url = "https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETmgR001Control&_PageID=WPLETmgR001Mdtl20&_DataStoreID=DSWPLETmgR001Control&_ActionID=DefaultAID&burl=iris_morningInfo&cat1=market&cat2=morningInfo&dir=tl1-minfo%7Ctl2-stmkt%7Ctl3-stkview&file=index.html&getFlg=on"
+    # url = "https://www.rakuten-sec.co.jp/web/market/calendar/"
+    # url = "https://www.rakuten-sec.co.jp/smartphone/market/calendar/"
+    # url = "https://info.finance.yahoo.co.jp/fx/marketcalendar/"
+    url = "https://fx.minkabu.jp/indicators"
+
+    # javascriptが動いているのでphantomjs(Capybaraによるpoltergeist)を使ってjs実行後のhtmlを取得する
+    #poltergistの設定
+    doc = getDocFromHtmlWithJS(url)
+    page = doc.css('div.box')
+    if page.css('h2').nil? || page.css('h2').count==0 || page.css('table.ei-list').nil?
+      p "null"
+      return
+    else
+      # どうせ古いやつから消されるし、ここではあえて消さなくてもいいかな(SEO的にも)
+      # p "all delete"
+      # Feed.tagged_with('market_schedule').each do |market_feed|
+      #   market_feed.destroy
+      # end
+    end
+    # 日付リストを取得する
+    date_array = []
+    page.css('h2').each do |each_date|
+      p Time.at(Time.parse(each_date.inner_text).to_time.to_i)
+      date_array.push(Time.parse(each_date.inner_text).to_time.to_i)#配列への追加
+    end
+
+    counter = 0
+    page.css('table.ei-list').each do |list_day| #日付ごと
+
+      date_unix_time = date_array[counter]
+      counter = counter + 1
+      list_day.css('tr.ei-list-item').each do |list_item|
+        str_time = Time.at(date_unix_time).strftime('%Y-%m-%d').to_s + " " + list_item.css('td.time').inner_text + ":00"
+        list_time = Time.parse(str_time)
+        # p "時間 : " + list_item.to_s
+        # <p class="flexbox__grow">ドイツ・卸売物価指数(前月比/前年比)</p>
+        title = list_item.css('p.flexbox__grow').inner_text#本文
+        if title.include?("・")
+          title = "(" + title.gsub(/・/,")")
+        end
+        data = list_item.css('td.data')
+        # 今回指標予想
+        expects = data[1].inner_text
+        # 前回指標予想
+        before = data[0].inner_text
+        # 影響度
+        affects = list_item.css('td.hl').inner_text.gsub(/ /, "").gsub(/\t/,"").gsub(/\n/,"")
+        description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
+
+        # Feed.where(title: title).each do |same_feed|
+        #   same_feed.destroy
+        #   same_feed.save
+        # end
+        # seoの観点で既に存在していれば残す
+        p "title = #{title}"
+        if Feed.where(title: title).count == 0
+          feed = Feed.new(
+            :feed_id          => list_time.to_time.to_i,
+            :title            => title,
+            :description      => description,
+            :link             => "",
+            :keyword          => "market_schedule"
+          )
+          feed.save
+          p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
+        else
+          p "既に存在しているので保存しません"
+        end
+      end
+    end
+  end
+
+  #getKessan
+  def get_kessan_news()
+    # 決算眼形のニュース（過去）→過去のデータならこれでいい
+    # url = "https://www.nikkei.com/markets/ir/compinfo/"
+    # doc = getDocFromHtml(url)
+    # doc.css('tbody').css('tr').each do |kessan_record|
+    #   kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.gsub(/\t/,"").gsub(/\n/,"")).to_time.to_i
+    #   kessan_brand = kessan_record.css('td')[0].inner_text
+    #   if !kessan_brand.nil?
+    #     kessan_brand = kessan_brand.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/グループ/,"")
+    #   end
+    #   kessan_title = kessan_record.css('td')[1].inner_text
+    #   kessan_link = kessan_record.css('td')[1].css('a').attribute('href').value
+    #   insert_feed_with_label(kessan_feed_id, kessan_title, nil, kessan_link, "kessan", kessan_brand)
+    # end
+
+    # 未来のニュースも含めて取得するなら以下のリンクから→そのうちやる？（その場合は取得側も現在以降を取得する必要がある）
+    # https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&SearchDate1=2018%E5%B9%B408&SearchDate2=01
+    # https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2
+    #常に7日前から7日後まで確認する
+    start_time = Time.new - 7*24*3600
+    #end_time = Time.new + 7*24*3600
+    for i in 0..14
+      p i.to_s + "日目"
+      target_time = start_time + i * 24*3600
+      searchDate1 = target_time.strftime('%Y') + "%E5%B9%B4" + target_time.strftime('%m')
+      searchDate2 = target_time.strftime('%d')
+      url_param = "ResultFlag=1&kwd=&KessanMonth=&SearchDate1=#{searchDate1}&SearchDate2=#{searchDate2}&Gcode=%20&hm="
+      base_url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?" + url_param
+
+      #loop_count = 1
+      (1..10).each do |loop_count|
+        url = base_url + loop_count.to_s
+        # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
+        p "url = #{url}"
+    		doc = getDocFromHtmlWithJS(url)
+        if doc.css('tbody').nil?
+          break;
+        elsif doc.css('tbody').css('tr.tr2').nil?
+          break;
+        elsif doc.css('tbody').css('tr.tr2')[0].nil?
+          break;
+        elsif doc.css('tbody').css('tr.tr2')[0].css('th').nil?
+          break;
+        end
+    		doc.css('tbody').css('tr.tr2').each do |kessan_record|
+          if !kessan_record.nil? && !kessan_record.css('th').nil?
+            tds = kessan_record.css('td')
+            ticker = tds[0].inner_text.gsub(/\t/, "").gsub(/\n/,"")
+            # 量が多いのでPriceseriesの中にある銘柄だけで実施する
+            if Priceseries.where(ticker: ticker).count == 0
+              p "#{ticker}=>225採用銘柄ではないのでスルー"
+              next
+            end
+            kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
+            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"").gsub(/自動車/,"自").gsub(/グループ/, "")
+            timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
+            phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
+            company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
+            market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
+            kessan_title = name.to_s + "(#{market_type}一部:#{company_type}) " + (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算"
+            #kessan_title = name.to_s + "決算公表"
+            kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
+              Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
+              (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"
+            kessan_link = "https://www.nikkei.com/nkd/company/kigyo/?scode=" + ticker
+
+            p "title = #{kessan_title}"
+            p "desc = #{kessan_description}"
+            #insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
+            insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, 'kessan', name, ticker)
+          end
+        end
+      end
+    end
+
+  end
+
+
 
   private
   def remove_price_series
@@ -272,161 +465,7 @@ class FetchController < ApplicationController
     return return_hash
   end
 
-  # これからの予定(統計情報など)
-  def get_schedules
-    p "get schedules"
-    # 今週予定
-    # url = "http://www.koyo-sec.co.jp/market/event/" #https://www.jiji.com/jc/calendar"
-    # url = "https://www.sbisec.co.jp/ETGate/?_ControlID=WPLETmgR001Control&_PageID=WPLETmgR001Mdtl20&_DataStoreID=DSWPLETmgR001Control&_ActionID=DefaultAID&burl=iris_morningInfo&cat1=market&cat2=morningInfo&dir=tl1-minfo%7Ctl2-stmkt%7Ctl3-stkview&file=index.html&getFlg=on"
-    # url = "https://www.rakuten-sec.co.jp/web/market/calendar/"
-    # url = "https://www.rakuten-sec.co.jp/smartphone/market/calendar/"
-    # url = "https://info.finance.yahoo.co.jp/fx/marketcalendar/"
-    url = "https://fx.minkabu.jp/indicators"
 
-    # javascriptが動いているのでphantomjs(Capybaraによるpoltergeist)を使ってjs実行後のhtmlを取得する
-    #poltergistの設定
-    doc = getDocFromHtmlWithJS(url)
-    page = doc.css('div.box')
-    if page.css('h2').nil? || page.css('h2').count==0 || page.css('table.ei-list').nil?
-      p "null"
-      return
-    else
-      # どうせ古いやつから消されるし、ここではあえて消さなくてもいいかな(SEO的にも)
-      # p "all delete"
-      # Feed.tagged_with('market_schedule').each do |market_feed|
-      #   market_feed.destroy
-      # end
-    end
-    # 日付リストを取得する
-    date_array = []
-    page.css('h2').each do |each_date|
-      p Time.at(Time.parse(each_date.inner_text).to_time.to_i)
-      date_array.push(Time.parse(each_date.inner_text).to_time.to_i)#配列への追加
-    end
-
-    counter = 0
-    page.css('table.ei-list').each do |list_day| #日付ごと
-
-      date_unix_time = date_array[counter]
-      counter = counter + 1
-      list_day.css('tr.ei-list-item').each do |list_item|
-        str_time = Time.at(date_unix_time).strftime('%Y-%m-%d').to_s + " " + list_item.css('td.time').inner_text + ":00"
-        list_time = Time.parse(str_time)
-        # p "時間 : " + list_item.to_s
-        # <p class="flexbox__grow">ドイツ・卸売物価指数(前月比/前年比)</p>
-        title = list_item.css('p.flexbox__grow').inner_text#本文
-        if title.include?("・")
-          title = "(" + title.gsub(/・/,")")
-        end
-        data = list_item.css('td.data')
-        # 今回指標予想
-        expects = data[1].inner_text
-        # 前回指標予想
-        before = data[0].inner_text
-        # 影響度
-        affects = list_item.css('td.hl').inner_text.gsub(/ /, "").gsub(/\t/,"").gsub(/\n/,"")
-        description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
-
-        # Feed.where(title: title).each do |same_feed|
-        #   same_feed.destroy
-        #   same_feed.save
-        # end
-        # seoの観点で既に存在していれば残す
-        p "title = #{title}"
-        if Feed.where(title: title).count == 0
-          feed = Feed.new(
-            :feed_id          => list_time.to_time.to_i,
-            :title            => title,
-            :description      => description,
-            :link             => "",
-            :keyword          => "market_schedule"
-          )
-          feed.save
-          p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
-        else
-          p "既に存在しているので保存しません"
-        end
-      end
-    end
-  end
-
-
-  def get_kessan_news()
-    # 決算眼形のニュース（過去）→過去のデータならこれでいい
-    # url = "https://www.nikkei.com/markets/ir/compinfo/"
-    # doc = getDocFromHtml(url)
-    # doc.css('tbody').css('tr').each do |kessan_record|
-    #   kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.gsub(/\t/,"").gsub(/\n/,"")).to_time.to_i
-    #   kessan_brand = kessan_record.css('td')[0].inner_text
-    #   if !kessan_brand.nil?
-    #     kessan_brand = kessan_brand.gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/グループ/,"")
-    #   end
-    #   kessan_title = kessan_record.css('td')[1].inner_text
-    #   kessan_link = kessan_record.css('td')[1].css('a').attribute('href').value
-    #   insert_feed_with_label(kessan_feed_id, kessan_title, nil, kessan_link, "kessan", kessan_brand)
-    # end
-
-    # 未来のニュースも含めて取得するなら以下のリンクから→そのうちやる？（その場合は取得側も現在以降を取得する必要がある）
-    # https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&SearchDate1=2018%E5%B9%B408&SearchDate2=01
-    # https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2
-    #常に7日前から7日後まで確認する
-    start_time = Time.new - 7*24*3600
-    #end_time = Time.new + 7*24*3600
-    for i in 0..14
-      p i.to_s + "日目"
-      target_time = start_time + i * 24*3600
-      searchDate1 = target_time.strftime('%Y') + "%E5%B9%B4" + target_time.strftime('%m')
-      searchDate2 = target_time.strftime('%d')
-      url_param = "ResultFlag=1&kwd=&KessanMonth=&SearchDate1=#{searchDate1}&SearchDate2=#{searchDate2}&Gcode=%20&hm="
-      base_url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?" + url_param
-
-      #loop_count = 1
-      (1..100).each do |loop_count|
-        url = base_url + loop_count.to_s
-        # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
-        p "url = #{url}"
-    		doc = getDocFromHtmlWithJS(url)
-        if doc.css('tbody').nil?
-          break;
-        elsif doc.css('tbody').css('tr.tr2').nil?
-          break;
-        elsif doc.css('tbody').css('tr.tr2')[0].nil?
-          break;
-        elsif doc.css('tbody').css('tr.tr2')[0].css('th').nil?
-          break;
-        end
-    		doc.css('tbody').css('tr.tr2').each do |kessan_record|
-          if !kessan_record.nil? && !kessan_record.css('th').nil?
-            tds = kessan_record.css('td')
-            ticker = tds[0].inner_text.gsub(/\t/, "").gsub(/\n/,"")
-            # 量が多いのでPriceseriesの中にある銘柄だけで実施する
-            if Priceseries.where(ticker: ticker).count == 0
-              p "225採用銘柄ではないのでスルー"
-              next
-            end
-            kessan_feed_id = Date.parse(kessan_record.css('th').inner_text.to_s.gsub(/\t/, "").gsub(/\n/,"")).to_time.to_i
-            name = tds[1].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/ホールディングス/,"HD").gsub(/株式会社/,"").gsub(/コーポレーション/,"").gsub(/自動車/,"自").gsub(/グループ/, "")
-            timing = tds[3].inner_text.gsub(/\t/, "").gsub(/\n/,"")#決算期
-            phase = tds[4].inner_text.gsub(/\t/, "").gsub(/\n/,"").gsub(/&nbsp/, "").gsub(/(\xc2\xa0)+/, '').gsub(/(\xc2\xa0|\s)+/, '')#第一、本
-            company_type = tds[5].inner_text.gsub(/\t/, "").gsub(/\n/,"")#業種
-            market_type = tds[6].inner_text.gsub(/\t/, "").gsub(/\n/,"")#上場場所
-            kessan_title = name.to_s + "(#{market_type}一部:#{company_type}) " + (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算"
-            #kessan_title = name.to_s + "決算公表"
-            kessan_description = name + "(#{market_type}一部:#{company_type},#{timing}本決算)は" +
-              Time.at(kessan_feed_id.to_i).in_time_zone('Tokyo').strftime('%-m月%-d日') + "に" +
-              (phase.to_s.include?("本") ? phase.to_s : (phase.to_s + "四半期")) + "決算を発表しました。"
-            kessan_link = "https://www.nikkei.com/nkd/company/kigyo/?scode=" + ticker
-
-            p "title = #{kessan_title}"
-            p "desc = #{kessan_description}"
-            #insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
-            insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, 'kessan', name, ticker)
-          end
-        end
-      end
-    end
-
-  end
 
   # bitcoin関連のニュース
   def get_bitcoin_news
@@ -485,94 +524,7 @@ class FetchController < ApplicationController
   end
 
 
-  def get_news()
-    # ニュース(Feed.count)が300以上ある場合,300個以内になるように最初のものから順番に削除していく
-    all_feed_count = Feed.count
-    if all_feed_count > 300
-      Feed.order(updated_at: :asc).first(all_feed_count - 300).each do |old_feed|
-        old_feed.destroy
-      end
-    end
 
-    noPage = 5
-    while noPage >= 0 do
-      # if TRUE#テスト用
-      #   noPage = 0
-      # end
-      p "search(page=#{noPage}....)"
-      url = "https://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=10"
-      doc = getDocFromHtml(url)
-      latest_id = get_latest_id()
-
-      p "latest = " + latest_id.to_s
-
-      #doc.xpath('//div[@class="story-content"]').each do |content|
-      doc.xpath('//article[@class="story "]').each do |content|
-        #content:
-        # <article class=\"story \">
-        #   <div class=\"story-photo lazy-photo \">
-        #     <a href=\"/article/china-centralbank-easing-idJPKBN1KA05Y\">
-        #       <img src=\"https://s1.reutersmedia.net/resources_v2/images/1x1.png\"
-        #            org-src=\"https://s2.reutersmed&amp;sq=&amp;r=LYNXMPEE6J03H\"
-        #            border=\"0\" alt=\"\">
-        #     </a>
-        #   </div>
-        #   <div class=\"story-content\">
-        #     <a href=\"/article/china-centralbank-easing-idJPKBN1KA05Y\">
-        #       <h3 class=\"story-title\">\n\t\t\t\t\t\t\t\t焦点：中国人民銀が流動性増強、貿易戦争でさらなる金融緩和も</h3>\n\t\t\t\t\t\t\t</a>\n\t\t\t        <div class=\"contributor\"></div>\n\t\t\t        <p>中国人民銀行（中央銀行）が金融システムへの流動性供給を増やし、中小企業への信用供与を強化している。負債圧縮の取り組みによる借り入れコスト上昇で製造業生産や設備投資が鈍化し、元から景気の勢いが失われつつあったところに米国との貿易紛争が追い打ちを掛けたためだ。</p>\n\t\t\t\t\t<time class=\"article-time\">\n\t\t\t\t\t\t\t<span class=\"timestamp\">2018年 07月 21日</span>\n\t\t\t\t\t\t</time>\n\t\t\t\t\t</div>\n\t\t\t\t\n\t\t\t</article>
-        if !(content.nil?)#contentに内容があれば
-          # title
-          title = content.css('h3').inner_text.gsub(/\n/,"").gsub(/\t/, "")
-          p "title=#{title}"
-
-          if !(title.nil? || title == "")
-            feed_contents = get_feed_id(content)
-            feed_id = feed_contents["feed_id"]
-            if feed_id > 0 #コンテンツからunixtimeが取得できない記事の場合(unixtime=-1)は記事追加をしない
-              p "feed : " + feed_id.to_s + "- lastest : " + latest_id.to_s + " = " + (feed_id.to_i - latest_id.to_i).to_s
-              if latest_id < feed_id
-                # DBに未登録の情報があったらDBに保存
-                # title            = content.css('h1').to_html
-                # description      = content.to_html
-                # link             = url + '#news' + feed_id.to_s
-
-                url = content.css('a').attribute('href').value
-                url = "http://jp.reuters.com" + url
-                # http://jp.reuters.com/article/us-business-inventories-dec-idJPKCN0VL1XX
-
-                # desc
-                #description = content.css('p').inner_text
-                description = feed_contents["article"]
-                p "description = #{description}"
-                keyword = get_keywords_from_description(description)
-                description = description.sub(/。/,"。<br>")
-
-                # 謎のワードが追加されるので削除する
-                description = description.gsub(/「信頼の原則」/,"").gsub(/信頼の原則/,"").gsub(/私たちの行動規範：/,"")
-
-                #形態素解析して名刺のみkeywordカラム（なければ追加する必要あり）に格納する
-                #http://watarisein.hatenablog.com/entry/2016/01/31/163327
-
-                p feed_id
-                p title
-                p description
-                p url
-                p keyword
-
-
-                insert_feed(feed_id, title, description, url, keyword)
-                p "db挿入完了"
-              else
-                p "最新ニュースではない（feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さい）ので格納しません。"
-                p Time.at(feed_id)
-              end
-            end
-          end
-        end
-      end
-      noPage = noPage - 1
-    end
-  end
 
 
 

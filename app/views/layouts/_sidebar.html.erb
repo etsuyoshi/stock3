@@ -199,6 +199,9 @@
       <div id="newssidebarcontents">
         <% today = Time.now %>
         <% @feed_news.each do |feed| %>
+          <% if feed.title.nil? ||  feed.title == "" %>
+            <% next %>
+          <% end %>
           <% feed_time = Time.at(feed.feed_id.to_i).in_time_zone('Tokyo') %>
           <div class="newssidebaritem">
             <div class="newsSideBarItemTime">
@@ -206,7 +209,11 @@
                     feed_time.strftime('%m').to_i == today.month.to_i &&
                     feed_time.strftime('%d').to_i == today.day.to_i %>
                 <% # 本日の日付なら %>
-                <%= feed_time.strftime('%H:%M') %>
+                <% if feed_time.strftime('%H') == "00" && feed_time.strftime('%M') == "00" %>
+                  本日発表の指標
+                <% else %>
+                  <%= feed_time.strftime('%H:%M') %>
+                <% end %>
 
               <% else %>
                 <%= feed_time.strftime('%m/%d').to_s %>

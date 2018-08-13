@@ -165,9 +165,11 @@ class ApplicationController < ActionController::Base
    start_unixtime = Time.now.to_i #today.to_time.to_i - 3600*24*5 #
    end_unixtime = today.to_time.to_i + 3600*24*5
    kessan_feeds = Feed.where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan').order(ticker: :desc).order(feed_id: :desc)
-   # index_feeds = Feed.where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).where(keyword: 'market_schedule').order(ticker: :desc).order(feed_id: :desc)
+   index_feeds = Feed.where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).where(keyword: 'market_schedule').order(ticker: :desc).order(feed_id: :desc)
    # @event_feeds = (kessan_feeds + index_feeds).uniq.sort_by{ |v|  [+(v.feed_id), v.ticker.to_s]}.reverse
    @event_feeds = kessan_feeds
+
+
    #uniq.sort_by{ |v|  v['ticker'] }.reverse.sort_by{ |v|  v['feed_id'] }.reverse#降順
 
 

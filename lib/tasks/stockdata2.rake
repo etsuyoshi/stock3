@@ -33,7 +33,7 @@ namespace :db do
 		# Priceseries更新
 		updatePrice()
 		updateRank()
-		get_news()
+		getNews()
 		delete_unused_tags()
 	end
 	# データが回ってない時の緊急実行用

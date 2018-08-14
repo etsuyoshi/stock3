@@ -274,6 +274,21 @@ namespace :db do
 
   end
 
+	def getShopId2()
+		puts "start..."
+
+		File.open("~/Documents/log-analyze/target_shops.csv", 'r') do |file|
+		  CSV.foreach('member.csv', headers: true) do |data|
+		    intro_msg = "#{data["club"]}クラブ所属の#{data["age"]}歳、#{data["name"]}です。\n"
+		    puts intro_msg
+		    file.write(intro_msg)
+		  end
+		end
+
+		puts "complete! See intro.txt."
+
+	end
+
 	def getShopId()
 		# shop_rfms = dbGetQuery(dbc, paste(
 		#   "select user_id, lower(shop_id) shop_id, r_score, f_score, m_score, date_format(created, '%Y-%m-%d') dates from base_batch.shop_rfms ",

@@ -694,6 +694,7 @@ def get_kessan_summary(today)
     #localでは使えるが、herokuでは使えない
     kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')
     if kessans.count == 0
+      # 決算情報がありません
       return nil
     end
     kessan_names = ""

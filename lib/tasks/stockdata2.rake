@@ -58,6 +58,10 @@ namespace :db do
 		FetchController.new.get_schedules()
 	end
 
+	def getNews()
+		FetchController.new.get_news()
+	end
+
 
 	def delete_unused_tags()
 		# 使っていないタグを削除する

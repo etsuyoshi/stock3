@@ -222,7 +222,7 @@ class FetchController < ApplicationController
         # <p class="flexbox__grow">ドイツ・卸売物価指数(前月比/前年比)</p>
         title = list_item.css('p.flexbox__grow').inner_text#本文
         if title.include?("・")
-          title = "(" + title.gsub(/・/,")")
+          # 最初のドットは国名を表しているのでtitle = "(" + title.gsub(/・/,")")としたいが、国名意外のドットも全部変換されてしまうためよくない
         end
         data = list_item.css('td.data')
         # 今回指標予想

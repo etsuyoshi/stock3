@@ -106,7 +106,7 @@ class FetchController < ApplicationController
       p "search(page=#{noPage}....)"
       url = "https://jp.reuters.com/news/archive/topNews?view=page&page=" + noPage.to_s + "&pageSize=10"
       doc = getDocFromHtml(url)
-      latest_id = get_latest_id()
+      latest_id = get_latest_reuter_id()
 
       p "latest = " + latest_id.to_s
 
@@ -164,7 +164,9 @@ class FetchController < ApplicationController
                 p keyword
 
 
-                insert_feed(feed_id, title, description, url, keyword)
+                #insert_feed(feed_id, title, description, url, keyword)#reuter_tagをつける
+                # def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
+                insert_feed_with_all(feed_id, title, description, url, "reuter", keyword, nil)
                 p "db挿入完了"
               else
                 p "最新ニュースではない（feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さい）ので格納しません。"
@@ -418,8 +420,8 @@ class FetchController < ApplicationController
   end
 
   # DBに保存されている最新のfeed_id(unixtime)を取得
-  def get_latest_id()
-    row = Feed.order("feed_id desc").first
+  def get_latest_reuter_id()
+    row = Feed.tagged_with("reuter").order("feed_id desc").first
     if row.nil?
       return 0
     end

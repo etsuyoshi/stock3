@@ -198,7 +198,7 @@
     <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
       <div id="newssidebarcontents">
         <% today = Time.now %>
-        <% if @feed_news.count > 0 %>
+        <% if @feed_news %>
           <% @feed_news.each do |feed| %>
             <% if feed.title.nil? ||  feed.title == "" %>
               <% next %>
@@ -244,7 +244,7 @@
       <div id="newssidebarcontents">
         <% today = Time.now %>
         <% the_date = "" %>
-        <% if @event_feeds.count > 0 %>
+        <% if @event_feeds %>
           <% @event_feeds.each do |event| %>
             <% event_time = event.feed_id.to_i %>
             <% if the_date != Time.at(event_time).strftime('%Y%m%d') %> <!-- 前回と同じ場合は表示しない -->

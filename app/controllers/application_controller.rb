@@ -175,7 +175,11 @@ class ApplicationController < ActionController::Base
    elsif index_feeds.count>0
      @event_feeds = index_feeds
    end
-   @event_feeds = @event_feeds.uniq.sort_by{ |v|  [(v.feed_id), v.ticker.to_s]}.reverse
+   if @event_feeds
+     @event_feeds = @event_feeds.uniq.sort_by{ |v|  [(v.feed_id), v.ticker.to_s]}.reverse
+   else
+
+   end
 
    #uniq.sort_by{ |v|  v['ticker'] }.reverse.sort_by{ |v|  v['feed_id'] }.reverse#降順
 

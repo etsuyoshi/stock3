@@ -13,7 +13,7 @@ $grayLighter: #999;
 
 $sidebarMarginLeft: -25px;
 $sidebarMarginRight: -20px;
-$sidebarPaddingLeft: 10px;
+$sidebarPaddingLeft: 0px;
 $sidebarPaddingRight: -45px;
 
 $topSidebarMarginLeft: -35px;
@@ -65,7 +65,6 @@ $topSidebarPaddingRight: -45px;
 #newssidebartitle{
   margin-right: $sidebarMarginRight;
   margin-left: $sidebarMarginLeft;
-
   padding-left: $sidebarPaddingLeft;
   padding-right: $sidebarPaddingRight;
 
@@ -76,7 +75,7 @@ $topSidebarPaddingRight: -45px;
 
   background-color:#858585;//#ffe;
   color:#fff;
-  letter-spacing: 1px;
+  // letter-spacing: 1px;
 
   // text-align:
 }
@@ -120,7 +119,8 @@ $topSidebarPaddingRight: -45px;
 
 .eventsidebaritem{
   // height: 17px;
-  margin-left: -3px;
+  padding-left: 15px;
+  margin-left: 0px;
   margin-right: -1px;
   margin-bottom: 3px;
   word-wrap: break-word;
@@ -155,14 +155,16 @@ $topSidebarPaddingRight: -45px;
 .newsSideBarItemTime{
   color:#c0c0c0;
   // color : #f00;
+  padding-left: 10px;
   font-size: 12px;
 }
 
 .eventSideBarItemTime{
-  background-color:#c1c1c1;
-  margin-left: -3px;
-  margin-right: -1px;
-  margin-bottom: 3px;
+  background-color:#00c0c1; //#c1c1c1;
+  padding-left: 5px;
+  // margin-left: -3px;
+  // margin-right: -1px;
+  // margin-bottom: 3px;
   word-wrap: break-word;
 }
 

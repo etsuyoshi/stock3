@@ -33,7 +33,8 @@ class ApplicationController < ActionController::Base
   end
 
   def getMarketSchedules(target_yyyymmdd)
-    schedules_at_day = [];
+    p "getMarketSchedules"
+    arr_schedules = [];
     if target_yyyymmdd.to_s.length != 8
       p "ymd形式ではないので終了"
       return [];
@@ -42,13 +43,14 @@ class ApplicationController < ActionController::Base
       begin
         if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == target_yyyymmdd
           p "loop@#{target_yyyymmdd}:#{feed_each.title}"
-          schedule_at_day.push(feed_each)
+          arr_schedules.push(feed_each)
         end
       rescue
         next
       end
     end
-    return schedules_at_day
+    p arr_schedules.count
+    return arr_schedules
   end
 
   # string型のurlからhtmlを取得する

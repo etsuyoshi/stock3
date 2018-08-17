@@ -84,7 +84,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    # update(client, tweet)
+    update(client, tweet)
   end
 
   # 10時にtweetする内容
@@ -596,14 +596,15 @@ def getWeekDayComment(d)
 
     #経済指標
     event_comment = ""
-    if event_yesterdays.length > 0
+    if event_yesterdays.count > 0
       event_yesterday_comment =
         "#{event_yesterdays[0].title}"+
         (event_yesterdays.length>1 ? ",#{event_yesterdays[1].title}" : "") +
         (event_yesterdays.length>2 ? ",#{event_yesterdays[2].title}" : "" )
       event_comment = event_comment + "昨日は" + event_yesterday_comment
     end
-    if event_todays.length > 0
+    p "event_todays.count = #{event_todays.count}"
+    if event_todays.count > 0
       event_today_comment =
         "#{event_todays[0].title}"+
         (event_todays.length>1 ? ",#{event_todays[1].title}" : "") +
@@ -635,6 +636,8 @@ def getWeekDayComment(d)
     # 今日の経済指標>今日の決算>>昨日の経済指標>昨日の決算
     p "comment = #{comment}"
     p "length = #{comment.length}, twitter char.length=#{comment.encode("EUC-JP").bytesize/2}"
+
+    comment = comment.gsub(/アメリカ/,"米")
 
 
   when 6

@@ -23,7 +23,7 @@ namespace :twitter do
   desc "tweet hello"
 
   task tttest: :environment do
-
+    get_today_nikkei_summary()
   end
 
   #フォロワー数を取得する
@@ -95,6 +95,16 @@ namespace :twitter do
     if !tweet.nil?
       update(client, tweet)
     end
+  end
+
+  task :tweetEvening => :environment do
+    client = get_twitter_client
+    tweet = get_today_nikkei_summary()
+    p tweet
+    if tweet
+      update(client, tweet)
+    end
+
   end
 
 
@@ -762,4 +772,74 @@ def get_kessan_summary(today)
   end
   p comment.length
   return comment
+end
+
+# 本日の日経上位と下位銘柄
+def get_today_nikkei_summary()
+  max_return = 0;
+  min_return = 0;
+  target_unixtime = Priceseries.where(ticker: "8306").order(ymd: :desc).first.ymd.to_i
+  p "target_unixtime = #{target_unixtime}"
+  ticker_returns = Hash.new
+  Priceseries.where(ymd: target_unixtime).each do |price_unit|
+    # ４桁の数字かどうか
+    ticker=price_unit.ticker
+    if ticker.scan(/\D/).empty?
+      if ticker.to_i > 999
+        price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
+        return_price = price.first.close.to_f / price.last.close.to_f - 1
+        ticker_returns[ticker] = return_price
+      end
+    end
+  end
+
+  # 並び替え（降順）→ハッシュから配列に変化
+  ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
+  arr_ups = []
+  ticker_returns.first(5).each do |ticker_return|
+    if ticker_return[1].to_f > 0.05
+      p "#{ticker_return[0]} : #{ticker_return[1]}"
+      arr_ups.push(ticker_return)
+    end
+  end
+  arr_downs = []
+  ticker_returns.last(5).each do |ticker_return|
+    if ticker_return[1].to_f < -0.05
+      p "#{ticker_return[0]} : #{ticker_return[1]}"
+      arr_downs.push(ticker_return)
+    end
+  end
+
+  up_contents = "今月の主な上昇銘柄は"
+  up_num = 0
+  arr_ups.each_with_index do |up,i|
+    up_info = Priceseries.where(ticker: up[0]).order(ymd: :desc).first
+    if up_info.close.to_f > 1000
+      if i > 0
+        up_contents = up_contents + ","
+      end
+      up_contents = up_contents + "#{up_info.name}(#{up_info.ticker})の#{up[1].to_f>0 ? '+' : '△'}#{((up[1].to_f)*100).abs.round(2)}%"
+      up_num = up_num + 1
+    end
+  end
+
+  down_contents = "今月の主な下落銘柄は"
+  down_num = 0
+  arr_downs.each_with_index do |down,i|
+    down_info = Priceseries.where(ticker: down[0]).order(ymd: :desc).first
+    if down_info.close.to_f > 1000
+      if i > 0
+        down_contents = down_contents + ","
+      end
+      down_contents = down_contents + "#{down_info.name}(#{down_info.ticker})の#{down[1].to_f>0 ? '+' : '△'}#{((down[1].to_f)*100).abs.round(2)}%"
+      down_num = down_num + 1
+    end
+  end
+
+
+  p up_contents
+  p down_contents
+
+  content = "本日の主な値動きは#{ticker_returns[0][0]}()"
+
 end

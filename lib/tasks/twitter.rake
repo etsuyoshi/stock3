@@ -810,7 +810,7 @@ def get_today_nikkei_summary()
     end
   end
 
-  up_contents = "今月の主な上昇銘柄は"
+  up_contents = ""
   up_num = 0
   arr_ups.each_with_index do |up,i|
     up_info = Priceseries.where(ticker: up[0]).order(ymd: :desc).first
@@ -823,7 +823,7 @@ def get_today_nikkei_summary()
     end
   end
 
-  down_contents = "今月の主な下落銘柄は"
+  down_contents = ""
   down_num = 0
   arr_downs.each_with_index do |down,i|
     down_info = Priceseries.where(ticker: down[0]).order(ymd: :desc).first
@@ -836,10 +836,25 @@ def get_today_nikkei_summary()
     end
   end
 
+  #上昇銘柄数
+  all_up_num = 0
+  all_down_num = 0
+  ticker_returns.each do |ticker_return|
+    if ticker_return[1].to_f > 0
+      all_up_num = all_up_num + 1
+    elsif ticker_return[1].to_f > 0
+      all_down_num = all_down_num + 1
+    end
+  end
+
 
   p up_contents
   p down_contents
+  contents =
+  "本日の主な上昇銘柄は#{up_contents}#{up_contents=='' ? '' : 'など'}#{all_up_num}銘柄で"+
+  "下落銘柄は#{down_contents}#{down_contents=='' ? '' : 'など'}#{all_down_num}銘柄です。"
 
-  content = "本日の主な値動きは#{ticker_returns[0][0]}()"
+
+  content = "#{contents}"
 
 end

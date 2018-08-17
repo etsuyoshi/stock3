@@ -22,7 +22,6 @@ class ApplicationController < ActionController::Base
     Feed.tagged_with('kessan').where('title like ?', '%決算%').each do |feed_each|
       # p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
       begin
-        p "loop" + Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d').to_s
         if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == target_yyyymmdd
           irs_at_day.push(feed_each)
         end
@@ -36,12 +35,13 @@ class ApplicationController < ActionController::Base
   def getMarketSchedules(target_yyyymmdd)
     schedules_at_day = [];
     if target_yyyymmdd.to_s.length != 8
-      p "8ではないので終了"
+      p "ymd形式ではないので終了"
       return [];
     end
     Feed.where(keyword: 'market_schedule').each do |feed_each|
       begin
         if Time.at(feed_each.feed_id.to_i).strftime('%Y%m%d') == target_yyyymmdd
+          p "loop@#{target_yyyymmdd}:#{feed_each.title}"
           schedule_at_day.push(feed_each)
         end
       rescue
@@ -177,19 +177,7 @@ class ApplicationController < ActionController::Base
    end
    if @event_feeds
      @event_feeds = @event_feeds.uniq.sort_by{ |v|  [(v.feed_id), v.ticker.to_s]}.reverse
-   else
-
    end
-
-   #uniq.sort_by{ |v|  v['ticker'] }.reverse.sort_by{ |v|  v['feed_id'] }.reverse#降順
-
-
-
-
-
-    # Feed.(where(Feed.arel_table[:feed_id].gteq(start_unixtime)).where(Feed.arel_table[:feed_id].lteq(end_unixtime)).tagged_with('kessan')).or(Feed.tagged_with('market_schedule'))
-
-   #kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')
  end
 
 

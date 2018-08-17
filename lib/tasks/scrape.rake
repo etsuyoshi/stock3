@@ -15,15 +15,26 @@ namespace :db do
 
 		counter = 0
 		# 初回実行時のみ列名入力
-		# CSV.open('instafollower.csv','w') do |test|
-		# 	test << ["insta_id", "max_posts", "follower", "numMonth", "numWeek", "recent_post_date"]
+		# CSV.open('instafollower3.csv','w') do |test|
+		# 	test << ["instagram_id", "max_posts", "follower", "numMonth", "numWeek", "recent_post_date"]
 		# end
-		CSV.open('instafollower2.csv','a') do |test|
+		continue_flag = FALSE
+		CSV.open('instafollower3.csv','a') do |test|
 			for shop_insta_id in arrShops
+
+				# 途中からやる場合
+				if !continue_flag #
+					if shop_insta_id == "propelua_inc" #最初に実施する店舗ID
+						continue_flag = TRUE
+					else
+						next
+					end
+				end
 				counter = counter  + 1
 				if counter > 5000
 					break
 				end
+				#insta_idからフォロワー数やポスト数など取得
 				outputInsta = getInsta(shop_insta_id)
 				if !outputInsta
 					# URLが存在しない、
@@ -33,8 +44,6 @@ namespace :db do
 				end
 			end
 		end
-
-
 	end
 
 
@@ -134,6 +143,31 @@ namespace :db do
 
 		returnArray = []
 		csv_data = CSV.read("#{ENV['HOME']}/Documents/log-analyze/target_shops.csv", headers: true)
+
+		# shop_rfms = dbGetQuery(dbc, paste(
+		#   "select user_id, lower(shop_id) shop_id, r_score, f_score, m_score, date_format(created, '%Y-%m-%d') dates from base_batch.shop_rfms ",
+		#   "where date_format(created, '%Y%m%d') = '20180705' order by recency desc", sep=""))
+		# # "where date_format(created, '%Y%m%d') = '20180601' order by recency desc", sep=""))
+		# #"where date_format(created, '%Y%m%d') = '20180427' order by recency desc", sep=""))
+		#
+		# target_r = 3
+		# target_f = 2
+		# target_shops = shop_rfms[shop_rfms$r_score==target_r & shop_rfms$f_score==target_f,]
+		# insta_ids = dbGetQuery(dbc, paste(
+		#   "select lower(shop_id) shop_id, instagram_id from users where id in (",
+		#   paste(target_shops$user_id, collapse=","), ")", sep=""))
+		# head(insta_ids[insta_ids$instagram_id=="",])
+		# head(insta_ids[is.na(insta_ids$instagram_id),])
+		#
+		# target_shops = merge(
+		#   target_shops,
+		#   insta_ids, by="shop_id", all.x=TRUE)
+		# head(target_shops)
+		#
+		# write.csv(target_shops, "target_shops.csv")
+		# read.csv("target_shops.csv")
+
+
 		r = Random.new(Time.new.to_time.to_i)
 		csv_data.each_with_index do |data, i|
 			if numToGet > 0 && returnArray.length < numToGet
@@ -144,9 +178,11 @@ namespace :db do
 				p "#{numToGet}, #{returnArray.length}"
 				break
 			end
-	    line_msg = "user_id:#{data["user_id"]}, shop_id:#{data["shop_id"]}\n"
-	    puts line_msg
-			returnArray.push(data["shop_id"])
+			if data["instagram_id"] && data["instagram_id"] != ""
+				line_msg = "user_id:#{data["user_id"]}, shop_id:#{data["shop_id"]}, insta_id:#{data["instagram_id"]}\n"
+				puts line_msg
+				returnArray.push(data["instagram_id"])
+			end
   	end
 
 

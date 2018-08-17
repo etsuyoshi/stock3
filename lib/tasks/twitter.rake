@@ -84,7 +84,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    update(client, tweet)
+    # update(client, tweet)
   end
 
   # 10時にtweetする内容
@@ -402,9 +402,6 @@ def getKessanComment()
   end
   p "本日決算を発表するのは#{str_todays}などの#{kessan_todays.length}企業です。"
   p "昨日決算を発表したのは#{str_todays}などの#{kessan_todays.length}企業です。"
-
-
-
 end
 
 

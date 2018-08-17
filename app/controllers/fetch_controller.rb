@@ -292,7 +292,8 @@ class FetchController < ApplicationController
       (1..10).each do |loop_count|
         url = base_url + loop_count.to_s
         # url = "https://www.nikkei.com/markets/kigyo/money-schedule/kessan/?ResultFlag=1&kwd=&KessanMonth=&SearchDate1=2018%E5%B9%B408&SearchDate2=01&Gcode=%20&hm=2"
-        p "url = #{url}"
+
+        p "HTML取得中..url = #{url}"
     		doc = getDocFromHtmlWithJS(url)
         if doc.css('tbody').nil?
           break;
@@ -302,7 +303,16 @@ class FetchController < ApplicationController
           break;
         elsif doc.css('tbody').css('tr.tr2')[0].css('th').nil?
           break;
+
+        #
+        # hm=2以降も存在してしまうので終了条件を加える必要がある
+        # 現在探索しているページに50商品ない場合は、そこで止める
+        # 現在探索しているページに0商品しかない場合はそこで止める
+        # 銘柄抽出が完了したタイミングで抽出銘柄数をカウントして50以上or0個なら続けないという仕組みで対応
+
         end
+
+        num_kessans = 0
     		doc.css('tbody').css('tr.tr2').each do |kessan_record|
           if !kessan_record.nil? && !kessan_record.css('th').nil?
             tds = kessan_record.css('td')
@@ -329,7 +339,13 @@ class FetchController < ApplicationController
             p "desc = #{kessan_description}"
             #insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
             insert_feed_with_all(kessan_feed_id, kessan_title, kessan_description, kessan_link, 'kessan', name, ticker)
+
+            num_kessans = num_kessans + 1
           end
+        end
+
+        if num_kessans < 50 || num_kessans == 0
+          break
         end
       end
     end

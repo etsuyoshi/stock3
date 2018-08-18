@@ -881,9 +881,11 @@ def get_today_nikkei_summary(today)
 
   p up_contents
   p down_contents
+  p up_num
+  p down_num
   contents =
-  "#{term_word}の上昇銘柄は#{up_num > 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
-  "下落銘柄は#{down_num > 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
+  "#{term_word}の上昇銘柄は#{up_num == 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
+  "下落銘柄は#{down_num == 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
 
 
   contents = "#{contents}"

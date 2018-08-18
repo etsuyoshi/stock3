@@ -887,6 +887,7 @@ def get_today_nikkei_summary(today)
 
 
   contents = "#{contents}"
+  p contents
 
   return contents
 

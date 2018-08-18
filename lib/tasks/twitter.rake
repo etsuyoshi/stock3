@@ -674,8 +674,8 @@ def getWeekDayComment(d)
     #騰落率ランキングトップ(where(rank: 1)としないでorderでやるのは１位がbitcoinや指数である可能性があるため)
     top_rank = Rank.where(market: "^N225-3days-return").where(sort: "up").where.not(name: "bitcoin").order(rank: :asc).first
     bottom_rank = Rank.where(market: "^N225-3days-return").where(sort: "down").where.not(name: "bitcoin").order(rank: :asc).first
-    comment = comment + "日経での騰落率トップは#{top_rank.name.gsub(/ホールディングス/,"").gsub(/株式会社/,"")}(#{top_rank.return.to_f>0 ? "+" : "-"}#{top_rank.return.to_f.abs.round(2)}%)、" +
-      "最下位は#{bottom_rank.name.gsub(/ホールディングス/,"").gsub(/株式会社/,"")}(#{bottom_rank.return.to_f>0 ? "+" : "-"}#{bottom_rank.return.to_f.abs.round(2)}%)でした。"
+    comment = comment + "日経での騰落率トップは#{top_rank.name.gsub(/ホールディングス/,"").gsub(/株式会社/,"")}(#{top_rank.return.to_f>0 ? "+" : "△"}#{top_rank.return.to_f.abs.round(2)}%)、" +
+      "下落率トップは#{bottom_rank.name.gsub(/ホールディングス/,"").gsub(/株式会社/,"")}(#{bottom_rank.return.to_f>0 ? "+" : "△"}#{bottom_rank.return.to_f.abs.round(2)}%)でした。"
 
     # 今週の振り返り
     # ニュースも？
@@ -851,10 +851,12 @@ def get_today_nikkei_summary()
   p up_contents
   p down_contents
   contents =
-  "本日の主な上昇銘柄は#{up_contents}#{up_contents=='' ? '' : 'など'}#{all_up_num}銘柄で"+
-  "下落銘柄は#{down_contents}#{down_contents=='' ? '' : 'など'}#{all_down_num}銘柄です。"
+  "本日の上昇銘柄は#{up_num > 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
+  "下落銘柄は#{down_num > 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
 
 
-  content = "#{contents}"
+  contents = "#{contents}"
+
+  return contents
 
 end

@@ -427,13 +427,13 @@ class StaticPagesController < ApplicationController
       if returnStock >= 0
         hashReturn = {
           code: code,
-          z: returnStock*100
+          z: (returnStock*100).round(2)
         }
         gon.country_return_plus.push(hashReturn)
       else
         hashReturn = {
           code: code,
-          z: -returnStock*100
+          z: -(returnStock*100).round(2)
         }
         gon.country_return_minus.push(hashReturn)
       end

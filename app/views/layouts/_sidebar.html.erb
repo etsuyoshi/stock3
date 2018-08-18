@@ -216,7 +216,7 @@
                     <%= feed_time.strftime('%H:%M') %>
                   <% end %>
                 <% else %>
-                  <%= feed_time.strftime('%m/%d').to_s %>
+                  <%= feed_time.strftime('%-m/%-d').to_s %>
 
                   <%= feed_time.strftime('%R').to_s %>
 
@@ -241,7 +241,7 @@
   </div>
   <div class="row">
     <div class="col-xs-12 col-sm-12 col-md-11 col-lg-11">
-      <div id="newssidebarcontents">
+      <div id="eventsidebarcontents">
         <% today = Time.now %>
         <% the_date = "" %>
         <% if @event_feeds %>
@@ -249,12 +249,14 @@
             <% event_time = event.feed_id.to_i %>
             <% if the_date != Time.at(event_time).strftime('%Y%m%d') %> <!-- 前回と同じ場合は表示しない -->
               <% the_date = Time.at(event_time).strftime('%Y%m%d') %>
-              <div class="eventSideBarItemTime">
-                <% if today.strftime('%Y%m%d') == Time.at(event_time).strftime('%Y%m%d').in_time_zone('Tokyo') %>
-                  <%= "本日" %>
-                <% else %>
-                  <%= Time.at(event_time).strftime('%-m/%-d') %>
-                <% end %>
+              <div class="eventSideBarColor">
+                <div class="eventSideBarItemTime">
+                  <% if today.strftime('%Y%m%d') == Time.at(event_time).strftime('%Y%m%d').in_time_zone('Tokyo') %>
+                    <%= "本日" %>
+                  <% else %>
+                    <%= Time.at(event_time).strftime('%-m/%-d') %>
+                  <% end %>
+                </div>
               </div>
             <% end %>
             <div class="eventsidebaritem">

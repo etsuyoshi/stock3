@@ -104,19 +104,6 @@ namespace :twitter do
     if tweet
       update(client, tweet)
     end
-
-  end
-
-
-  task :tweetGoodMorning => :environment do
-    client = get_twitter_client
-    tweet = "今日も１日楽しいひと時を！"
-    d = Time.now + 60 * 60 * 24 * 1
-    #str = d.strftime("%Y年%m月%d日 %H:%M")
-    str = d.strftime("%Y年%m月%d日")
-    tweet = tweet + str
-    puts tweet
-    update(client, tweet)
   end
   task :followTweeter => :environment do
     client = get_twitter_client
@@ -352,8 +339,8 @@ def update(client, tweet)
 
 
     if tweet.encode("EUC-JP").bytesize/2 > 140
-      sleep(60)
-      tweet_contents2 = "..(続き)" + tweet[140..[tweet.length-1,280].min].to_s + " 詳しくは→ http://www.japanchart.com"
+      sleep(20)
+      tweet_contents2 = "..(続き)" + tweet[140..[tweet.length-1,280].min].to_s + " 詳しくは↓↓ http://www.japanchart.com"
       client.update(tweet_contents2.chomp)
     end
   rescue => e
@@ -894,7 +881,7 @@ def get_today_nikkei_summary(today)
   "下落銘柄は#{down_num == 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
 
   contents2_1 =
-  "日経225企業のうち、この１週間で上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
+  "日経225企業のうち、この1週間で上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
   contents2_2 =
   ((up_num==0) && (down_num==0)) ? '' :
   ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +

@@ -786,17 +786,17 @@ def get_today_nikkei_summary(today)
     p "日曜日"
     #1ヶ月分の騰落率を取得したい
     start_unixtime = target_unixtime - 30 * 24 * 3600
-    term_word = "この1ヶ月間の"
+    term_word = "この1ヶ月間"
   when 1,2,3,4,5 #平日
     p "平日"
     #前日からの騰落率を取得したい
     start_unixtime = target_unixtime - 1 * 24 * 3600
-    term_word = "本日の"
+    term_word = "本日"
   when 6 #土曜日
     p "土曜日"
     # １週間分の騰落率を取得したい
     start_unixtime = target_unixtime - 7 * 24 * 3600
-    term_word = "この１週間の"
+    term_word = "この１週間"
   end
   max_return = 0;
   min_return = 0;
@@ -834,7 +834,7 @@ def get_today_nikkei_summary(today)
     end
   end
   arr_downs = []
-  ticker_returns.last(5).each do |ticker_return|
+  ticker_returns.last(5).reverse.each do |ticker_return|
     if ticker_return[1].to_f < -0.05
       p "#{ticker_return[0]} : #{ticker_return[1]}"
       arr_downs.push(ticker_return)
@@ -842,27 +842,33 @@ def get_today_nikkei_summary(today)
   end
 
   up_contents = ""
+  up_contents2 = ""
   up_num = 0
   arr_ups.each_with_index do |up,i|
     up_info = Priceseries.where(ticker: up[0]).order(ymd: :desc).first
     if up_info.close.to_f > 1000
       if i > 0
         up_contents = up_contents + ","
+        up_contents2 = up_contents2 + ","
       end
       up_contents = up_contents + "#{up_info.name}(#{up_info.ticker})の#{up[1].to_f>0 ? '+' : '△'}#{((up[1].to_f)*100).abs.round(2)}%"
+      up_contents2 = up_contents2 + "#{up_info.name}(#{up_info.ticker})が#{up[1].to_f>0 ? '+' : '△'}#{((up[1].to_f)*100).abs.round(2)}%"
       up_num = up_num + 1
     end
   end
 
   down_contents = ""
+  down_contents2 = ""
   down_num = 0
   arr_downs.each_with_index do |down,i|
     down_info = Priceseries.where(ticker: down[0]).order(ymd: :desc).first
     if down_info.close.to_f > 1000
       if i > 0
         down_contents = down_contents + ","
+        down_contents2 = down_contents2 + ","
       end
       down_contents = down_contents + "#{down_info.name}(#{down_info.ticker})の#{down[1].to_f>0 ? '+' : '△'}#{((down[1].to_f)*100).abs.round(2)}%"
+      down_contents2 = down_contents2 + "#{down_info.name}(#{down_info.ticker})が#{down[1].to_f>0 ? '+' : '△'}#{((down[1].to_f)*100).abs.round(2)}%"
       down_num = down_num + 1
     end
   end
@@ -873,7 +879,7 @@ def get_today_nikkei_summary(today)
   ticker_returns.each do |ticker_return|
     if ticker_return[1].to_f > 0
       all_up_num = all_up_num + 1
-    elsif ticker_return[1].to_f > 0
+    elsif ticker_return[1].to_f < 0
       all_down_num = all_down_num + 1
     end
   end
@@ -887,10 +893,22 @@ def get_today_nikkei_summary(today)
   "#{term_word}の上昇銘柄は#{up_num == 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
   "下落銘柄は#{down_num == 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
 
+  contents2_1 =
+  "日経225企業のうち、この１週間で上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
+  contents2_2 =
+  ((up_num==0) && (down_num==0)) ? '' :
+  ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
+  "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
+  contents2 = contents2_1 + contents2_2
 
-  contents = "#{contents}"
-  p contents
+  if ((up_num>0) || (down_num>0))
+    contents = contents2
+  end
 
-  return contents
 
+  if Random.new(Time.now.to_i).rand(2) % 2 == 0
+    return contents2
+  else
+    return contents
+  end
 end

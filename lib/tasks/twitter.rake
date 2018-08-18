@@ -613,19 +613,19 @@ def getWeekDayComment(d)
     end
 
     # 文章の結合
-    if event_comment.encode("EUC-JP").bytesize/2 < 140
+    # if event_comment.encode("EUC-JP").bytesize/2 < 140
       comment = event_comment
-    end
-    if (comment + kessan_comment).encode("EUC-JP").bytesize/2 < 140
+    # end
+    # if (comment + kessan_comment).encode("EUC-JP").bytesize/2 < 140
       comment = comment + kessan_comment
-    end
-    if (comment + market_comment).encode("EUC-JP").bytesize/2 < 140
+    # end
+    # if (comment + market_comment).encode("EUC-JP").bytesize/2 < 140
       # マーケット情報は先
       comment = market_comment + comment
-    end
+    # end
 
     #その他の決算銘柄、マーケット情報はこちら
-    other_words = "その他の決算銘柄、マーケット情報はこちら→ http://www.japanchart.com/"
+    other_words = "#{kessan_comment=='' ? '' : 'その他の'}決算銘柄、マーケット情報はこちら→ http://www.japanchart.com/"
     if (comment + other_words).encode("EUC-JP").bytesize/2 < 140
       comment = comment + other_words
     end

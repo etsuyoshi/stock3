@@ -23,7 +23,7 @@ namespace :twitter do
   desc "tweet hello"
 
   task tttest: :environment do
-    get_today_nikkei_summary()
+    get_today_nikkei_summary(Date.today)
   end
 
   #フォロワー数を取得する
@@ -774,11 +774,33 @@ def get_kessan_summary(today)
   return comment
 end
 
-# 本日の日経上位と下位銘柄
-def get_today_nikkei_summary()
+# 本日の日経上位と下位銘柄@夕方19時
+def get_today_nikkei_summary(today)
+  comment = nil;
+  start_unixtime = 0
+  target_unixtime = Priceseries.where(ticker: "8306").order(ymd: :desc).first.ymd.to_i
+  term_word = ""
+
+  case today.wday
+  when 0#日曜日
+    p "日曜日"
+    #1ヶ月分の騰落率を取得したい
+    start_unixtime = target_unixtime - 30 * 24 * 3600
+    term_word = "この1ヶ月間の"
+  when 1,2,3,4,5 #平日
+    p "平日"
+    #前日からの騰落率を取得したい
+    start_unixtime = target_unixtime - 1 * 24 * 3600
+    term_word = "本日の"
+  when 6 #土曜日
+    p "土曜日"
+    # １週間分の騰落率を取得したい
+    start_unixtime = target_unixtime - 7 * 24 * 3600
+    term_word = "この１週間の"
+  end
   max_return = 0;
   min_return = 0;
-  target_unixtime = Priceseries.where(ticker: "8306").order(ymd: :desc).first.ymd.to_i
+
   p "target_unixtime = #{target_unixtime}"
   ticker_returns = Hash.new
   Priceseries.where(ymd: target_unixtime).each do |price_unit|
@@ -786,7 +808,14 @@ def get_today_nikkei_summary()
     ticker=price_unit.ticker
     if ticker.scan(/\D/).empty?
       if ticker.to_i > 999
-        price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
+        # 直近分
+        # price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
+
+        # 曜日によって異なるリターンの組み合わせ
+        # 土曜日→[最新の株価]vs[7日（以前で最大の日における）株価]のリターン
+        price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(1) +
+                Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(start_unixtime)).order(ymd: :desc).first(1)
+                #Priceseries.where(ticker: ticker).where(ymd: start_unixtime).order(ymd: :desc).first(1)
         return_price = price.first.close.to_f / price.last.close.to_f - 1
         ticker_returns[ticker] = return_price
       end
@@ -795,6 +824,8 @@ def get_today_nikkei_summary()
 
   # 並び替え（降順）→ハッシュから配列に変化
   ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
+
+  # 上昇銘柄と下落銘柄を最大５銘柄格納する
   arr_ups = []
   ticker_returns.first(5).each do |ticker_return|
     if ticker_return[1].to_f > 0.05
@@ -851,7 +882,7 @@ def get_today_nikkei_summary()
   p up_contents
   p down_contents
   contents =
-  "本日の上昇銘柄は#{up_num > 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
+  "#{term_word}の上昇銘柄は#{up_num > 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
   "下落銘柄は#{down_num > 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
 
 

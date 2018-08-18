@@ -99,7 +99,7 @@ namespace :twitter do
 
   task :tweetEvening => :environment do
     client = get_twitter_client
-    tweet = get_today_nikkei_summary()
+    tweet = get_today_nikkei_summary(Date.today)
     p tweet
     if tweet
       update(client, tweet)

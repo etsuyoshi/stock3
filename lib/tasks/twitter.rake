@@ -24,6 +24,7 @@ namespace :twitter do
 
   task tttest: :environment do
     get_today_nikkei_summary(Date.today)
+
   end
 
   #フォロワー数を取得する
@@ -513,8 +514,8 @@ def getWeekDayComment(d)
         next
       end
     end
-    min_feed_event = Feed.where(keyword: 'market_schedule').first
-    feed_length = min_feed_event.nil? ? 0 : min_feed_event.title.encode('EUC-JP').bytesize
+    min_feed_event = Feed.where(keyword: 'market_schedule').where(Priceseries.arel_table[:feed_id].gt(Time.now.to_i)).first
+    feed_length = min_feed_event.nil? ? 0 : (min_feed_event.title.encode('EUC-JP').bytesize)
     Feed.where(keyword: 'market_schedule').each do |feed_each|
       p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
       begin
@@ -542,6 +543,7 @@ def getWeekDayComment(d)
     end
     if !min_feed_event.nil?
       event_comment = "今週は#{Time.at(min_feed_event.feed_id.to_i).strftime('%-d')}日に#{min_feed_event.title}などの発表を控えている。"
+      # ex. # 先週末の日経平均は22270.38円で引けた後、ダウは25669.32ドルに。日経平均は足元1週間で-0.12％の下落 、ダウは1.41％の上昇、1ヶ月間ではそれぞれ-2.3％の下落、1.87％の上昇。今週は17日に韓国・雇用統計などの発表を控えている。
       comment = comment + event_comment
     end
     # 文字サイズに応じて文章を変更する
@@ -690,8 +692,9 @@ def get_kessan_summary(today)
 
     #localでは使えるが、herokuでは使えない
     kessans = Feed.where(Feed.arel_table[:feed_id].gteq(from_unixtime)).where(Feed.arel_table[:feed_id].lteq(to_unixtime)).tagged_with('kessan')
+    p "決算情報がありません"
     if kessans.count == 0
-      # 決算情報がありません
+
       return nil
     end
     kessan_names = ""
@@ -789,28 +792,29 @@ def get_today_nikkei_summary(today)
   min_return = 0;
 
   p "target_unixtime = #{target_unixtime}"
-  ticker_returns = Hash.new
-  Priceseries.where(ymd: target_unixtime).each do |price_unit|
-    # ４桁の数字かどうか
-    ticker=price_unit.ticker
-    if ticker.scan(/\D/).empty?
-      if ticker.to_i > 999
-        # 直近分
-        # price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
-
-        # 曜日によって異なるリターンの組み合わせ
-        # 土曜日→[最新の株価]vs[7日（以前で最大の日における）株価]のリターン
-        price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(1) +
-                Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(start_unixtime)).order(ymd: :desc).first(1)
-                #Priceseries.where(ticker: ticker).where(ymd: start_unixtime).order(ymd: :desc).first(1)
-        return_price = price.first.close.to_f / price.last.close.to_f - 1
-        ticker_returns[ticker] = return_price
-      end
-    end
-  end
-
-  # 並び替え（降順）→ハッシュから配列に変化
-  ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
+  # ticker_returns = Hash.new
+  # Priceseries.where(ymd: target_unixtime).each do |price_unit|
+  #   # ４桁の数字かどうか
+  #   ticker=price_unit.ticker
+  #   if ticker.scan(/\D/).empty?
+  #     if ticker.to_i > 999
+  #       # 直近分
+  #       # price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
+  #
+  #       # 曜日によって異なるリターンの組み合わせ
+  #       # 土曜日→[最新の株価]vs[7日（以前で最大の日における）株価]のリターン
+  #       price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(1) +
+  #               Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(start_unixtime)).order(ymd: :desc).first(1)
+  #               #Priceseries.where(ticker: ticker).where(ymd: start_unixtime).order(ymd: :desc).first(1)
+  #       return_price = price.first.close.to_f / price.last.close.to_f - 1
+  #       ticker_returns[ticker] = return_price
+  #     end
+  #   end
+  # end
+  #
+  # # 並び替え（降順）→ハッシュから配列に変化
+  # ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
+  ticker_returns = ApplicationController.new.getReturnRanks(start_unixtime, target_unixtime)
 
   # 上昇銘柄と下落銘柄を最大５銘柄格納する
   arr_ups = []
@@ -880,8 +884,9 @@ def get_today_nikkei_summary(today)
   "#{term_word}の上昇銘柄は#{up_num == 0 ? '' : (up_contents + 'など')}#{all_up_num}銘柄で"+
   "下落銘柄は#{down_num == 0 ? '' : (down_contents + 'など')}#{all_down_num}銘柄です。"
 
+
   contents2_1 =
-  "日経225企業のうち、この1週間で上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
+  "日経225企業のうち、#{term_word}#{(today.wday%6 == 0) ? "で" : ""}上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
   contents2_2 =
   ((up_num==0) && (down_num==0)) ? '' :
   ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +

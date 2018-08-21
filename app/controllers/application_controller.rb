@@ -9,7 +9,34 @@ class ApplicationController < ActionController::Base
   # before_action :get_event
 
   #全コントローラー及びビュー内で使用可能なメソッドの定義
-  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime, :getDocFromHtmlWithJS, :getDocFromHtml, :isValidate
+  helper_method :getTimeFromYMDHMS, :getYMDHMSFromTime, :getDocFromHtmlWithJS, :getDocFromHtml, :isValidate, :getReturnRanks;
+
+
+  def getReturnRanks(from_unixtime, to_unixtime)
+    ticker_returns = Hash.new
+    Priceseries.where(ymd: to_unixtime).each do |price_unit|
+      # ４桁の数字かどうか
+      ticker=price_unit.ticker
+      if ticker.scan(/\D/).empty?
+        if ticker.to_i > 999
+          # 直近分
+          # price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
+
+          # 曜日によって異なるリターンの組み合わせ
+          # 土曜日→[最新の株価]vs[7日（以前で最大の日における）株価]のリターン
+          price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(1) +
+                  Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(from_unixtime)).order(ymd: :desc).first(1)
+          return_price = price.first.close.to_f / price.last.close.to_f - 1
+          ticker_returns[ticker] = return_price
+        end
+      end
+    end
+
+    # 並び替え（降順）→ハッシュから配列に変化
+    ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
+    p "取得銘柄 = #{ticker_returns.count}"
+    return ticker_returns
+  end
 
   #該当日付(yyyymmdd)に該当する日付のIR情報(feed)を取得する
   def getIrArrays(target_yyyymmdd)

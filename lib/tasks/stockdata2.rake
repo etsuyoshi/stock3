@@ -19,6 +19,9 @@ namespace :db do
 	desc "Fill database with sample data"
 
 	task :delete_unused => :environment do
+		# taggingsの増加が止まらないので、純粋に全部消す（heroku側でDB容量増やすようにupgradeすれば不要）
+		Feed.destroy_all
+
 		# 使っていないタグを削除する
 		delete_unused_tags()
   end

@@ -1,3 +1,4 @@
+<!-- マップをタップしたり銘柄コードをタップするとPriceseries#indexページに遷移する仕組み -->
 <%= include_gon(:init => true) %>
 <% set_meta_tags title: '日本株チャートと初心者講座' %>
 <% set_meta_tags description:
@@ -35,7 +36,8 @@
 <script>
 $(function () {//３番目に表示される(TOYOTA)
     // $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
-        var container_ticker = ["7203", "0950", "6758", "0000", "FB", "AMZN", "AAPL", "^DJI"];
+        // var container_ticker = ["7203", "0950", "6758", "0000", "FB", "AMZN", "AAPL", "^DJI"];
+        var container_ticker = gon.historical_tickers;
         var data_price = [], data_volume = [];
         for(ticker_label = 0 ; ticker_label < container_ticker.length ; ticker_label ++ ){
           historicals = gon.historical[container_ticker[ticker_label]];
@@ -277,7 +279,7 @@ $(function () {//３番目に表示される(TOYOTA)
         </div>
       </div>
 
-      <h2>主要銘柄の値動き</h2>
+      <h2>主要指標と代表的な銘柄の値動き</h2>
       <div class = "row">
         <!-- candle stick @apple -->
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
@@ -312,7 +314,7 @@ $(function () {//３番目に表示される(TOYOTA)
 
 
         <!-- candle chart -->
-        <br><br><br>
+
         <h2>世界各国の最新株価指標の推移</h2>
         <br>
         <!-- <div id="historical_chart"></div> -->

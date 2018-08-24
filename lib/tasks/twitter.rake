@@ -888,10 +888,19 @@ def get_today_nikkei_summary(today)
 
   contents2_1 =
   "日経225採用銘柄のうち、#{term_word}#{(today.wday%6 == 0) ? "で" : ""}上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
-  contents2_2 =
-  ((up_num==0) && (down_num==0)) ? '' :
-  ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
-  "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
+  contents2_2 = ""
+  # contents2_2 =
+  # ((up_num==0) && (down_num==0)) ? '' :
+  # ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
+  # "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
+  if (up_num==0) && (down_num==0)
+    
+  else
+    contents2_2 =
+    ((up_num==0) && (down_num==0)) ? '' :
+    ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
+    "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
+  end
   contents2 = contents2_1 + contents2_2
 
   if ((up_num>0) || (down_num>0))

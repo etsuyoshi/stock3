@@ -254,7 +254,7 @@ $(function () {//３番目に表示される(TOYOTA)
         <% end %>
       </div>
 
-      <h2>本日大きく上昇した銘柄</h2>
+      <h2>本日大きく下落した銘柄</h2>
       <div class = "row">
         <!-- candle stick @apple -->
         <% @historical_labels.last(@historical_labels.length - 8).first(2).each_with_index do |label, i| %>
@@ -270,7 +270,7 @@ $(function () {//３番目に表示される(TOYOTA)
           <% end %>
         <% end %>
       </div>
-      <h2>本日大きく下落した銘柄</h2>
+      <h2>本日大きく上昇した銘柄</h2>
       <div class = "row">
         <!-- candle stick @apple -->
         <% @historical_labels.last(@historical_labels.length - 8).last(2).each_with_index do |label, i| %>

@@ -24,7 +24,7 @@ class ApplicationController < ActionController::Base
 
           # 曜日によって異なるリターンの組み合わせ
           # 土曜日→[最新の株価]vs[7日（以前で最大の日における）株価]のリターン
-          price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(1) +
+          price = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(to_unixtime)).order(ymd: :desc).first(1) +
                   Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(from_unixtime)).order(ymd: :desc).first(1)
           return_price = price.first.close.to_f / price.last.close.to_f - 1
           ticker_returns[ticker] = return_price

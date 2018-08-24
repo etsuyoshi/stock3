@@ -444,18 +444,27 @@ class StaticPagesController < ApplicationController
     new8306 = Priceseries.where(ticker: "8306").order(ymd: :desc).first(2)
     returnRanks = ApplicationController.new.getReturnRanks(
       new8306.first.ymd, new8306.last.ymd)
-    returnRanks.each do |rank|
-      p rank
+
+    #最上位と最下位それぞれ２銘柄
+    topN = returnRanks.first(2) + returnRanks.last(2)
+    top_tickers = [];
+    top_labels = [];
+    top_names = [];
+    topN.each do |n|
+      top_tickers.push(n[0])
+      top_labels.push(n[0])
+      top_names.push(Priceseries.where(ticker: n[0].to_s).first.name)
     end
 
 
-    gon.historical_tickers = ["0000", "7203", "6758", "0950", "FB", "AAPL", "AMZN", "^DJI"];
-    gon.historical_labels = ["nikkei", "toyota", "sony", "dollar", "fb", "apple", "amzn", "dow"];
-    gon.historical_names = ["日経平均", "トヨタ(7203)", "ソニー(6758)", "ドル円", "フェイスブック", "アップル", "アマゾン", "ダウ平均"];
+    gon.historical_tickers = ["0000", "7203", "6758", "0950", "FB", "AAPL", "AMZN", "^DJI"] + top_tickers;
+    gon.historical_labels = ["nikkei", "toyota", "sony", "dollar", "fb", "apple", "amzn", "dow"] + top_labels;
+    gon.historical_names = ["日経平均", "トヨタ(7203)", "ソニー(6758)", "ドル円", "フェイスブック", "アップル", "アマゾン", "ダウ平均"] + top_names;
     gon.historical = {};#時系列データを格納
     gon.historical_tickers.each do |ticker|
       gon.historical[ticker] = Priceseries.where(ticker: ticker).order(ymd: :asc)
     end
+    @historical_labels = gon.historical_labels
 
 
   end

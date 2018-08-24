@@ -451,9 +451,10 @@ class StaticPagesController < ApplicationController
     top_labels = [];
     top_names = [];
     topN.each do |n|
+      name = Priceseries.where(ticker: n[0].to_s).first.name
       top_tickers.push(n[0])
+      top_names.push("#{name}(#{n[0]}):#{(n[1].to_f*100).round(2)}%")
       top_labels.push(n[0])
-      top_names.push(Priceseries.where(ticker: n[0].to_s).first.name)
     end
 
 

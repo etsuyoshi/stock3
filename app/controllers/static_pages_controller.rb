@@ -440,26 +440,24 @@ class StaticPagesController < ApplicationController
     end
 
 
+    #上昇率ランキング上位銘柄の抽出
+    new8306 = Priceseries.where(ticker: "8306").order(ymd: :desc).first(2)
+    returnRanks = ApplicationController.new.getReturnRanks(
+      new8306.first.ymd, new8306.last.ymd)
+    returnRanks.each do |rank|
+      p rank
+    end
 
 
-    # try and error->本来的にはfind_by(ymd: 20160101, ticker:"^N225")などとするのが適切
-    # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-    # historical_nikkei= Priceseries.where(ticker: "0000").order(ymd: :asc)
-    # historical_toyota = Priceseries.where(ticker: "7203").order(ymd: :asc)
-    # historical_dollar = Priceseries.where(ticker: "0950").order(ymd: :asc)
-    gon.historical_tickers = ["0000", "7203", "6758", "0950", "FB", "AAPL", "AMZN", "^DJI"]
-    gon.historical = {};
+    gon.historical_tickers = ["0000", "7203", "6758", "0950", "FB", "AAPL", "AMZN", "^DJI"];
+    gon.historical_labels = ["nikkei", "toyota", "sony", "dollar", "fb", "apple", "amzn", "dow"];
+    gon.historical_names = ["日経平均", "トヨタ(7203)", "ソニー(6758)", "ドル円", "フェイスブック", "アップル", "アマゾン", "ダウ平均"];
+    gon.historical = {};#時系列データを格納
     gon.historical_tickers.each do |ticker|
       gon.historical[ticker] = Priceseries.where(ticker: ticker).order(ymd: :asc)
     end
-    # gon.historical["0000"] = Priceseries.where(ticker: "0000").order(ymd: :asc)
-    # gon.historical["7203"] = Priceseries.where(ticker: "7203").order(ymd: :asc)
-    # gon.historical["6758"] = Priceseries.where(ticker: "6758").order(ymd: :asc)
-    # gon.historical["0950"] = Priceseries.where(ticker: "0950").order(ymd: :asc)
-    # gon.historical["FB"] = Priceseries.where(ticker: "FB").order(ymd: :asc)
-    # gon.historical["AAPL"] = Priceseries.where(ticker: "AAPL").order(ymd: :asc)
-    # gon.historical["AMZN"] = Priceseries.where(ticker: "AMZN").order(ymd: :asc)
-    # gon.historical["^DJI"] = Priceseries.where(ticker: "^DJI").order(ymd: :asc)
+
+
   end
 
   def help

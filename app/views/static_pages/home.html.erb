@@ -38,6 +38,11 @@ $(function () {//３番目に表示される(TOYOTA)
     // $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?a=e&filename=aapl-ohlc.json&callback=?', function (data) {
         // var container_ticker = ["7203", "0950", "6758", "0000", "FB", "AMZN", "AAPL", "^DJI"];
         var container_ticker = gon.historical_tickers;
+
+        // set the allowed units for data grouping
+        var groupingUnits = [['week',[1]], ['month',[1, 2, 3, 4, 6]]];
+        var param_yaxis =[{ title: {text: 'Price'}, height: 170, lineWidth: 2},
+                          { title: {text: 'Volume'}, top: 250, height: 40, offset: 0, lineWidth: 2}];
         var data_price = [], data_volume = [];
         for(ticker_label = 0 ; ticker_label < container_ticker.length ; ticker_label ++ ){
           historicals = gon.historical[container_ticker[ticker_label]];
@@ -51,69 +56,22 @@ $(function () {//３番目に表示される(TOYOTA)
           data_price[container_ticker[ticker_label]] = dict_price;
           data_volume[container_ticker[ticker_label]] = dict_volume;
         }
-        // set the allowed units for data grouping
-        var groupingUnits = [['week',[1]], ['month',[1, 2, 3, 4, 6]]];
-        var param_yaxis =[{ title: {text: 'price'}, height: 170, lineWidth: 2},
-                          { title: {text: 'Volume'}, top: 250, height: 40, offset: 0, lineWidth: 2}];
-        // create the chart:
-        $('#container_nikkei').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : '日経平均'},
-            yAxis: param_yaxis,
-            series: [data_price["0000"], data_volume["0000"]]
-        });
-        $('#container_toyota').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'トヨタ株(7203.T)'},
-            yAxis:param_yaxis,
-            series: [data_price["7203"], data_volume["7203"]]
-        });
-        $('#container_sony').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'ソニー株(6758.T)'},
-            yAxis:param_yaxis,
-            series: [data_price["6758"], data_volume["6758"]]
-        });
-        // create the chart:toyota
-        $('#container_dollar').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'ドル円'},
-            yAxis: param_yaxis,
-            series: [data_price["0950"], data_volume["0950"]]
-        });
-        $('#container_apple').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'アップル株(AAPL)'},
-            yAxis: param_yaxis,
-            series: [data_price["AAPL"], data_volume["AAPL"]],
-        });
-        $('#container_FB').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'フェイスブック株(FB)'},
-            yAxis: param_yaxis,
-            series: [data_price["FB"], data_volume["FB"]]
-        });
-        $('#container_AMZN').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'アマゾン株(AMZN)'},
-            yAxis: param_yaxis,
-            series: [data_price["AMZN"], data_volume["AMZN"]]
-        });
-        $('#container_DOW').highcharts('StockChart', {
-            rangeSelector : {selected : 1},
-            title : {text : 'ダウ平均(DJI)'},
-            yAxis: param_yaxis,
-            series: [data_price["^DJI"], data_volume["^DJI"]]
-        });
-});
-// $(function () {
-//     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=aapl-c.json&callback=?', function (data) {
-//         // Create the chart
-//         $('#container_apple').highcharts('StockChart', {
-//             rangeSelector : {selected : 1},
-//             title : {text : 'アップル株(AAPL)'},
-//             series : [{name : 'AAPL', data : data, tooltip: {valueDecimals: 2}}]});});
-// });
+
+        //これで個別に指定しなくても良い？→要改良
+        // for(label in gon.historical_labels){
+        for(i = 0 ; i < gon.historical_labels.length ; i++){
+          label = gon.historical_labels[i]
+          ticker = gon.historical_tickers[i]
+          name = gon.historical_names[i]
+          // alert('#container_'+label+":" + ticker);
+          $('#container_'+label).highcharts('StockChart', {
+              rangeSelector : {selected : 1},
+              title : {text : name},
+              yAxis: param_yaxis,
+              series: [data_price[ticker], data_volume[ticker]]
+          });
+        }
+  });
 
   $(function () {
     // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
@@ -270,7 +228,7 @@ $(function () {//３番目に表示される(TOYOTA)
         <!-- global map -->
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
           <div class="studytips">
-            世界の主要な20カ国の株価指標の前日騰落状況のバブルチャートです。
+            世界の主要な20カ国の株価指標の前日騰落状況です。赤は下落、青は上昇、バブルの大きさが騰落率の大きさを表しています。
             <br>
             詳しくは<%= link_to 'こちら', '/study_pages/advanced/nikkei225sakimono' %>
             <br>
@@ -300,15 +258,15 @@ $(function () {//３番目に表示される(TOYOTA)
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
           <!-- ドル円を表示したい -->
-          <div id="container_DOW" style="width:100%; height:400px;"></div>
+          <div id="container_dow" style="width:100%; height:400px;"></div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
           <!-- ドル円を表示したい -->
-          <div id="container_AMZN" style="width:100%; height:400px;"></div>
+          <div id="container_amzn" style="width:100%; height:400px;"></div>
         </div>
         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
           <!-- ドル円を表示したい -->
-          <div id="container_FB" style="width:100%; height:400px;"></div>
+          <div id="container_fb" style="width:100%; height:400px;"></div>
         </div>
       </div>
 

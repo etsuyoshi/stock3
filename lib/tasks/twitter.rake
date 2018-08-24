@@ -614,6 +614,7 @@ def getWeekDayComment(d)
       event_comment = event_comment + "の発表があります."
     end
 
+
     # 文章の結合
     # if event_comment.encode("EUC-JP").bytesize/2 < 140
       comment = event_comment
@@ -886,7 +887,7 @@ def get_today_nikkei_summary(today)
 
 
   contents2_1 =
-  "日経225企業のうち、#{term_word}#{(today.wday%6 == 0) ? "で" : ""}上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
+  "日経225採用銘柄のうち、#{term_word}#{(today.wday%6 == 0) ? "で" : ""}上昇したのは#{all_up_num}銘柄,下落は#{all_down_num}銘柄です。"
   contents2_2 =
   ((up_num==0) && (down_num==0)) ? '' :
   ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +

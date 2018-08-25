@@ -427,7 +427,7 @@ class StaticPagesController < ApplicationController
     #上昇率ランキング上位銘柄の抽出
     new8306 = Priceseries.where(ticker: "8306").order(ymd: :desc).first(2)
     returnRanks = ApplicationController.new.getReturnRanks(
-      new8306.first.ymd, new8306.last.ymd)
+      new8306.last.ymd, new8306.first.ymd)
 
     #最上位と最下位それぞれ２銘柄
     topN = returnRanks.first(2) + returnRanks.last(2)

@@ -74,12 +74,35 @@ $(function() {
     <div class="row">
       <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
 
-
+        <!-- 日足チャート -->
         <div id="container" style="width:100%; height:400px;"></div>
         <br>
 
+        <!-- 関連ニュース -->
+        <% related_feeds = Feed.where(ticker: @indicated_ticker) %>
+        <% ticker_name = Priceseries.where(ticker: @indicated_ticker).first.name %>
+        <% ticker_name = ticker_name.nil? ? @indicated_ticker : ticker_name %>
+        <% if related_feeds.count > 0 %>
+          <h2> 関連ニュース </h2>
+          <table class="ranking">
+            <tr>
+              <th>銘柄</th>
+              <th>概要</th>
+            </tr>
+            <tr>
+            <% feeds_to_disp = related_feeds.order(feed_id: :desc).first(3) %>
+            <% feeds_to_disp.each do |feed| %>
+              <!-- %= link_to feed do % -->
+                <td><%= link_to "#{ticker_name}(#{@indicated_ticker})", static_pages_nikkei_path(ticker: @indicated_ticker) %></td>
+                <td><%= link_to feed.title, feed %></td>
+              <!-- % end % -->
+            <% end %>
+          </table>
+        <% end %>
 
-        騰落率ランキング
+        <% if !@up_ranks.nil? && @up_ranks.length > 0 %>
+          全銘柄騰落率ランキング
+        <% end %>
         <div class="row">
           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <% if !@up_ranks.nil? && @up_ranks.length > 0 %>

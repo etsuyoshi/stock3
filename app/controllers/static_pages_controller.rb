@@ -34,29 +34,19 @@ class StaticPagesController < ApplicationController
   # 以下各ページに限定したニュースフィードだけでいいかも。
   # feedsモデルにカテゴリを追加→とりあえず最初はすべてのニュースで良い
   def nikkei
-
-    # p "count = " + @events.count
-    # @up_ranks = get_rank_hash("priceup")
-    # @down_ranks = get_rank_hash("pricedown")
-    #一日騰落率ランキング
-    @up_ranks = get_rank_from_db("priceup")
-    @down_ranks = get_rank_from_db("pricedown")
-
-    # p "uprank = #{@up_ranks}"
-    # p "downrank = #{@down_ranks}"
-
-    # @nikkei225_now2 = Priceseries.find_by_sql("select * from Priceseries where ticker = '^N225' order by ymd desc limit 2")
-    @nikkei225_now2 =
-    Priceseries.where(ticker: "0000").order(ymd: :desc).limit(2)
-    # Priceseries.where(ticker: "^N225").order(ymd: :asc).limit(2)
-
-
-    gon.historical_data=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "0000").order(ymd: :asc)
-    # Priceseries.where(ticker: "^N225").order(ymd: :asc)
-    # Priceseries.find_by_sql("select * from priceseries where ticker = '^N225' order by 'ymd' desc")
-    # p "nikkei225"
-    # p gon.historical_data.length
+    @indicated_ticker = params[:ticker]
+    p "indicated_ticker=#{@indicated_ticker}"
+    if @indicated_ticker
+      p "tag : #{@indicated_ticker}を受け取りました"
+    else
+      @indicated_ticker = "0000"
+      #一日騰落率ランキング
+      @up_ranks = get_rank_from_db("priceup")
+      @down_ranks = get_rank_from_db("pricedown")
+      @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000").where.not(name: "bitcoin")#^N225以外
+    end
+    @nikkei225_now2 = Priceseries.where(ticker: @indicated_ticker).order(ymd: :desc).limit(2)
+    gon.historical_data=Priceseries.where(ticker: @indicated_ticker).order(ymd: :asc)
 
     if @nikkei225_now2.length == 2
       todayVal = @nikkei225_now2[0].close.to_f
@@ -65,14 +55,6 @@ class StaticPagesController < ApplicationController
       @diffNikkei225 = sprintf("%.2f", (todayVal - yesterdayVal))
       @valueNikkei225 = todayVal
     end
-
-
-    #日経225銘柄の中で騰落率ランキングを作成(１日、３日、７日、１０日、３０日)
-    # ^N225:一日騰落率ランキング
-    # ^N225-3days-return:3日騰落率ランキング
-    # ^N225-3days-change:3日変化幅ランキング
-    # @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "^N225")#^N225以外
-    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000").where.not(name: "bitcoin")#^N225以外
 
   end
 

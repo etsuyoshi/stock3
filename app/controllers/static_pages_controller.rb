@@ -196,6 +196,18 @@ class StaticPagesController < ApplicationController
       @returnEurope = sprintf("%.2f", ((@valueEurope / yesterdayVal - 1.0)*100.0).to_f).to_s + "%"
       @diffEurope = sprintf("%.2f", (@valueEurope - yesterdayVal))
     end
+
+    gon.historical_tickers = ["EWQ", "^FTSE?P=FTSE", "^GDAXI", "EWI"];
+    gon.historical_labels = ["france", "london", "german", "italia"];
+    gon.historical_names = ["フランス証券取引所", "ロンドン証券取引所", "ドイツ証券取引所", "イタリア証券取引所"];
+    gon.historical = {};#時系列データを格納
+    gon.historical_tickers.each do |ticker|
+      gon.historical[ticker] = Priceseries.where(ticker: ticker).order(ymd: :asc)
+    end
+    @historical_tickers = gon.historical_tickers
+    @historical_labels = gon.historical_labels
+
+
   end
   def commodity
 
@@ -379,14 +391,14 @@ class StaticPagesController < ApplicationController
      {ticker:"^FTSE?P=FTSE", code:"GB"},#FTSE100(england)
      {ticker:"^HSI", code:"CN"},#HangSengIndex
      {ticker:"^NZ50", code:"NZ"},#NewZealand
-     {ticker:"^AXJO", code:"AT"},#
+     {ticker:"^AXJO", code:"AT"},#Australia
      {ticker:"EWS", code:"SG"},#singapore
      {ticker:"^GDAXI", code:"DE"},#german
      {ticker:"EWI", code:"IT"},
-     {ticker:"^MERV", code:"AR"},
-     {ticker:"^MXX", code:"MX"},
-     {ticker:"EWM", code:"MY"},
-     {ticker:"MCHI", code:"CH"},
+     {ticker:"^MERV", code:"AR"},#Turkey
+     {ticker:"^MXX", code:"MX"},#Mexico
+     {ticker:"EWM", code:"MY"},#Malaysia
+     {ticker:"MCHI", code:"CH"},#China
      {ticker:"EGPT", code:"EG"}
      ];
     #  "^KLSE", "^SSMI"

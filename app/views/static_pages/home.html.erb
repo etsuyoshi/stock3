@@ -258,15 +258,18 @@ $(function () {//３番目に表示される(TOYOTA)
       <div class = "row">
         <!-- candle stick @apple -->
         <% @historical_labels.last(@historical_labels.length - 8).first(2).each_with_index do |label, i| %>
+          <% ticker_code = @historical_tickers.last(@historical_tickers.length - 8).first(2)[i] %>
           <% id_name = "container_"+label %>
-          <% if (i % 2) == 0 %>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
-              <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
-            </div>
-          <% else %>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
-              <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
-            </div>
+          <%= link_to static_pages_nikkei_path(ticker: ticker_code) do %>
+            <% if (i % 2) == 0 %>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+                <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
+              </div>
+            <% else %>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
+                <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
+              </div>
+            <% end %>
           <% end %>
         <% end %>
       </div>
@@ -275,15 +278,18 @@ $(function () {//３番目に表示される(TOYOTA)
       <div class = "row">
         <!-- candle stick @apple -->
         <% @historical_labels.last(@historical_labels.length - 8).last(2).each_with_index do |label, i| %>
+          <% ticker_code = @historical_tickers.last(@historical_tickers.length - 8).last(2)[i] %>
           <% id_name = "container_"+label %>
-          <% if (i % 2) == 0 %>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
-              <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
-            </div>
-          <% else %>
-            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
-              <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
-            </div>
+          <%= link_to static_pages_nikkei_path(ticker: ticker_code) do %>
+            <% if (i % 2) == 0 %>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+                <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
+              </div>
+            <% else %>
+              <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5">
+                <div id="<%= id_name -%>" style="width:100%; height:400px;"></div>
+              </div>
+            <% end %>
           <% end %>
         <% end %>
       </div>

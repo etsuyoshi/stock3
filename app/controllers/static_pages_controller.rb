@@ -449,6 +449,7 @@ class StaticPagesController < ApplicationController
     gon.historical_tickers.each do |ticker|
       gon.historical[ticker] = Priceseries.where(ticker: ticker).order(ymd: :asc)
     end
+    @historical_tickers = gon.historical_tickers
     @historical_labels = gon.historical_labels
 
 

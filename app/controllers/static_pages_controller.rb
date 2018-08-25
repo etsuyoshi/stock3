@@ -35,17 +35,19 @@ class StaticPagesController < ApplicationController
   # feedsモデルにカテゴリを追加→とりあえず最初はすべてのニュースで良い
   def nikkei
     @indicated_ticker = params[:ticker]
-    p "indicated_ticker=#{@indicated_ticker}"
+
     if @indicated_ticker
-      p "tag : #{@indicated_ticker}を受け取りました"
+      p "params : #{@indicated_ticker}を受け取りました"
     else
       @indicated_ticker = "0000"
       #一日騰落率ランキング
       @up_ranks = get_rank_from_db("priceup")
       @down_ranks = get_rank_from_db("pricedown")
-      @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000").where.not(name: "bitcoin")#^N225以外
     end
+    p "indicated_ticker=#{@indicated_ticker}"
+    @rank_others = Rank.where(market: Rank.pluck(:market).uniq).where.not(market: "0000").where.not(name: "bitcoin")#^N225以外
     @nikkei225_now2 = Priceseries.where(ticker: @indicated_ticker).order(ymd: :desc).limit(2)
+    p "nikkei225 = #{@nikkei225_now2.first.close}"
     gon.historical_data=Priceseries.where(ticker: @indicated_ticker).order(ymd: :asc)
 
     if @nikkei225_now2.length == 2

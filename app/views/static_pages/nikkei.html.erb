@@ -78,8 +78,6 @@ $(function() {
         <div id="container" style="width:100%; height:400px;"></div>
         <br>
 
-        <%= link_to "8306", static_pages_nikkei_path(ticker: "8306") %>
-
 
         騰落率ランキング
         <div class="row">
@@ -173,7 +171,7 @@ $(function() {
 
           <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
 
-            <h3><%= "日経225銘柄における騰落率ランキング(更新:#{@rank_others.first.created_at.in_time_zone('Tokyo').strftime('%-m月%-d日')})" %></h3>
+            <h3><%= "騰落率ランキング(更新:#{@rank_others.first.created_at.in_time_zone('Tokyo').strftime('%-m月%-d日')})" %></h3>
 
 
             <% markets = @rank_others.pluck(:market).uniq %>
@@ -234,15 +232,25 @@ $(function() {
                 <% end %>
                 <div class="row">
                   <% rank_to_display.all.each do |rank_Xdays| %>
-                    <% reuter_code = rank_Xdays.stock_code.to_s[0..3]+".T" %>
-                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 chart_rank_container">
-                      <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s + "(" + reuter_code.to_s + ")" %>
+                    <% ticker_code = rank_Xdays.stock_code.to_s[0..3] %>
+                    <% reuter_code = ticker_code+".T" %>
+                    <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 chart_rank_container" >
+                      <%= rank_Xdays.rank.to_s + ":" + rank_Xdays.name.to_s + "(" + ticker_code.to_s + ")" %>
                       <br>
-                      <%= link_to "http://www.reuters.com/finance/stocks/chart?symbol=#{reuter_code}" do %>
-                        <%= image_tag("http://charts.reuters.com/reuters/enhancements/chartapi/chart_api.asp?width=458&height=292&symbol=#{reuter_code}&duration=#{days}&lowers=volume&headertype=none",
-                        alt: reuter_code, :width => '192', :height => '96') %>
+                      <% tmp_image_url = "http://charts.reuters.com/reuters/enhancements/chartapi/chart_api.asp?width=458&height=292&symbol=#{reuter_code}&duration=#{days}&lowers=volume&headertype=none" %>
+                      <% tmp_comment = rank_Xdays.nowprice.to_f.round(0).to_s + "円(前日比" + (rank_Xdays.vsYesterday.to_f.round(0)>0 ? "+":"") + rank_Xdays.vsYesterday.to_f.round(0).to_s + "円, " + (rank_Xdays.vsYesterday.to_f.round(0)>0 ? "+":"") + rank_Xdays.return[0..(rank_Xdays.vsYesterday.to_f.round(0)>0 ? 3:4)] + "%)" %>
+                      <% if Priceseries.where(ticker: ticker_code).count > 0 %>
+                        <%= link_to static_pages_nikkei_path(ticker: ticker_code) do %>
+                          <%= image_tag(tmp_image_url, alt: reuter_code, :width => '192', :height => '96') %>
+                          <br>
+                          <%= tmp_comment %>
+                        <% end %>
+                      <% else %>
+                        <%= link_to "http://www.reuters.com/finance/stocks/chart?symbol=#{reuter_code}" do %>
+                        <%= image_tag(tmp_image_url, alt: reuter_code, :width => '192', :height => '96') %>
                         <br>
-                        <%= rank_Xdays.nowprice.to_f.round(0).to_s + "円(前日比" + (rank_Xdays.vsYesterday.to_f.round(0)>0 ? "+":"") + rank_Xdays.vsYesterday.to_f.round(0).to_s + "円, " + (rank_Xdays.vsYesterday.to_f.round(0)>0 ? "+":"") + rank_Xdays.return[0..(rank_Xdays.vsYesterday.to_f.round(0)>0 ? 3:4)] + "%)" %>
+                        <%= tmp_comment %>
+                        <% end %>
                       <% end %>
                     </div>
                   <% end %>

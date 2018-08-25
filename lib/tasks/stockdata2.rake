@@ -33,9 +33,13 @@ namespace :db do
 	end
 
 	task fetcher: :environment do
-		# Priceseries更新
-		updatePrice()
-		updateRank()
+
+		# 平日のみPriceseries更新
+		week_day = Date.today.in_time_zone('Tokyo').wday
+		if week_day % 6 > 0 #1.mon ~ 5.Fri
+			updatePrice()
+			updateRank()
+		end
 		getNews()
 		delete_unused_tags()
 	end

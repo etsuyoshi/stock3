@@ -182,10 +182,10 @@ class StaticPagesController < ApplicationController
 
   def europe
     gon.europe_historical=#Priceseries.all.order(:ymd)
-    Priceseries.where(ticker: "^FTSE?P=FTSE").order(ymd: :asc)
+    Priceseries.where(ticker: "SX5E.SW").order(ymd: :asc)
     # Priceseries.find_by_sql("select * from priceseries where ticker = '^FTSE' order by 'ymd' desc")
     @europe_now2 =
-    Priceseries.where(ticker: "^FTSE?P=FTSE").order(ymd: :desc).limit(2)
+    Priceseries.where(ticker: "SX5E.SW").order(ymd: :desc).limit(2)
     # Priceseries.find_by_sql("select * from Priceseries where ticker = '^FTSE' order by ymd desc limit 2")
     p "shanghai"
     p @europe_now2[0].close.to_f

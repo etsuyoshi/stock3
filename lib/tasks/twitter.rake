@@ -894,24 +894,31 @@ def get_today_nikkei_summary(today)
   # ((up_num==0) && (down_num==0)) ? '' :
   # ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
   # "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
+  p "up_num = #{up_num}, down_num = #{down_num}"
   if (up_num==0) || (down_num==0)
     if up_num > 0
+      "pattern 1"
       contents2_2 = "特に大きく動いたのは#{up_contents}の上昇です。"
     elsif down_num > 0
+      "pattern 2"
       contents2_2 = "特に大きく動いたのは#{up_contents}の下落です。"
     else
+      "pattern 3"
       contents2_2 = "#{(threashold*100).to_i}%以上動いた銘柄はありませんでした。"
     end
   else
+    "pattern 4"
     contents2_2 =
     "主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
     "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。"
   end
   contents2 = contents2_1 + contents2_2
 
-  if ((up_num>0) || (down_num>0))
+
+  # if ((up_num>0) || (down_num>0))
     contents = contents2
-  end
+  # end
+  return contents
 
 
   if Random.new(Time.now.to_i).rand(2) % 2 == 0

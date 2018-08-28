@@ -103,7 +103,7 @@ namespace :twitter do
     tweet = get_today_nikkei_summary(Date.today)
     p tweet
     if tweet
-      update(client, tweet)
+      # update(client, tweet)
     end
   end
   task :followTweeter => :environment do
@@ -817,17 +817,18 @@ def get_today_nikkei_summary(today)
   # ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
   ticker_returns = ApplicationController.new.getReturnRanks(start_unixtime, target_unixtime)
 
+  threashold = 0.05
   # 上昇銘柄と下落銘柄を最大５銘柄格納する
   arr_ups = []
   ticker_returns.first(5).each do |ticker_return|
-    if ticker_return[1].to_f > 0.05
+    if ticker_return[1].to_f > threashold
       p "#{ticker_return[0]} : #{ticker_return[1]}"
       arr_ups.push(ticker_return)
     end
   end
   arr_downs = []
   ticker_returns.last(5).reverse.each do |ticker_return|
-    if ticker_return[1].to_f < -0.05
+    if ticker_return[1].to_f < -1 * threashold
       p "#{ticker_return[0]} : #{ticker_return[1]}"
       arr_downs.push(ticker_return)
     end
@@ -893,13 +894,18 @@ def get_today_nikkei_summary(today)
   # ((up_num==0) && (down_num==0)) ? '' :
   # ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
   # "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
-  if (up_num==0) && (down_num==0)
-    
+  if (up_num==0) || (down_num==0)
+    if up_num > 0
+      contents2_2 = "特に大きく動いたのは#{up_contents}の上昇です。"
+    elsif down_num > 0
+      contents2_2 = "特に大きく動いたのは#{up_contents}の下落です。"
+    else
+      contents2_2 = "#{(threashold*100).to_i}%以上動いた銘柄はありませんでした。"
+    end
   else
     contents2_2 =
-    ((up_num==0) && (down_num==0)) ? '' :
-    ("主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
-    "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。")
+    "主に#{up_contents2 == '' ? '' : (up_contents2 + 'の上昇、')}" +
+    "下落銘柄では#{down_contents2 == '' ? '' : (down_contents2 + '')}と大きく動いています。"
   end
   contents2 = contents2_1 + contents2_2
 

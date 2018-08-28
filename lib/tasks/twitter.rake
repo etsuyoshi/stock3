@@ -817,7 +817,7 @@ def get_today_nikkei_summary(today)
   # ticker_returns = ticker_returns.sort {|(k1, v1), (k2, v2)| v2 <=> v1 }
   ticker_returns = ApplicationController.new.getReturnRanks(start_unixtime, target_unixtime)
 
-  threashold = 0.05
+  threashold = 0.03
   # 上昇銘柄と下落銘柄を最大５銘柄格納する
   arr_ups = []
   ticker_returns.first(5).each do |ticker_return|

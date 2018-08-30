@@ -344,7 +344,7 @@ namespace :db do
 			'^DJI', # Dow Jones Industrial Index
 			'AAPL',#apple
 			'FB',
-			'SX5E.SW',#all europe(STOXX)->Europe's leading blue-chip index for the Eurozone, provides a blue-chip representation of supersector leaders in the region
+			'^STOXX50E', #'SX5E.SW'←？,#all europe(STOXX)->Europe's leading blue-chip index for the Eurozone, provides a blue-chip representation of supersector leaders in the region
 			'AMZN',#amazon
 			# '^GSPC',# :SP500
 			# '^IXIC', # :NASDAQ

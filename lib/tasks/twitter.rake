@@ -948,12 +948,14 @@ end
 
 def get_tweet_feed(today)
   User.where(User.arel_table[:id].gt(200))
-  feed_now_on = Feed.where(keyword: "market_schedule").where(Feed.arel_table[:feed_id].gt(Time.now.to_time.to_i))
+  feed_now_on = Feed.where(keyword: "market_schedule").where(Feed.arel_table[:feed_id].gt(Time.now.to_time.to_i)).where(isTweeted: 0)
   tweet_feed = feed_now_on.order(feed_id: :desc).last(Random.new(Time.now.to_time.to_i).rand(feed_now_on.count)).last
   tweet = tweet_feed.description
 
-  return tweet
+  tweet_feed.isTweeted = 1#tweet済みとする
+  tweet_feed.save
 
+  return tweet
 end
 
 def get_tweet_europe(today)

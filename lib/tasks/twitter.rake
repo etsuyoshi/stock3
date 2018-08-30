@@ -107,11 +107,12 @@ namespace :twitter do
     end
   end
 
-
   # 直近の予定やニュースについてtweet
   task :tweetFeed => :environment do
     client = get_twitter_client
     tweet = get_tweet_feed(Date.today)
+    tweet = tweet + " #japanchart 他のスケジュールについてはこちら→ http://www.japanchart.com/"
+    p tweet
     if tweet
       update(client, tweet)
     end
@@ -375,7 +376,6 @@ def get_all_friends(screen_name)
       all_friends << friend
     end
   end
-
   all_friends
 end
 
@@ -947,9 +947,10 @@ def get_today_nikkei_summary(today)
 end
 
 def get_tweet_feed(today)
-  all_count = Feed.where(keyword: "market_schedule").count
-  tweet_feed = Feed.where(keyword: "market_schedule").order(feed_id: :desc).last(Random.new(Time.now.to_i).rand(all_count)).last
-  tweet = tweet_feed.title + tweet_feed.description
+  User.where(User.arel_table[:id].gt(200))
+  feed_now_on = Feed.where(keyword: "market_schedule").where(Feed.arel_table[:feed_id].gt(Time.now.to_time.to_i))
+  tweet_feed = feed_now_on.order(feed_id: :desc).last(Random.new(Time.now.to_time.to_i).rand(feed_now_on.count)).last
+  tweet = tweet_feed.description
 
   return tweet
 

@@ -106,6 +106,24 @@ namespace :twitter do
       update(client, tweet)
     end
   end
+
+
+  # 直近の予定やニュースについてtweet
+  task :tweetFeed => :environment do
+    client = get_twitter_client
+    tweet = get_tweet_feed(Date.today)
+    if tweet
+      update(client, tweet)
+    end
+  end
+
+  task :tweetEurope => :environment do
+    client = get_twitter_client
+    tweet = get_tweet_europe(Date.today)
+    if tweet
+      update(client, tweet)
+    end
+  end
   task :followTweeter => :environment do
     client = get_twitter_client
     arrKeywords = ["相互", "リフォロー", "フォロバ", "支援", "フォロー", "refollow","followme","相互"]
@@ -926,4 +944,29 @@ def get_today_nikkei_summary(today)
   else
     return contents
   end
+end
+
+def get_tweet_feed(today)
+  all_count = Feed.where(keyword: "market_schedule").count
+  tweet_feed = Feed.where(keyword: "market_schedule").order(feed_id: :desc).last(Random.new(Time.now.to_i).rand(all_count)).last
+  tweet = tweet_feed.title + tweet_feed.description
+
+  return tweet
+
+end
+
+def get_tweet_europe(today)
+  comment = ""
+  case today.wday
+  when 0,6 #sunday
+    p "ヨーロッパはこの１週間でxxxx%、この1ヶ月でxxxx%下落しました。先月比では主にイギリスがxx％と大きく動いています。"
+  when 1,2,3,4,5 #mon,tue,wed,thu,fri
+    p "昨日の欧州株式市場はイギリスが、フランスが、イタリアが、ドイツがxxx%の上昇となっています。この１週間ではイギリスがxxxの上昇と最も動いています。"
+
+  else
+
+  end
+
+
+
 end

@@ -17,6 +17,10 @@ require 'json'
 
 namespace :db do
 	desc "Fill database with sample data"
+	task ttt: :environment do
+		updatePrice("^STOXX50E")
+
+	end
 
 	task :delete_unused => :environment do
 		# taggingsの増加が止まらないので、純粋に全部消す（heroku側でDB容量増やすようにupgradeすれば不要）

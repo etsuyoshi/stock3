@@ -31,7 +31,7 @@ $(function() {
           title: {text: "欧州株価指数(EURO STOXX 50)"},
           yAxis: [{title: {text: 'Price'},height: 170,lineWidth: 2}, {title: {text: 'Volume'},top: 250,height: 40,offset: 0,lineWidth: 2}],
           series: [
-            {type:'candlestick',name: historicals[0].ticker,data: ohlc,dataGrouping: {units: groupingUnits}},
+            {/*type:'candlestick',*/name: historicals[0].ticker,data: ohlc,dataGrouping: {units: groupingUnits}},
             {type: 'column',name: 'Volume',data: volume,yAxis: 1,dataGrouping: {units: groupingUnits}}]
       });
 
@@ -84,7 +84,7 @@ $(function() {
           <div class="row">
             <div class="col-xs-12 col-sm-12 col-md-9 col-lg-9 col-md-offset-1 col-lg-offset-1">
               <br>
-              ユーロ・ストックス50(STOXX50)
+              欧州株価指数(代表的な50銘柄：STOXX50)
               <div id="nikkeiValue">
                 <%= number_with_delimiter(@valueEurope.to_d.floor(2), :delimiter => ',') %>
               </div>
@@ -114,8 +114,19 @@ $(function() {
       </div>
     </div>
 
+    <div class="row">
+      <div class="col-xs-12 col-sm-12 col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1">
+        <p>ユーロ・ストックス50インデックス（EURO STOXX 50 Index）は、ユーロ圏のスーパーセクターの上位優良銘柄で構成される代表的な指数。
+           ユーロ圏の12カ国から50銘柄で構成。資格をもつ金融機関が上場投資信託（ETF）、先物・オプション、仕組商品など幅広い投資商品の原証券として使用する。</p>
+      </div>
+    </div>
 
-    <h2>主要各国の証券取引所</h2>
+
+    <div class = "row">
+      <div class="col-xs-12 col-sm-12 col-md-12 col-lg-5 col-lg-offset-1">
+        <h2>主要各国の証券取引所</h2>
+      </div>
+    </div>
     <div class = "row">
       <!-- candle stick @apple -->
       <% @historical_labels.first(8).each_with_index do |label, i| %>

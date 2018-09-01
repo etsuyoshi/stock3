@@ -18,7 +18,6 @@ require 'json'
 namespace :db do
 	desc "Fill database with sample data"
 	task ttt: :environment do
-
 		getPriceYahoo("^STOXX50E")
 
 	end

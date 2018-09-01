@@ -236,9 +236,9 @@ class FetchController < ApplicationController
 
         # 予想がない場合がある
         if expects.nil? || expects.to_s == ""
-          description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。前回は#{before}と発表された際、為替は#{affects}動きました。"
+          description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。#{(before.to_s=="") ? "" : "前回は#{before}と発表された際、為替は#{affects}動きました。"}"
         else
-          description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
+          description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回の予想は#{expects}で #{(before.to_s=="") ? "す" : "前回は#{before}と発表された際、為替は#{affects}動きました。"}
         end
 
         # def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)

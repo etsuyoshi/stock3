@@ -211,9 +211,14 @@ namespace :db do
 				price_row.css('td')[2].nil? ||
 				price_row.css('td')[3].nil? ||
 				price_row.css('td')[4].nil? ||
-				price_row.css('td')[5].nil?
+				price_row.css('td')[6].nil?
 				next
 			end
+
+			for i in [*(0..6)] do
+				p "#{i}=#{price_row.css('td')[i].text}"
+			end
+
 
 			# 休日の場合（ハイフンが入っている時）は前回格納した値を適用する（前日データを取得したいが、desc-orderなので実際には翌日のデータを取得）
 			before_price = Priceseries.where(ticker: ticker.to_s).order(updated_at: :desc).first
@@ -221,21 +226,37 @@ namespace :db do
 			# Date, Open, High, Low, Close, Volume
 			begin
 				row_date  = Date.parse(price_row.css('td')[0].text).to_time.in_time_zone('Tokyo').to_i#to_iでunix_time変換
-				row_open  = price_row.css('td')[1].text == '-' ? before_price.open : price_row.css('td')[1].text.gsub(/,/,"").to_f
-				row_high  = price_row.css('td')[2].text == '-' ? before_price.high : price_row.css('td')[2].text.gsub(/,/,"").to_f
-				row_low   = price_row.css('td')[3].text == '-' ? before_price.low : price_row.css('td')[3].text.gsub(/,/,"").to_f
-				row_close = price_row.css('td')[4].text == '-' ? before_price.close : price_row.css('td')[4].text.gsub(/,/,"").to_f
-				row_vol   = price_row.css('td')[6].text == '-' ? before_price.volume : price_row.css('td')[6].text.gsub(/,/,"").to_f
-
 			rescue
-				row_date  = 0
-				row_open  = 0
-				row_high  = 0
-				row_low   = 0
-				row_close = 0
-				row_vol   = 0
 			end
 
+			begin
+				row_open  = price_row.css('td')[1].text == '-' ? before_price.open : price_row.css('td')[1].text.gsub(/,/,"").to_f
+			rescue
+			end
+
+			begin
+				row_high  = price_row.css('td')[2].text == '-' ? before_price.high : price_row.css('td')[2].text.gsub(/,/,"").to_f
+			rescue
+				row_high = 0
+			end
+
+			begin
+				row_low   = price_row.css('td')[3].text == '-' ? before_price.low : price_row.css('td')[3].text.gsub(/,/,"").to_f
+			rescue
+				row_low = 0
+			end
+
+			begin
+				row_close = price_row.css('td')[4].text == '-' ? before_price.close : price_row.css('td')[4].text.gsub(/,/,"").to_f
+			rescue
+				row_close = 0
+			end
+
+			begin
+				row_vol   = price_row.css('td')[6].text == '-' ? before_price.volume : price_row.css('td')[6].text.gsub(/,/,"").to_f
+			rescue
+				row_vol = 0
+			end
 			p "date=#{Time.at(row_date)}, o=#{row_open}, h=#{row_high}, l=#{row_low}, c=#{row_close}, v=#{row_vol}"
 			ps =
 			Priceseries.new(

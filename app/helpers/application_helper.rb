@@ -139,6 +139,7 @@ module ApplicationHelper
 
     if feed.description
       hash_related_description = Hash.new(0)
+      # 関連ニュースを紐づけるパラメータで無視するキーワード
       exclusive_words = ["東証", "決算", "一部", "株式会社", "会社", "株"]
       # description中における名詞の数だけループさせる
       get_keywords_from_description(feed.description).split(",").each do |included_keyword|

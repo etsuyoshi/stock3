@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180830134421) do
+ActiveRecord::Schema.define(version: 20180901012701) do
 
   create_table "adrs", force: :cascade do |t|
     t.string   "ticker"
@@ -37,7 +37,6 @@ ActiveRecord::Schema.define(version: 20180830134421) do
     t.datetime "updated_at",  null: false
     t.string   "keyword"
     t.string   "ticker"
-    t.integer  "isTweeted"
   end
 
   create_table "posts", force: :cascade do |t|

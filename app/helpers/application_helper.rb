@@ -62,7 +62,7 @@ module ApplicationHelper
     sample_text = description
     #予約語(これらのワードは抽出対象外とする)
     super_words = ["ロイター", "reuter", "世界", "内容", "あれ", "これ", "どれ", "それ"]
-    
+
     hist_keywords = Hash.new
     mecab.parse(sample_text) do |n|
 

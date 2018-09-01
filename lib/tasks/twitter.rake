@@ -111,7 +111,12 @@ namespace :twitter do
   task :tweetFeed => :environment do
     client = get_twitter_client
     tweet = get_tweet_feed(Date.today)
-    tweet = tweet + " #japanchart 他のスケジュールについてはこちら→ http://www.japanchart.com/"
+    p tweet
+    if tweet.nil?
+      next
+    end
+    tweet = tweet.to_s + " #japanchart 他のスケジュールについてはこちら→ http://www.japanchart.com/"
+
     if tweet
       update(client, tweet)
     end
@@ -947,10 +952,13 @@ end
 
 def get_tweet_feed(today)
   feed_now_on = Feed.where(keyword: "market_schedule").where(Feed.arel_table[:feed_id].gt(Time.now.to_time.to_i)).where(is_tweeted: 0)
+  p "feed_now_on.count = #{feed_now_on.count}"
   if feed_now_on.count == 0
-    return
+
+    return nil
   end
   tweet_feed = feed_now_on.order(feed_id: :desc).last(Random.new(Time.now.to_time.to_i).rand(feed_now_on.count)).last
+
   tweet = tweet_feed.description
 
   tweet_feed.is_tweeted = 1#tweet済みとする

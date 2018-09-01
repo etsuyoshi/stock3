@@ -241,19 +241,22 @@ class FetchController < ApplicationController
         # end
         # seoの観点で既に存在していれば残す
         p "title = #{title}"
-        if Feed.where(title: title).count == 0
-          feed = Feed.new(
-            :feed_id          => list_time.to_time.to_i,
-            :title            => title,
-            :description      => description,
-            :link             => "",
-            :keyword          => "market_schedule"
-          )
-          feed.save
-          p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
-        else
-          p "既に存在しているので保存しません"
-        end
+        # if Feed.where(title: title).count == 0
+        #   feed = Feed.new(
+        #     :feed_id          => list_time.to_time.to_i,
+        #     :title            => title,
+        #     :description      => description,
+        #     :link             => "",
+        #     :keyword          => "market_schedule"
+        #   )
+        #   feed.save
+        #   p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
+        # else
+        #   p "既に存在しているので保存しません"
+        # end
+
+        # def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
+        insert_feed_with_all(list_time.to_time.to_i, title, description, "", nil, "market_schedule", nil)
       end
     end
   end
@@ -413,8 +416,9 @@ class FetchController < ApplicationController
         :link             => link,
         :keyword          => keyword,
         :ticker           => ticker,
-        :is_tweeted        => 0
+        :is_tweeted       => 0
       )
+      p "created: feed(#{feed.id}:#{feed.title}, is_tweeted=#{feed.is_tweeted})"
       if !feedlabel.nil?
         feed.tag_list.add(feedlabel.split(','))
       end

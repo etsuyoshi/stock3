@@ -233,27 +233,13 @@ class FetchController < ApplicationController
         before = data[0].inner_text
         # 影響度
         affects = list_item.css('td.hl').inner_text.gsub(/ /, "").gsub(/\t/,"").gsub(/\n/,"")
-        description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
 
-        # Feed.where(title: title).each do |same_feed|
-        #   same_feed.destroy
-        #   same_feed.save
-        # end
-        # seoの観点で既に存在していれば残す
-        p "title = #{title}"
-        # if Feed.where(title: title).count == 0
-        #   feed = Feed.new(
-        #     :feed_id          => list_time.to_time.to_i,
-        #     :title            => title,
-        #     :description      => description,
-        #     :link             => "",
-        #     :keyword          => "market_schedule"
-        #   )
-        #   feed.save
-        #   p "saved: #{title} at #{feed.updated_at.in_time_zone('Tokyo')}"
-        # else
-        #   p "既に存在しているので保存しません"
-        # end
+        # 予想がない場合がある
+        if expects.nil? || expects.to_s == ""
+          description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。前回は#{before}と発表された際、為替は#{affects}動きました。"
+        else
+          description = "#{Time.at(list_time).strftime('%-m月%-d日')}に#{title}が発表されます。今回予想は#{expects}で前回は#{before}と発表された際、為替は#{affects}動きました。"
+        end
 
         # def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
         insert_feed_with_all(list_time.to_time.to_i, title, description, "", nil, "market_schedule", nil)

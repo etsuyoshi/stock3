@@ -125,6 +125,7 @@ namespace :twitter do
   task :tweetEurope => :environment do
     client = get_twitter_client
     tweet = get_tweet_europe(Date.today)
+    p tweet
     if tweet
       update(client, tweet)
     end
@@ -968,11 +969,53 @@ end
 def get_tweet_europe(today)
   comment = ""
   stoxx_ticker = "^STOXX50E"
-  france_ticker = ""
+  france_ticker = "EWQ"
+  england_ticker = "^FTSE?P=FTSE"#FTSE100
+  german_ticker = "^GDAXI"
+  italy_ticker = "EWI"
+  arr_names = ["ヨーロッパ", "イギリス", "ドイツ", "フランス", "イタリア"]
+  arr_tickers = [stoxx_ticker, england_ticker, german_ticker,france_ticker, italy_ticker];
+  weekly_return = Hash.new
+  monthly_return = Hash.new
+  most_move_country = ""
+  most_return = 0
+
+  arr_tickers.each_with_index do |ticker, i|
+    country_name = arr_names[i]
+    newest = Priceseries.where(ticker: ticker).order(ymd: :desc).first
+    week_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(newest.ymd.to_i-7*24*3600)).order(ymd: :desc).first
+    month_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(newest.ymd.to_i-30*24*3600)).order(ymd: :desc).first
+    if newest.nil?
+      next
+    end
+    if !week_ago.nil?
+      weekly_return[ticker] = (newest.close.to_f / week_ago.close.to_f - 1)*100
+    end
+    if !month_ago.nil?
+      monthly_return[ticker] = (newest.close.to_f / month_ago.close.to_f - 1)*100
+
+      if country_name != "ヨーロッパ"
+        most_move_country == "" ? country_name : most_move_country
+
+        if monthly_return[ticker].to_f.abs > most_return.abs
+          most_move_country = country_name
+          most_return = monthly_return[ticker].to_f
+        end
+      end
+
+    end
+  end
+
   case today.wday
   when 0,6 #sunday
 
-    p "ヨーロッパはこの１週間でxxxx%、1ヶ月でxxxx%下落しました。先月比では主にイギリスがxx％と大きく動いています。"
+    #p "ヨーロッパはこの１週間でxxxx%上昇、1ヶ月でxxxx%下落しました。主にイギリスがxx％と大きく動いています。"
+    phrase1 = weekly_return[stoxx_ticker].nil? ? "" : "この１週間で#{weekly_return[stoxx_ticker].abs.round(1)}%#{weekly_return[stoxx_ticker]>0 ? "上昇" : "下落"}、"
+    phrase2 = monthly_return[stoxx_ticker].nil? ? "" : "この１ヶ月間で#{monthly_return[stoxx_ticker].abs.round(1)}%#{monthly_return[stoxx_ticker]>0 ? "上昇" : "下落"}"
+    phrase3 = (most_return == 0) ? "" : "特に#{most_move_country}が#{most_return.to_f.abs.round(2)}%が#{most_return>3 ? "大きく" : ""}#{most_return>0 ? "上昇" : "下落"}でした。"
+    comment = "ヨーロッパの代表的な株価指数(EURO STOXX50)は#{phrase1.to_s + phrase2.to_s}しました。#{phrase3.to_s}"
+
+
   when 1,2,3,4,5 #mon,tue,wed,thu,fri
     p "昨日の欧州株式市場はイギリスが、フランスが、イタリアが、ドイツがxxx%の上昇となっています。この１週間ではイギリスがxxxの上昇と最も動いています。"
 

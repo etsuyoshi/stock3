@@ -64,6 +64,7 @@ module ApplicationHelper
     super_words = ["ロイター", "reuter", "世界", "内容", "あれ", "これ", "どれ", "それ"]
 
     keywords = ""
+    arr_keywords = [];
     mecab.parse(sample_text) do |n|
 
       word = n.surface.to_s#単語
@@ -80,6 +81,8 @@ module ApplicationHelper
         end
       end
     end
+
+    #上位5keywordのみ返す
     return keywords
   end
 

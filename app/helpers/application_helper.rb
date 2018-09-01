@@ -62,9 +62,8 @@ module ApplicationHelper
     sample_text = description
     #予約語(これらのワードは抽出対象外とする)
     super_words = ["ロイター", "reuter", "世界", "内容", "あれ", "これ", "どれ", "それ"]
-
-    keywords = ""
-    arr_keywords = [];
+    
+    hist_keywords = Hash.new
     mecab.parse(sample_text) do |n|
 
       word = n.surface.to_s#単語
@@ -72,18 +71,25 @@ module ApplicationHelper
 
       # heroku側で日本語で機能することを確認済み
       if (parts.match(/(固有名詞|名詞,一般)/)) and (word.length>0)#1文字以上の固有名詞と一般名詞のみ抽出
-        if !super_words.include?(word) and !keywords.include?(word)
-          if keywords == ""
-            keywords = word
-          else
-            keywords = keywords + "," + word
-          end
+        #if !super_words.include?(word) and !hist_keywords.keys.include?(word)
+        if !super_words.include?(word)
+          hist_keywords[word] = (hist_keywords[word].nil?) ? 0 : (hist_keywords[word]+1)
         end
       end
     end
 
+    #降順ソート
+    arr_hist_keywords = hist_keywords.sort{|(k1, v1), (k2, v2)| v2 <=> v1 }
+    keywords = nil
+    arr_hist_keywords.each_with_index do |keyword, i|
+      keywords = (keywords.nil? ? "" : (keywords + ",")) + keyword[0]
+      if i >= 5
+        break
+      end
+    end
+
     #上位5keywordのみ返す
-    return keywords
+    return keywords #"key1,key2,key3,..."
   end
 
 

@@ -947,6 +947,9 @@ end
 
 def get_tweet_feed(today)
   feed_now_on = Feed.where(keyword: "market_schedule").where(Feed.arel_table[:feed_id].gt(Time.now.to_time.to_i)).where(is_tweeted: 0)
+  if feed_now_on.count == 0
+    return
+  end
   tweet_feed = feed_now_on.order(feed_id: :desc).last(Random.new(Time.now.to_time.to_i).rand(feed_now_on.count)).last
   tweet = tweet_feed.description
 

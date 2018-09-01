@@ -413,7 +413,7 @@ class FetchController < ApplicationController
         :link             => link,
         :keyword          => keyword,
         :ticker           => ticker,
-        :isTweeted        => 0
+        :is_tweeted        => 0
       )
       if !feedlabel.nil?
         feed.tag_list.add(feedlabel.split(','))

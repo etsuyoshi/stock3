@@ -167,6 +167,7 @@ class FetchController < ApplicationController
                 #insert_feed(feed_id, title, description, url, keyword)#reuter_tagをつける
                 # def insert_feed_with_all(feed_id, title, description, link, feedlabel, keyword, ticker)
                 insert_feed_with_all(feed_id, title, description, url, "reuter", keyword, nil)
+                break
                 p "db挿入完了"
               else
                 p "最新ニュースではない（feed = " + feed_id.to_s + "がlastest=" + latest_id.to_s + "より小さい）ので格納しません。"

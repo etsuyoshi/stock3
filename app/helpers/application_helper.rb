@@ -118,8 +118,6 @@ module ApplicationHelper
       arr_hist_article = hist_article.sort{|(k1, v1), (k2, v2)| v2 <=> v1 }
       arr_hist_article.each_with_index do |hist_art|
         # 自分以外の記事のみ格納する
-        p "hist_art = #{hist_art[0]}"
-        p "article_id = #{article_id}"
         if hist_art[0] != article_id
           return_array.push(hist_art[0])
         end

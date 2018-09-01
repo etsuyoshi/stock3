@@ -967,9 +967,12 @@ end
 
 def get_tweet_europe(today)
   comment = ""
+  stoxx_ticker = "^STOXX50E"
+  france_ticker = ""
   case today.wday
   when 0,6 #sunday
-    p "ヨーロッパはこの１週間でxxxx%、この1ヶ月でxxxx%下落しました。先月比では主にイギリスがxx％と大きく動いています。"
+
+    p "ヨーロッパはこの１週間でxxxx%、1ヶ月でxxxx%下落しました。先月比では主にイギリスがxx％と大きく動いています。"
   when 1,2,3,4,5 #mon,tue,wed,thu,fri
     p "昨日の欧州株式市場はイギリスが、フランスが、イタリアが、ドイツがxxx%の上昇となっています。この１週間ではイギリスがxxxの上昇と最も動いています。"
 

@@ -85,7 +85,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    update(client, tweet)
+    # update(client, tweet)
   end
 
   # 10時にtweetする内容
@@ -537,13 +537,14 @@ def getWeekDayComment(d)
         next
       end
     end
-    min_feed_event = Feed.where(keyword: 'market_schedule').where(Priceseries.arel_table[:feed_id].gt(Time.now.to_i)).first
+    min_feed_event = Feed.where(keyword: 'market_schedule').where(Feed.arel_table[:feed_id].gt(Time.now.to_i)).first
     feed_length = min_feed_event.nil? ? 0 : (min_feed_event.title.encode('EUC-JP').bytesize)
     Feed.where(keyword: 'market_schedule').each do |feed_each|
       p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
       begin
         if feed_each.title.encode("EUC-JP").bytesize <= feed_length ||
-          feed_each.title.include?('日銀') || feed_each.title.include?('雇用統計')
+          feed_each.title.include?('日銀') || feed_each.title.match?(/アメリカ・.*雇用/)[0]#アメリカの雇用系指標を抽出
+          # feed_each.title.include?('日銀') || (feed_each.title.include?('アメリカ・') & feed_each.title.include?('雇用'))
           min_feed_event = feed_each
           feed_length = feed_each.title.encode('EUC-JP').bytesize
           if feed_each.title.include?('日銀') || feed_each.title.include?('雇用統計')
@@ -977,16 +978,21 @@ def get_tweet_europe(today)
   arr_tickers = [stoxx_ticker, england_ticker, german_ticker,france_ticker, italy_ticker];
   weekly_return = Hash.new
   monthly_return = Hash.new
+  daily_return = Hash.new
   most_move_country = ""
-  most_return = 0
+  most_return = 0#monthlyのみ
 
   arr_tickers.each_with_index do |ticker, i|
     country_name = arr_names[i]
     newest = Priceseries.where(ticker: ticker).order(ymd: :desc).first
+    day_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(newest.ymd.to_i-1*24*3600)).order(ymd: :desc).first
     week_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(newest.ymd.to_i-7*24*3600)).order(ymd: :desc).first
     month_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(newest.ymd.to_i-30*24*3600)).order(ymd: :desc).first
     if newest.nil?
       next
+    end
+    if !day_ago.nil?
+      daily_return[ticker] = (newest.close.to_f / day_ago.close.to_f - 1)*100
     end
     if !week_ago.nil?
       weekly_return[ticker] = (newest.close.to_f / week_ago.close.to_f - 1)*100
@@ -999,7 +1005,7 @@ def get_tweet_europe(today)
 
         if monthly_return[ticker].to_f.abs > most_return.abs
           most_move_country = country_name
-          most_return = monthly_return[ticker].to_f
+          most_return = monthly_return[ticker].to_f#monthlyのみ
         end
       end
 
@@ -1007,22 +1013,32 @@ def get_tweet_europe(today)
   end
 
   case today.wday
-  when 0,6 #sunday
+  # when 0
+  #   # do nothing
+  when 1 #mon
 
     #p "ヨーロッパはこの１週間でxxxx%上昇、1ヶ月でxxxx%下落しました。主にイギリスがxx％と大きく動いています。"
-    phrase1 = weekly_return[stoxx_ticker].nil? ? "" : "この１週間で#{weekly_return[stoxx_ticker].abs.round(1)}%#{weekly_return[stoxx_ticker]>0 ? "上昇" : "下落"}、"
-    phrase2 = monthly_return[stoxx_ticker].nil? ? "" : "この１ヶ月間で#{monthly_return[stoxx_ticker].abs.round(1)}%#{monthly_return[stoxx_ticker]>0 ? "上昇" : "下落"}"
-    phrase3 = (most_return == 0) ? "" : "特に#{most_move_country}が#{most_return.to_f.abs.round(2)}%が#{most_return>3 ? "大きく" : ""}#{most_return>0 ? "上昇" : "下落"}でした。"
-    comment = "ヨーロッパの代表的な株価指数(EURO STOXX50)は#{phrase1.to_s + phrase2.to_s}しました。#{phrase3.to_s}"
+    phrase1 = weekly_return[stoxx_ticker].nil? ? "" : "この1週間で#{weekly_return[stoxx_ticker].abs.round(1)}%#{weekly_return[stoxx_ticker]>0 ? "上昇" : "下落"}、"
+    phrase2 = monthly_return[stoxx_ticker].nil? ? "" : "この1ヶ月間で#{monthly_return[stoxx_ticker].abs.round(1)}%#{monthly_return[stoxx_ticker]>0 ? "上昇" : "下落"}"
+    phrase3 = (most_return == 0) ? "" : "特に#{most_move_country}が#{most_return.to_f.abs.round(2)}%と#{most_return.abs>3 ? "大きく" : ""}#{most_return>0 ? "上昇" : "下落"}しています。"
+    comment = "ヨーロッパの代表的な銘柄で構成される株価指数(EURO STOXX50)は#{phrase1.to_s + phrase2.to_s}しました。#{phrase3.to_s}"
+    p "most_return=#{most_return}"
 
-
-  when 1,2,3,4,5 #mon,tue,wed,thu,fri
+  when 2,3,4,5,6 #tue,wed,thu,fri,sat
     p "昨日の欧州株式市場はイギリスが、フランスが、イタリアが、ドイツがxxx%の上昇となっています。この１週間ではイギリスがxxxの上昇と最も動いています。"
+    comment = "昨日の欧州株式市場は"
+    arr_tickers.each_with_index do |ticker, i|
+      if i == 0
+        next
+      end
+      country_phrase = daily_return[ticker].nil? ? "" : "#{arr_names[i]}が#{daily_return[ticker].abs.round(1)}%の#{daily_return[ticker]>0 ? "上昇" : "下落"}、"
+      comment = comment + country_phrase
+    end
 
   else
 
   end
 
 
-
+  return comment
 end

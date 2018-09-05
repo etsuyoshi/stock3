@@ -14,18 +14,25 @@ namespace :db do
 		arrShops = getShopId(0)
 
 		counter = 0
-		# 初回実行時のみ列名入力
-		# CSV.open('instafollower3.csv','w') do |test|
-		# 	test << ["instagram_id", "max_posts", "follower", "numMonth", "numWeek", "recent_post_date"]
-		# end
-		continue_flag = FALSE
-		CSV.open('instafollower3.csv','a') do |test|
+		output_filename = 'instafollower4.csv'
+
+		continue_flag = TRUE
+
+		# 初回実行時のみ列名入力(継続実行時には実施しない)
+		if !continue_flag
+			CSV.open(output_filename,'w') do |test|
+				test << ["instagram_id", "max_posts", "follower", "numMonth", "numWeek", "recent_post_date"]
+			end
+		end
+
+		CSV.open(output_filename,'a') do |test|
 			for shop_insta_id in arrShops
 
 				# 途中からやる場合
 				if !continue_flag #
-					if shop_insta_id == "propelua_inc" #最初に実施する店舗ID
+					if shop_insta_id == "toki_italian_sai" #最初に実施する店舗ID
 						continue_flag = TRUE
+						next
 					else
 						next
 					end
@@ -93,7 +100,7 @@ namespace :db do
 		count = 0
 		max_posts = posts.count
 		most_recent_time = 0
-		p "#{insta_id}, 取得できた投稿数=#{max_posts}"
+		#p "#{insta_id}, 取得できた投稿数=#{max_posts}"
 		posts[0..30].each do |post|
 			count = count + 1
 	 		shortcode = post['node']['shortcode']
@@ -133,6 +140,8 @@ namespace :db do
 
 		end
 
+		p "insta_id=#{insta_id}, max_posts=#{max_posts}, follower=#{follower}, numMonth=#{numMonth}, numWeek=#{numWeek}, time = #{Time.at(most_recent_time).in_time_zone('Tokyo').strftime('%Y%m%d')}"
+
 		#insta_id, 投稿数,...
 		return [insta_id, max_posts, follower, numMonth, numWeek, Time.at(most_recent_time).in_time_zone('Tokyo').strftime('%Y%m%d')]
 
@@ -170,6 +179,7 @@ namespace :db do
 
 		r = Random.new(Time.new.to_time.to_i)
 		csv_data.each_with_index do |data, i|
+			#numToGetになるまでreturnArrayにinstagram_idを追加する（numToGet=0の場合は全部追加する）
 			if numToGet > 0 && returnArray.length < numToGet
 				if r.rand(2) % 2 == 1
 					next

@@ -14,24 +14,32 @@ namespace :db do
 		arrShops = getShopId(0)
 
 		counter = 0
-		output_filename = 'instafollower4.csv'
+		output_filename = 'instafollower7.csv'
 
-		continue_flag = TRUE
+		continue_flag = FALSE
 
 		# 初回実行時のみ列名入力(継続実行時には実施しない)
 		if !continue_flag
 			CSV.open(output_filename,'w') do |test|
-				test << ["instagram_id", "max_posts", "follower", "numMonth", "numWeek", "recent_post_date"]
+				test << ["instagram_id", "max_posts", "follower", "numMonth", "numWeek","numMonthTag","numWeekTag", "recent_post_date"]
 			end
 		end
+
+		#test
+		getInsta("baseec")
+
 
 		CSV.open(output_filename,'a') do |test|
 			for shop_insta_id in arrShops
 
+				if shop_insta_id.nil? || shop_insta_id == "" || shop_insta_id == "NA"
+					next
+				end
+
 				# 途中からやる場合
-				if !continue_flag #
-					if shop_insta_id == "toki_italian_sai" #最初に実施する店舗ID
-						continue_flag = TRUE
+				if continue_flag #
+					if shop_insta_id == "honnoh_genta" #最初に実施する店舗ID
+						continue_flag = FALSE
 						next
 					else
 						next
@@ -43,6 +51,7 @@ namespace :db do
 				end
 				#insta_idからフォロワー数やポスト数など取得
 				outputInsta = getInsta(shop_insta_id)
+
 				if !outputInsta
 					# URLが存在しない、
 					next
@@ -95,6 +104,10 @@ namespace :db do
 
 		numMonth = 0
 		numWeek = 0
+		numMonthHashTag = 0
+		numWeekHashTag = 0
+
+		hash_tag = "#baseec"
 
 		# 直近X件取得
 		count = 0
@@ -105,16 +118,43 @@ namespace :db do
 			count = count + 1
 	 		shortcode = post['node']['shortcode']
 
+			#test
+			# if shortcode != 'BnVXKCNH96R'
+			# 	next
+			# end
+
 			post_link = "https://www.instagram.com/p/#{shortcode}"
 			# post_link = "https://www.instagram.com/p/BlKNjYfgEVF/"
 			# post_link = "https://www.instagram.com/p/BkkfzupH1Kb/"
 			doc = getInstaDoc(post_link)
 			metaInfo = doc.css('body script').first.text
+
 			metaInfo.slice!(0, 21)
 			metaInfo = metaInfo.chop
 			# コメント投稿日時
 			# time =  Time.at(JSON.parse(metaInfo)['entry_data']['PostPage'][0]['graphql']['shortcode_media']['edge_media_to_comment']['edges'][0]['node']['created_at']).in_time_zone('Tokyo')
 			post_time =  Time.at(JSON.parse(metaInfo)['entry_data']['PostPage'][0]['graphql']['shortcode_media']['taken_at_timestamp']).in_time_zone('Tokyo').to_i
+
+			if JSON.parse(metaInfo)['entry_data']['PostPage'][0]["graphql"]["shortcode_media"]["edge_media_to_caption"]["edges"].count == 0
+				p "#{insta_id} : edgesにデータが格納されていません"
+				next
+			elsif JSON.parse(metaInfo)['entry_data']['PostPage'][0]["graphql"]["shortcode_media"]["edge_media_to_caption"]["edges"][0]["node"]["text"].nil?
+				p "#{insta_id} : 投稿データがありません"
+				next
+			end
+
+			post_contents = JSON.parse(metaInfo)['entry_data']['PostPage'][0]["graphql"]["shortcode_media"]["edge_media_to_caption"]["edges"][0]["node"]["text"].to_s
+
+			post_comment = ""
+			if JSON.parse(metaInfo)['entry_data']['PostPage'][0]["graphql"]["shortcode_media"]["edge_media_to_comment"]["edges"].count > 0
+				if !JSON.parse(metaInfo)['entry_data']['PostPage'][0]["graphql"]["shortcode_media"]["edge_media_to_comment"]["edges"][0]["node"]["text"].nil?
+					post_comment = JSON.parse(metaInfo)['entry_data']['PostPage'][0]["graphql"]["shortcode_media"]["edge_media_to_comment"]["edges"][0]["node"]["text"]
+					post_contents = post_contents.to_s + " " + post_comment.to_s
+				end
+			end
+			# p "contents = #{post_contents}"
+
+
 
 			if count == 1
 				most_recent_time = post_time
@@ -126,6 +166,11 @@ namespace :db do
 			if post_time >= Time.current.in_time_zone('Tokyo').to_time.to_i-7*24*3600
 				# p "週内"
 				numWeek = numWeek + 1
+
+				# p "hashtag search"
+				if post_contents.include?(hash_tag)
+					numWeekHashTag = numWeekHashTag + 1
+				end
 			end
 
 			#月内かどうか
@@ -133,17 +178,20 @@ namespace :db do
 			if post_time >= Time.current.in_time_zone('Tokyo').to_time.to_i - 31 * 24 * 3600
 				# p "月内"
 				numMonth = numMonth + 1
+
+				if post_contents.include?(hash_tag)
+					numMonthHashTag = numMonthHashTag + 1
+				end
+
 			else
 				# p "月内でないので終了"
 				break
 			end
-
 		end
-
-		p "insta_id=#{insta_id}, max_posts=#{max_posts}, follower=#{follower}, numMonth=#{numMonth}, numWeek=#{numWeek}, time = #{Time.at(most_recent_time).in_time_zone('Tokyo').strftime('%Y%m%d')}"
+		p "insta_id=#{insta_id}, max_posts=#{max_posts}, follower=#{follower}, numMonth=#{numMonth}, numWeek=#{numWeek}, hashWeek=#{numWeekHashTag}, hashMonth=#{numMonthHashTag}, time = #{Time.at(most_recent_time).in_time_zone('Tokyo').strftime('%Y%m%d')}"
 
 		#insta_id, 投稿数,...
-		return [insta_id, max_posts, follower, numMonth, numWeek, Time.at(most_recent_time).in_time_zone('Tokyo').strftime('%Y%m%d')]
+		return [insta_id, max_posts, follower, numMonth, numWeek,numMonthHashTag,numWeekHashTag, Time.at(most_recent_time).in_time_zone('Tokyo').strftime('%Y%m%d')]
 
   end
 
@@ -196,7 +244,7 @@ namespace :db do
   	end
 
 
-		puts "complete! See intro.txt."
+		puts "#{returnArray.count}complete! See intro.txt."
 		return returnArray;
 
 	end

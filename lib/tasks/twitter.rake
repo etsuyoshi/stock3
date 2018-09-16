@@ -23,7 +23,7 @@ namespace :twitter do
   desc "tweet hello"
 
   task tttest: :environment do
-    get_today_nikkei_summary(Date.today)
+    p getWeekDayComment(Date.today)
 
   end
 
@@ -517,7 +517,9 @@ def getWeekDayComment(d)
       end
       kessan_feature = kessan_feature + "です。"
     end
-    comment = comment + kessan_feature;
+    if kessan_feature
+      comment = comment + kessan_feature;
+    end
     # ↑まだ確認してない
 
 
@@ -543,7 +545,7 @@ def getWeekDayComment(d)
       p feed_each.title + "(#{Time.at(feed_each.feed_id.to_i).in_time_zone('Tokyo')})"
       begin
         if feed_each.title.encode("EUC-JP").bytesize <= feed_length ||
-          feed_each.title.include?('日銀') || feed_each.title.match?(/アメリカ・.*雇用/)[0]#アメリカの雇用系指標を抽出
+          feed_each.title.include?('日銀') || ((feed_each.title.match(/アメリカ・.*雇用/)) ? FALSE : (feed_each.title.match(/アメリカ・.*雇用/))[0])#アメリカの雇用系指標を抽出
           # feed_each.title.include?('日銀') || (feed_each.title.include?('アメリカ・') & feed_each.title.include?('雇用'))
           min_feed_event = feed_each
           feed_length = feed_each.title.encode('EUC-JP').bytesize

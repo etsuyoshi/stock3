@@ -23,7 +23,8 @@ namespace :twitter do
   desc "tweet hello"
 
   task tttest: :environment do
-    p getWeekDayComment(Date.today)
+    # p getWeekDayComment(Date.today)
+    p get_today_nikkei_summary(Date.today)
 
   end
 
@@ -465,7 +466,7 @@ def getWeekDayComment(d)
   weekly_comment = "今週の日経平均は#{nikkei_last2.first.close}円で前週比#{rtnNikkei_7.abs.round(2)}%の#{rtnNikkei_7>0 ? "上昇" : "下落"}(前月比#{rtnNikkei_30.abs.round(2)}%#{rtnNikkei_30>0 ? "上昇" : "下落"})、" +
     "ダウは#{dow_last2.first.close}ドルで前週比#{rtnDow_7.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}(前月比#{rtnDow_30.abs.round(2)}%#{rtnDow_30>0 ? "上昇" : "下落"})、" +
     "上海総合は#{shanghai_last2.first.close}ptで前週比#{rtnShg_7.abs.round(2)}%#{rtnShg_7>0 ? "上昇" : "下落"}(前月比#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"})でした。"
-  monthly_comment = "日経平均は1ヶ月で#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
+  monthly_comment = "日経平均はこの1ヶ月で#{rtnNikkei_30.abs.round(2)}%の#{rtnNikkei_30>0 ? "上昇" : "下落"}、ダウは#{rtnDow_30.abs.round(2)}%#{rtnDow_7>0 ? "上昇" : "下落"}、上海総合は#{rtnShg_30.abs.round(2)}%#{rtnShg_30>0 ? "上昇" : "下落"}でした。"
 
   case d.wday
   when 0

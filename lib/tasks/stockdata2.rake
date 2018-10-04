@@ -392,7 +392,6 @@ namespace :db do
 			"BTI",#British American Tobacco
 			"XOM",#エクソンモービル
 			"KO",#コカコーラ
-			"PG", #プロクターギャンブル
 			"IBM",
 			#指標
 			'^DJI', # Dow Jones Industrial Index

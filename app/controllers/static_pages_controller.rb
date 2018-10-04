@@ -82,7 +82,26 @@ class StaticPagesController < ApplicationController
       @diffdow = sprintf("%.2f", (@valuedow - yesterdayVal))
     end
 
+    gon.historical_tickers = [
+      "VZ",#verizon
+      "PG",#procter & gamble
+      "JNJ",#johnson and johnson
+      "PM",#Philip Morris International
+      "BTI",#British American Tobacco
+      "XOM",#エクソンモービル
+      "KO",#コカコーラ
+      "IBM"];
 
+
+    gon.historical_labels = ["verizon", "pg", "jnj", "pm", "bti", "xom", "ko", "ibm"]
+    gon.historical_names = ["verizon communications", "Procter&Gamble", "Johnson&johnson",
+    "Philip morris international", "British American Tabacco", "Exxon Mobil", "coca cola", "IBM"]
+    gon.historical = {};#時系列データを格納
+    gon.historical_tickers.each do |ticker|
+      gon.historical[ticker] = Priceseries.where(ticker: ticker).order(ymd: :asc)
+    end
+    @historical_tickers = gon.historical_tickers
+    @historical_labels = gon.historical_labels
 
   end
 

@@ -1,3 +1,6 @@
+# head(buy_items_all)
+# as.data.frame(xtabs(sum_total~ymd, buy_items_all[buy_items_all$shop_id=='atf',]))
+
 # 世界の株価動向を一覧・一目で見れる
 # 値上がり傾向、値下がりトップ５
 # Rankモデルの更新場所はどこ？(FetchControllerで更新確認)→static_pages#nikkeiで取得して、static_pages/nikkei.html.erbで使用している
@@ -18,7 +21,7 @@ require 'json'
 namespace :db do
 	desc "Fill database with sample data"
 	task ttt: :environment do
-		getPriceYahoo("^STOXX50E")
+		getPriceYahoo("VZ")
 
 	end
 
@@ -381,6 +384,17 @@ namespace :db do
 	def getYahooTicker
 		# yahoo finance自体の株価指数がない場合は全てMSCIで取得する？
 		return [
+			#高配当銘柄
+			"VZ",#verizon
+			"PG",#procter & gamble
+			"JNJ",#johnson and johnson
+			"PM",#Philip Morris International
+			"BTI",#British American Tobacco
+			"XOM",#エクソンモービル
+			"KO",#コカコーラ
+			"PG", #プロクターギャンブル
+			"IBM",
+			#指標
 			'^DJI', # Dow Jones Industrial Index
 			'AAPL',#apple
 			'FB',

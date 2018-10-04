@@ -72,7 +72,7 @@ $(function () {//３番目に表示される(TOYOTA)
   });
 
   $(function () {
-    // $.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
+    // $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=world-population.json&callback=?', function (data) {
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
         $('#container_map').highcharts('Map', {
             chart : {borderWidth : 1},
@@ -318,7 +318,7 @@ $(function () {//３番目に表示される(TOYOTA)
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3 first-col">
             <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/ftse.html" do %>
               <!-- 90, 120 -->
-              <!-- http://ichart.finance.yahoo.com/t?s=^NZ50 -->
+              <!-- https://ichart.finance.yahoo.com/t?s=^NZ50 -->
               <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.FTSE&per=4&width=755&height=400&tp=0&sma=1&vol=1",
               alt: "イギリス", :width => '192', :height => '96') %>
               <br>
@@ -330,7 +330,7 @@ $(function () {//３番目に表示される(TOYOTA)
           <div class="col-xs-12 col-sm-12 col-md-3 col-lg-3">
             <%= link_to "https://www.rakuten-sec.co.jp/web/market/data/fchi.html" do %>
               <!-- 90, 120 -->
-              <!-- http://ichart.finance.yahoo.com/t?s=^AXJO -->
+              <!-- https://ichart.finance.yahoo.com/t?s=^AXJO -->
               <%= image_tag("https://www.trkd-asia.com/rakutensecj/common/analytic.jsp?ric=.FCHI&per=4&width=755&height=400&tp=0&sma=1&vol=1",
                alt: "フランス", :width => '192', :height => '96') %>
               <br>

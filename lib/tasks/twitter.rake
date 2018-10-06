@@ -41,6 +41,10 @@ namespace :twitter do
     last_week = Time.at(Priceseries.where(ticker: tweet_tickers.first).first.ymd).ago(7.days)
 
     ticker_returns = {};
+    max_return = 0
+    min_return = 0
+    max_tweet = ""
+    min_tweet = ""
     tweet_tickers.each do |ticker|
       prices = Priceseries.where(ticker: ticker).order(ymd: :desc)
       daily_return = (prices.first.close.to_f / prices.first(2).last.close.to_f - 1)*100
@@ -53,15 +57,45 @@ namespace :twitter do
       monthly_return = (prices.first.close.to_f / price_month_ago.close.to_f - 1)*100
       p "ticker = #{ticker}, now = #{prices.first.close.to_s}, bef = #{prices.first(2).last.close.to_s}, weekly = #{weekly_return.to_s}, monthly = #{monthly_return.to_s}"
       ticker_returns[ticker] = [daily_return, weekly_return, monthly_return];
+
+      if daily_return > max_return
+        max_return = daily_return
+        max_tweet = "#{ticker}が日次で#{max_return.round(2)}%と大きく動いています。"
+      end
+      if daily_return < min_return
+        min_return = daily_return
+        min_tweet = "#{ticker}が日次で#{min_return.round(2)}%と大きく動いています。"
+      end
+
+      if weekly_return > max_return
+        max_return = weekly_return
+        max_tweet = "#{ticker}が週次で#{max_return.round(2)}%と大きく動いています。"
+      end
+      if weekly_return < min_return
+        min_return = weekly_return
+        min_tweet = "#{ticker}が週次で#{min_return.round(2)}%と大きく動いています。"
+      end
+
+      if monthly_return > max_return
+        max_return = monthly_return
+        max_tweet = "#{ticker}が月次で#{max_return.round(2)}%と大きく動いています。"
+      end
+      if monthly_return < min_return
+        min_return = monthly_return
+        min_tweet = "#{ticker}が月次で#{min_return.round(2)}%と大きく動いています。"
+      end
     end
 
     tweets = "|ticker|day|week|month|"
     ticker_returns.each do |key, returns|
-      str = "| " + key.to_s + " | " + returns[0].round(2).to_s + "% | " + returns[1].round(2).to_s + "% | " + returns[2].round(2).to_s + "% |"
+      #round(2)では1.2％となるが、formatだと1.20%となるので後者を採用
+      #str = "| " + key.to_s + " | " + returns[0].round(2).to_s + "% | " + returns[1].round(2).to_s + "% | " + returns[2].round(2).to_s + "% |"
+      str = "| " + key.to_s + " | " + format("%.2f", returns[0]).to_s + "% | " + format("%.2f", returns[1]).to_s + "% | " + format("%.2f", returns[2]).to_s + "% |"
       tweets = tweets + "\n" + str
-      p str
+      #p str
     end
-    posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #米株 #高配当 #リターン"
+    posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
+    p posts
     client = get_twitter_client
     update(client, posts)
 

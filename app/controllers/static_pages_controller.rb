@@ -84,13 +84,15 @@ class StaticPagesController < ApplicationController
 
     gon.historical_tickers = [
       "VZ",#verizon
+      "T",#AT&T
       "PG",#procter & gamble
       "JNJ",#johnson and johnson
       "PM",#Philip Morris International
       "BTI",#British American Tobacco
       "XOM",#エクソンモービル
       "KO",#コカコーラ
-      "IBM"];
+      "IBM",
+      "MCD"];
 
 
     gon.historical_labels = ["verizon", "pg", "jnj", "pm", "bti", "xom", "ko", "ibm"]

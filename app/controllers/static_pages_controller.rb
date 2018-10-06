@@ -95,9 +95,9 @@ class StaticPagesController < ApplicationController
       "MCD"];
 
 
-    gon.historical_labels = ["verizon", "pg", "jnj", "pm", "bti", "xom", "ko", "ibm"]
-    gon.historical_names = ["verizon communications", "Procter&Gamble", "Johnson&johnson",
-    "Philip morris international", "British American Tabacco", "Exxon Mobil", "coca cola", "IBM"]
+    gon.historical_labels = ["verizon","t", "pg", "jnj", "pm", "bti", "xom", "ko", "ibm", "mcd"]
+    gon.historical_names = ["Verizon Communications", "AT&T", "Procter&Gamble", "Johnson&johnson",
+    "Philip Morris International", "British American Tabacco", "Exxon Mobil", "Coca Cola", "IBM", "Mcdonald's Corp"]
     gon.historical = {};#時系列データを格納
     gon.historical_tickers.each do |ticker|
       gon.historical[ticker] = Priceseries.where(ticker: ticker).order(ymd: :asc)

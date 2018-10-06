@@ -28,6 +28,48 @@ namespace :twitter do
 
   end
 
+  task tweetGaikoku: :environment do#毎朝7時頃
+    #日曜日と月曜日は実行しない
+    if Date.today.wday % 6 == 0#曜日を0(日曜日)から6(土曜日)の整数で取得
+      next
+    end
+
+    #"verizon","t", "pg", "jnj", "pm", "bti", "xom", "ko", "ibm", "mcd"の株価をtweetする
+    tweet_tickers = ["VZ","T","PG","JNJ","PM","BTI","XOM","KO","IBM","MCD"];
+    #前月同日時点
+    last_month = Time.at(Priceseries.where(ticker: tweet_tickers.first).first.ymd).last_month
+    last_week = Time.at(Priceseries.where(ticker: tweet_tickers.first).first.ymd).ago(7.days)
+
+    ticker_returns = {};
+    tweet_tickers.each do |ticker|
+      prices = Priceseries.where(ticker: ticker).order(ymd: :desc)
+      daily_return = (prices.first.close.to_f / prices.first(2).last.close.to_f - 1)*100
+
+      #前週（休みの場合は前日以前で最新）
+      price_week_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(last_week)).order(ymd: :desc).first
+      weekly_return = (prices.first.close.to_f / price_week_ago.close.to_f - 1)*100#1週間前＝7レコード前
+      # 前月同日時点より小さい最大レコード
+      price_month_ago = Priceseries.where(ticker: ticker).where(Priceseries.arel_table[:ymd].lteq(last_month)).order(ymd: :desc).first
+      monthly_return = (prices.first.close.to_f / price_month_ago.close.to_f - 1)*100
+      p "ticker = #{ticker}, now = #{prices.first.close.to_s}, bef = #{prices.first(2).last.close.to_s}, weekly = #{weekly_return.to_s}, monthly = #{monthly_return.to_s}"
+      ticker_returns[ticker] = [daily_return, weekly_return, monthly_return];
+    end
+
+    tweets = "|ticker|day|week|month|"
+    ticker_returns.each do |key, returns|
+      str = "| " + key.to_s + " | " + returns[0].round(2).to_s + "% | " + returns[1].round(2).to_s + "% | " + returns[2].round(2).to_s + "% |"
+      tweets = tweets + "\n" + str
+      p str
+    end
+    posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #米株 #高配当 #リターン"
+    client = get_twitter_client
+    update(client, posts)
+
+
+
+
+  end
+
   #フォロワー数を取得する
   task :get_followers do
     client = get_twitter_client

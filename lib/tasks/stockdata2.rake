@@ -386,6 +386,7 @@ namespace :db do
 		return [
 			#高配当銘柄
 			"VZ",#verizon
+			"T",#AT&T
 			"PG",#procter & gamble
 			"JNJ",#johnson and johnson
 			"PM",#Philip Morris International
@@ -393,6 +394,7 @@ namespace :db do
 			"XOM",#エクソンモービル
 			"KO",#コカコーラ
 			"IBM",
+			"MCD",#mc donald
 			#指標
 			'^DJI', # Dow Jones Industrial Index
 			'AAPL',#apple

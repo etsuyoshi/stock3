@@ -406,7 +406,8 @@ class StaticPagesController < ApplicationController
      {ticker:"^JKSE", code:"ID"},#indonesia(jakarta)
      {ticker:"^KS11", code:"KR"},#korea
      {ticker:"^TWII", code:"TW"},#taiwan
-     {ticker:"^GSPC", code:"US"},#S&P
+     #{ticker:"^GSPC", code:"US"},#S&P
+     {ticker:"^DJI", code:"US"},#DOW JONES
      {ticker:"EWQ", code:"FR"},#France
      # {ticker:"DAX", code:"DE"},#German
      {ticker:"^FTSE?P=FTSE", code:"GB"},#FTSE100(england)

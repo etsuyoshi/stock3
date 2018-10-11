@@ -98,10 +98,6 @@ namespace :twitter do
     p posts
     client = get_twitter_client
     update(client, posts)
-
-
-
-
   end
 
   #フォロワー数を取得する

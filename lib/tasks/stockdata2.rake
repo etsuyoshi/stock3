@@ -401,7 +401,7 @@ namespace :db do
 			'FB',
 			'^STOXX50E', #'SX5E.SW'←？,#all europe(STOXX)->Europe's leading blue-chip index for the Eurozone, provides a blue-chip representation of supersector leaders in the region
 			'AMZN',#amazon
-			# '^GSPC',# :SP500
+			'^GSPC',# :SP500->mapにのみ使用している
 			# '^IXIC', # :NASDAQ
 			'^JKSE', #jakarta->used
 		  "EZA", # code:"ZA"},#SouthAfrica->used

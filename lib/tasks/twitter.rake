@@ -60,29 +60,29 @@ namespace :twitter do
 
       if daily_return > max_return
         max_return = daily_return
-        max_tweet = "#{ticker}が日次で#{max_return.round(2)}%と大きく動いています。"
+        max_tweet = "#{ticker}が1日で#{max_return.round(2)}%と大きく動いています。"
       end
       if daily_return < min_return
         min_return = daily_return
-        min_tweet = "#{ticker}が日次で#{min_return.round(2)}%と大きく動いています。"
+        min_tweet = "#{ticker}が1日で#{min_return.round(2)}%と大きく動いています。"
       end
 
       if weekly_return > max_return
         max_return = weekly_return
-        max_tweet = "#{ticker}が週次で#{max_return.round(2)}%と大きく動いています。"
+        max_tweet = "#{ticker}が1週間で#{max_return.round(2)}%と大きく動いています。"
       end
       if weekly_return < min_return
         min_return = weekly_return
-        min_tweet = "#{ticker}が週次で#{min_return.round(2)}%と大きく動いています。"
+        min_tweet = "#{ticker}が1週間で#{min_return.round(2)}%と大きく動いています。"
       end
 
       if monthly_return > max_return
         max_return = monthly_return
-        max_tweet = "#{ticker}が月次で#{max_return.round(2)}%と大きく動いています。"
+        max_tweet = "#{ticker}が1ヶ月で#{max_return.round(2)}%と大きく動いています。"
       end
       if monthly_return < min_return
         min_return = monthly_return
-        min_tweet = "#{ticker}が月次で#{min_return.round(2)}%と大きく動いています。"
+        min_tweet = "#{ticker}が1ヶ月で#{min_return.round(2)}%と大きく動いています。"
       end
     end
 
@@ -97,8 +97,14 @@ namespace :twitter do
     #posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
     posts = tweets
     p posts
-    # client = get_twitter_client
-    # update_once(client, posts)
+    client = get_twitter_client
+    update_once(client, posts)
+
+
+
+    posts2 = "..(続き)米国高配当株の中では#{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
+    p posts2
+    update_once(client, posts2)
   end
 
   #フォロワー数を取得する

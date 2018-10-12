@@ -8,6 +8,30 @@ require 'open-uri'
 
 namespace :db do
 	desc "Fill database with sample data"
+	#特定商品の画像を抽出する(aliexpress)
+	task aliexpress: :environment do
+		target_url = "https://ja.aliexpress.com/item/2018/32893580190.html?spm=a2g0s.8937460.0.0.3de02e0eUwnDLU"
+
+		# <img alt="9047764137_2106944726" src="https://ae01.alicdn.com/kf/HTB1.s5FksIrBKNjSZK9q6ygoVXa4.jpg">
+		html = ApplicationController.new.getDocFromHtmlWithJS(URI.encode(target_url))
+		# p html
+
+		# p style box-sizing
+
+		#p html.css("img").first.attribute('src').value
+#		p html.xpath('//div[@class="origin-part"]')
+		p html.css("h1")
+		#p html.css("p")
+		#p html.xpath('//p[@style="box-sizing: content-box"]')
+		p html.css('//img[@alt="HTB1dnqYXMKTBuNkSne1q6yJoXXaq"]')
+		# <img alt="HTB1dnqYXMKTBuNkSne1q6yJoXXaq" height="420" src="https://ae01.alicdn.com/kf/HTB1dnqYXMKTBuNkSne1q6yJoXXaq.jpg" style="box-sizing: content-box;margin: 0.0px;padding: 0.0px;border: 0.0px;font-style: inherit;font-weight: inherit;font-size: 0.0px;line-height: inherit;vertical-align: middle;color: transparent;" width="655" data-spm-anchor-id="a2g11.10010108.1000023.i5.5d6b6a7cjEuEMR">
+
+		html.xpath('//p[@style="box-sizing: content-box;"]').css("p").each do |ppp|
+			ppp.css("img").each do |img|
+				p img.attribute('src').value
+			end
+		end
+	end
   # 特定の店舗の投稿頻度を算出する
 	task insta: :environment do
 

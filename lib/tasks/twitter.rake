@@ -97,7 +97,7 @@ namespace :twitter do
     posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
     p posts
     client = get_twitter_client
-    update(client, posts)
+    update_once(client, posts)
   end
 
   #フォロワー数を取得する
@@ -428,6 +428,16 @@ def get_twitter_client
   client
 end
 
+# 一回で全文ツィートしたい場合
+def update_once(client, tweet)
+  begin
+    client.update(tweet.chomp)
+  rescue => e
+    Rails.logger.error "<<twitter.rake::tweet.update ERROR : #{e.message}>>"
+  end
+end
+
+#文字数が長くて分割したい場合
 def update(client, tweet)
   begin
     p "length = #{tweet.length}, twitter char.length=#{tweet.encode("EUC-JP").bytesize/2}"

@@ -94,10 +94,11 @@ namespace :twitter do
       tweets = tweets + "\n" + str
       #p str
     end
-    posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
+    #posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
+    posts = tweets
     p posts
-    client = get_twitter_client
-    update_once(client, posts)
+    # client = get_twitter_client
+    # update_once(client, posts)
   end
 
   #フォロワー数を取得する

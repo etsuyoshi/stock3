@@ -39,10 +39,10 @@ namespace :twitter do
       (hash_1.values.first.abs > hash_2.values.first.abs) ? hash_1.keys.first : hash_2.keys.first
     tweet_value =
       (hash_1.values.first.abs > hash_2.values.first.abs) ? hash_1.values.first : hash_2.values.first
-    tweets = "..(続き)米国高配当株の中では#{tweet_ticker}がこの1週間で#{tweet_value.round(2)}%と大きく動いています。 #米株 #高配当 #リターン"
+    tweets = "米国高配当株の中では#{tweet_ticker}がこの1週間で#{tweet_value.round(2)}%と大きく動いています。 #米株 #高配当 #リターン"
     p tweets
     client = get_twitter_client
-    # update_once(client, tweets)
+    update_once(client, tweets)
   end
 
   def tweetGaikoku(param)
@@ -103,8 +103,8 @@ namespace :twitter do
     #posts = "米国高配当銘柄の騰落率↓↓\n" + tweets + "\n #{max_return.abs > min_return.abs ? max_tweet : min_tweet} #米株 #高配当 #リターン"
     posts = tweets
     p posts
-    # client = get_twitter_client
-    # update_once(client, posts)
+    client = get_twitter_client
+    update_once(client, posts)
 
     return {(max_return.abs > min_return.abs ? max_ticker : min_ticker) => (max_return.abs > min_return.abs ? max_return : min_return)}
 

@@ -53,9 +53,9 @@ namespace :twitter do
 
     tweet_tickers = [];
     if param == 1 #前半
-      tweet_tickers = ["VZ","T","PG","JNJ","PM"];
+      tweet_tickers = ["VZ "," T ","PG ","KO ","PM "];
     else #後半
-      tweet_tickers = ["BTI","XOM","KO","IBM","MCD"];
+      tweet_tickers = ["BTI","XOM","JNJ","IBM","MCD"];
     end
     #前月同日時点
     last_month = Time.at(Priceseries.where(ticker: tweet_tickers.first).first.ymd).last_month

@@ -1025,7 +1025,7 @@ def get_today_nikkei_summary(today)
       contents2_2 = "特に大きく動いたのは#{up_contents}の上昇です。"
     elsif down_num > 0
       "pattern 2"
-      contents2_2 = "特に大きく動いたのは#{up_contents}の下落です。"
+      contents2_2 = "特に大きく動いたのは#{down_contents}の下落です。"
     else
       "pattern 3"
       contents2_2 = "#{(threashold*100).to_i}%以上動いた銘柄はありませんでした。"

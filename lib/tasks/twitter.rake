@@ -39,11 +39,12 @@ namespace :twitter do
       (hash_1.values.first.abs > hash_2.values.first.abs) ? hash_1.keys.first : hash_2.keys.first
     tweet_value =
       (hash_1.values.first.abs > hash_2.values.first.abs) ? hash_1.values.first : hash_2.values.first
-    tweets = "米国高配当株の中では#{tweet_ticker}がこの1週間で#{tweet_value.round(2)}%と大きく動いています。 #米株 #高配当 #リターン"
+    tweets = "米国高配当株の#{tweet_ticker}がこの1週間で#{tweet_value.round(2)}%と大きく動いています。 #米株 #高配当 #リターン"
     p tweets
     client = get_twitter_client
     update_once(client, tweets)
   end
+
 
   def tweetGaikoku(param)
     #日曜日と月曜日は実行しない
@@ -53,7 +54,7 @@ namespace :twitter do
 
     tweet_tickers = [];
     if param == 1 #前半
-      tweet_tickers = ["VZ "," T ","PG ","KO ","PM "];
+      tweet_tickers = ["VZ","T","PG","KO","PM"];
     else #後半
       tweet_tickers = ["BTI","XOM","JNJ","IBM","MCD"];
     end
@@ -97,6 +98,7 @@ namespace :twitter do
       #round(2)では1.2％となるが、formatだと1.20%となるので後者を採用
       #str = "| " + key.to_s + " | " + returns[0].round(2).to_s + "% | " + returns[1].round(2).to_s + "% | " + returns[2].round(2).to_s + "% |"
       str = "| " + key.to_s + " | " + format("%.2f", returns[0]).to_s + "% | " + format("%.2f", returns[1]).to_s + "% | " + format("%.2f", returns[2]).to_s + "% |"
+      key.to_s.length
       tweets = tweets + "\n" + str
       #p str
     end

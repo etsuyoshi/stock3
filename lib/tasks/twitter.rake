@@ -175,7 +175,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    update(client, tweet)
+    # update(client, tweet)
   end
 
   # 10時にtweetする内容

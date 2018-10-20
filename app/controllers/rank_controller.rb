@@ -48,32 +48,36 @@ class RankController < ApplicationController
       return_all = Hash.new#[[ticker1, return1], [ticker2,return2],..]
       change_all = Hash.new#[[ticker1, change1], [ticker2,return2],..]
       all_tickers.each_with_index do |ticker, i|
-        now_record = Priceseries.where(ymd: latest_ymd).where(ticker: ticker).first
-        before_record = Priceseries.where(ymd: ymd_Xdays_ago).where(ticker: ticker).first
-        return_price = (now_record.close.to_f / before_record.close.to_f - 1 ) * 100
+        if ticker.scan(/\D/).empty? #数字かどうか
+          if ticker.to_i > 999 && ticker.to_i < 10000# ４桁の数字かどうか
 
-        info = Hash.new
-        #必要なデータは銘柄コード、名称、リターン、前日比、最新株価（後はランクを計算するだけ）
-        #stock_code, name, return, vsYesterday, price
-        info["name"] = now_record.name
-        info["stock_code"] = now_record.ticker
-        info["return"] = return_price
-        info["vsYesterday"] = now_record.close.to_f - before_record.close.to_f
-        info["price"] = now_record.close.to_f
-        info_all[i] = info
-        #騰落率ハッシュの設定
-        #return_info = Hash.new
-        #return_info[now_record.ticker] = info["return"]
-        #return_all[i] = return_info
-        return_all[now_record.ticker] = info["return"]
+            now_record = Priceseries.where(ymd: latest_ymd).where(ticker: ticker).first
+            before_record = Priceseries.where(ymd: ymd_Xdays_ago).where(ticker: ticker).first
+            return_price = (now_record.close.to_f / before_record.close.to_f - 1 ) * 100
+
+            info = Hash.new
+            #必要なデータは銘柄コード、名称、リターン、前日比、最新株価（後はランクを計算するだけ）
+            #stock_code, name, return, vsYesterday, price
+            info["name"] = now_record.name
+            info["stock_code"] = now_record.ticker
+            info["return"] = return_price
+            info["vsYesterday"] = now_record.close.to_f - before_record.close.to_f
+            info["price"] = now_record.close.to_f
+            info_all[i] = info
+            #騰落率ハッシュの設定
+            #return_info = Hash.new
+            #return_info[now_record.ticker] = info["return"]
+            #return_all[i] = return_info
+            return_all[now_record.ticker] = info["return"]
 
 
-        #前日比ハッシュの入力
-        # change_info = Hash.new
-        # change_info[now_record.ticker] = info["vsYesterday"]
-        # change_all[i] = change_info
-        change_all[now_record.ticker] = info["vsYesterday"]
-
+            #前日比ハッシュの入力
+            # change_info = Hash.new
+            # change_info[now_record.ticker] = info["vsYesterday"]
+            # change_all[i] = change_info
+            change_all[now_record.ticker] = info["vsYesterday"]
+          end
+        end
       end
 
       #info_allに全銘柄の騰落率や株価情報が取得できたら騰落率や下落幅のランキングを作成する(sort, reverse)

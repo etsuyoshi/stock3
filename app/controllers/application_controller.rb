@@ -15,10 +15,10 @@ class ApplicationController < ActionController::Base
   def getReturnRanks(from_unixtime, to_unixtime)
     ticker_returns = Hash.new
     Priceseries.where(ymd: to_unixtime).each do |price_unit|
-      # ４桁の数字かどうか
+
       ticker=price_unit.ticker
-      if ticker.scan(/\D/).empty?
-        if ticker.to_i > 999 && ticker.to_i < 10000
+      if ticker.scan(/\D/).empty? #数字かどうか
+        if ticker.to_i > 999 && ticker.to_i < 10000# ４桁の数字かどうか
           # 直近分
           # price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
 

@@ -18,7 +18,7 @@ class ApplicationController < ActionController::Base
       # ４桁の数字かどうか
       ticker=price_unit.ticker
       if ticker.scan(/\D/).empty?
-        if ticker.to_i > 999
+        if ticker.to_i > 999 && ticker.to_i < 10000
           # 直近分
           # price = Priceseries.where(ticker: ticker).order(ymd: :desc).first(2)
 

@@ -47,7 +47,9 @@ class RankController < ApplicationController
       info_all = Hash.new
       return_all = Hash.new#[[ticker1, return1], [ticker2,return2],..]
       change_all = Hash.new#[[ticker1, change1], [ticker2,return2],..]
-      all_tickers.each_with_index do |ticker, i|
+      i=0
+      #all_tickers.each_with_index do |ticker, i|
+      all_tickers.each do |ticker|
         if ticker.scan(/\D/).empty? #数字かどうか
           if ticker.to_i > 999 && ticker.to_i < 10000# ４桁の数字かどうか
 
@@ -76,6 +78,7 @@ class RankController < ApplicationController
             # change_info[now_record.ticker] = info["vsYesterday"]
             # change_all[i] = change_info
             change_all[now_record.ticker] = info["vsYesterday"]
+            i = i + 1
           end
         end
       end

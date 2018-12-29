@@ -97,8 +97,7 @@ namespace :twitter do
     ticker_returns.each do |key, returns|
       #round(2)では1.2％となるが、formatだと1.20%となるので後者を採用
       #str = "| " + key.to_s + " | " + returns[0].round(2).to_s + "% | " + returns[1].round(2).to_s + "% | " + returns[2].round(2).to_s + "% |"
-      str = "| " + key.to_s + " | " + format("%.2f", returns[0]).to_s + "% | " + format("%.2f", returns[1]).to_s + "% | " + format("%.2f", returns[2]).to_s + "% |"
-      key.to_s.length
+      str = "| " + (key.to_s + " "*(3-[key.to_s.length,3].min)) + " | " + format("%.2f", returns[0]).to_s + "% | " + format("%.2f", returns[1]).to_s + "% | " + format("%.2f", returns[2]).to_s + "% |"
       tweets = tweets + "\n" + str
       #p str
     end
@@ -175,7 +174,7 @@ namespace :twitter do
     # str = d.strftime("%Y年%m月%d日")
     # tweet = str + tweet
     puts tweet
-    update(client, tweet)
+    # update(client, tweet)
   end
 
   # 10時にtweetする内容
@@ -533,7 +532,7 @@ end
 def getWeekDayComment(d)
   # d = Date.today
 
-  # 日経平均、ダウ、上海総合の当落
+  # 日経平均、ダウ、上海総合の騰落
   nikkei_last2 = Priceseries.where(ticker: "0000").order(ymd: :desc).first(2)
   dow_last2 = Priceseries.where(ticker: "^DJI").order(ymd: :desc).first(2)
   shanghai_last2 = Priceseries.where(ticker: "0823").order(ymd: :desc).first(2)

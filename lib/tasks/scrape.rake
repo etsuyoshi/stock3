@@ -103,6 +103,52 @@ namespace :db do
 		return doc
 	end
 
+	# 自己紹介文にリンクがあれば良い
+	task insta_intro_link: :environment do
+		p "insta intro"
+
+		# file_link = "#{ENV['HOME']}/Documents/log-analyze/instagram_list.csv"
+		file_link = "#{ENV['HOME']}/Documents/log-analyze/open_shops.csv"
+		#csv_data = CSV.read("#{ENV['HOME']}/Documents/log-analyze/target_shops.csv", headers: true)
+		insta_ids = CSV.read(file_link, headers: true)
+		row = 1
+		output_filename="insta_link2.csv"
+		# target_id = "1988.design"#instagram_listで最初に読み込むinsta_id
+		# is_target = FALSE
+		is_target = TRUE
+		CSV.open(output_filename,'a') do |test|
+			for row_insta_id in insta_ids
+				insta_id = row_insta_id.to_s.gsub(/\n/, "").to_s
+				if insta_id == 'lily_accessory'#lily_accessory
+					is_target = TRUE
+				end
+				if !is_target
+					p "next : #{insta_id}"
+					next
+				end
+
+				# insta_id = insta_ids[0].to_s.gsub(/\n/, "").to_s
+				shop_url = "https://www.instagram.com/#{insta_id.to_s}/"
+				doc = ApplicationController.new.getDocFromHtmlWithJS(URI.encode(shop_url))
+				if !doc
+					return nil
+				end
+				if doc.css('.yLUwa').first.nil?
+					p "#{insta_id} is not exist"
+					next;
+				else
+					# p doc.css('.yLUwa')
+				end
+				shop_link = doc.css('.yLUwa').first.text
+				p "#{row}, insta_ids=#{insta_id}, link=#{shop_link}"
+
+				test << [insta_id, shop_link]
+				row = row + 1
+			end
+		end
+
+	end
+
   # k-dbサービス終了に伴い、別の方法を検討
   # 日経銘柄：kabutan
   # dji : https://finance.yahoo.com/quote/%5EDJI/history?p=%5EDJI
@@ -113,6 +159,7 @@ namespace :db do
     # insta_id = "murababystore"
     shop_url = "https://www.instagram.com/#{insta_id.to_s}/"
 		doc = getInstaDoc(shop_url)
+
 
 		if !doc
 			return nil

@@ -21,7 +21,8 @@ require 'json'
 namespace :db do
 	desc "Fill database with sample data"
 	task ttt: :environment do
-		getPriceYahoo("VZ")
+		#getPriceYahoo("VZ")
+		getPriceKabutan("8306")
 
 	end
 
@@ -309,19 +310,25 @@ namespace :db do
 				end
 			end
 		end
-		td_tags = price0.css('th')
-		target_date = td_tags[0].nil? ? "" : (td_tags[0]).text
+		#td_tags = price0.css('th')
+
+		th_tags = price0.css('th')#日付
+		td_tags = price0.css('td')#OHLCV配列
+
+
+		target_date = th_tags[0].nil? ? "" : (th_tags[0]).text
 		target_year = "20" + target_date[0..1].to_s
 		target_month = target_date[3..4].to_s
 		target_day = target_date[6..7].to_s
+		p "td_tags = #{td_tags}"
 
 		# target_ymd = (target_year.to_s+target_month.to_s+target_day.to_s).to_i
 		target_ymd = Date.new(target_year.to_i, target_month.to_i, target_day.to_i).in_time_zone('Tokyo')
-		start_value = (td_tags[1].nil? ? "" : (td_tags[1]).text).gsub(/,/, "").to_f
-		high_value = (td_tags[2].nil? ? "" : (td_tags[2]).text).gsub(/,/, "").to_f
-		low_value = (td_tags[3].nil? ? "" : (td_tags[3]).text).gsub(/,/, "").to_f
-		end_value = (td_tags[4].nil? ? "" : (td_tags[4]).text).gsub(/,/, "").to_f
-		vol_value = (td_tags[7].nil? ? "" : (td_tags[7]).text).gsub(/,/, "").to_f
+		start_value = (td_tags[0].nil? ? "" : (td_tags[0]).text).gsub(/,/, "").to_f
+		high_value = (td_tags[1].nil? ? "" : (td_tags[1]).text).gsub(/,/, "").to_f
+		low_value = (td_tags[2].nil? ? "" : (td_tags[2]).text).gsub(/,/, "").to_f
+		end_value = (td_tags[3].nil? ? "" : (td_tags[3]).text).gsub(/,/, "").to_f
+		vol_value = (td_tags[6].nil? ? "" : (td_tags[6]).text).gsub(/,/, "").to_f
 		ps =
 		Priceseries.new(
 			ticker: ticker.to_s,
@@ -333,6 +340,8 @@ namespace :db do
 			volume: vol_value,
 			ymd: target_ymd)
 		ps.save
+
+		p "newest : #{Time.at(target_ymd)}, #{end_value}"
 
 
   	#price_series = doc.css(".stock_kabuka1 > tr")
@@ -390,6 +399,7 @@ namespace :db do
         end
   		end
   	end
+		p "get price kabutan, #{end_value}"
   end
 	def getYahooTicker
 		# yahoo finance自体の株価指数がない場合は全てMSCIで取得する？

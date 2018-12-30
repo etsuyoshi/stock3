@@ -311,7 +311,6 @@ namespace :db do
 			end
 		end
 		#td_tags = price0.css('th')
-
 		th_tags = price0.css('th')#日付
 		td_tags = price0.css('td')#OHLCV配列
 
@@ -320,8 +319,6 @@ namespace :db do
 		target_year = "20" + target_date[0..1].to_s
 		target_month = target_date[3..4].to_s
 		target_day = target_date[6..7].to_s
-		p "td_tags = #{td_tags}"
-
 		# target_ymd = (target_year.to_s+target_month.to_s+target_day.to_s).to_i
 		target_ymd = Date.new(target_year.to_i, target_month.to_i, target_day.to_i).in_time_zone('Tokyo')
 		start_value = (td_tags[0].nil? ? "" : (td_tags[0]).text).gsub(/,/, "").to_f
@@ -340,9 +337,6 @@ namespace :db do
 			volume: vol_value,
 			ymd: target_ymd)
 		ps.save
-
-		p "newest : #{Time.at(target_ymd)}, #{end_value}"
-
 
   	#price_series = doc.css(".stock_kabuka1 > tr")
 		price_series = doc.css(".stock_kabuka1 > tbody > tr")
@@ -368,15 +362,6 @@ namespace :db do
 			end
   		if td_tags
         if td_tags.count > 0
-
-          # # 日付
-          # target_date = td_tags[0].nil? ? "" : (td_tags[0]).text
-          # target_year = "20" + target_date[0..1].to_s
-          # target_month = target_date[3..4].to_s
-          # target_day = target_date[6..7].to_s
-          # # target_ymd = (target_year.to_s+target_month.to_s+target_day.to_s).to_i
-					# target_ymd = Date.new(target_year.to_i, target_month.to_i, target_day.to_i).in_time_zone('Tokyo')
-
           # 始値
           start_value = (td_tags[0].nil? ? "" : (td_tags[0]).text).gsub(/,/, "").to_f
           # 高値
